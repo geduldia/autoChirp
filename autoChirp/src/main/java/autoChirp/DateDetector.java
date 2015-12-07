@@ -17,13 +17,12 @@ public class DateDetector {
 	
 
 	
-	HeidelTimeStandalone ht = new HeidelTimeStandalone(Language.GERMAN, DocumentType.COLLOQUIAL	, OutputType.TIMEML, "src/main/resources/config.props");
 
-	public Map<Timex3,String> detectDates(List<String> sentences) throws DocumentCreationTimeMissingException{
+	public Map<Timex3,String> detectDates(List<String> sentences, Language lang) throws DocumentCreationTimeMissingException{
 		Map<Timex3,String> toReturn = new HashMap<Timex3,String>();
+		HeidelTimeStandalone ht = new HeidelTimeStandalone(lang, DocumentType.NARRATIVES, OutputType.TIMEML, "config.props",  POSTagger.TREETAGGER, false);
 		for (String string : sentences) {
-			String s = ht.process(string, new Date(2015, 11, 12));
-			System.out.println(s);
+			ht.process(string);
 		}
 		return toReturn;
 	}

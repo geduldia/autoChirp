@@ -1,12 +1,14 @@
-package autoChirp;
+package autoChirp.applications;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import autoChirp.DBConnector;
 
 
-public class createDBApp {
+
+public class createTestDBApp {
 	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
 		String outputPath = "C:/sqlite/";

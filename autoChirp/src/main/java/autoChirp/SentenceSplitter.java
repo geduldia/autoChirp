@@ -16,20 +16,21 @@ public class SentenceSplitter {
 	private Language language;
 	
 	public SentenceSplitter(Language language){
-		if(language == Language.GERMAN){
-			setSentenceSplittingModel("data/OpenNLP_sentenceModels/de-sent.bin");
-		}
-		else{
-			setSentenceSplittingModel("data/OpenNLP_sentenceModels/en-sent.bin");
-		}
-	
+			setSentenceSplittingModel(language);
 	}
 	
-	private void setSentenceSplittingModel(String model){
+	public SentenceSplitter(){
+		
+	}
+	
+	private void setSentenceSplittingModel(Language language){
+		String model = "data/OpenNLP_SentenceModels/"+language.toString()+"-sent.bin";
+		System.out.println(model);
 		InputStream modelIn = null;
 		try {
 			modelIn = new FileInputStream(model);
 			sentenceModel = new SentenceModel(modelIn);
+			this.language = language;
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -42,7 +43,10 @@ public class SentenceSplitter {
 		}
 	}
 
-	public List<String> splitIntoSentences(String text){
+	public List<String> splitIntoSentences(String text, Language lang){
+		if(this.language != lang){
+			setSentenceSplittingModel(lang);
+		}
 		String[] sentences = null;
 		SentenceDetectorME detector = new SentenceDetectorME(sentenceModel);
 		sentences = detector.sentDetect(text);	
