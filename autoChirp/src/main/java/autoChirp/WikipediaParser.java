@@ -11,6 +11,7 @@ import org.xml.sax.SAXException;
 
 import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
 
+//TODO Encoding
 public class WikipediaParser  {
 	
 	private StringBuilder builder;

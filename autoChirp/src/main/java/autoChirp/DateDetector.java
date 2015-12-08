@@ -1,9 +1,16 @@
 package autoChirp;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.cyberneko.html.parsers.DOMParser;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import de.unihd.dbs.heideltime.standalone.DocumentType;
 import de.unihd.dbs.heideltime.standalone.HeidelTimeStandalone;
@@ -18,14 +25,26 @@ public class DateDetector {
 
 	
 
-	public Map<Timex3,String> detectDates(List<String> sentences, Language lang) throws DocumentCreationTimeMissingException{
-		Map<Timex3,String> toReturn = new HashMap<Timex3,String>();
-		HeidelTimeStandalone ht = new HeidelTimeStandalone(lang, DocumentType.NARRATIVES, OutputType.TIMEML, "config.props",  POSTagger.TREETAGGER, false);
-		for (String string : sentences) {
-			ht.process(string);
+	public  void detectDates(Document doc) throws DocumentCreationTimeMissingException, SAXException, IOException{
+		Map<String, List<String>> sentencesByDate = new HashMap<String,List<String>>();
+		HeidelTimeStandalone ht = new HeidelTimeStandalone(doc.getLanguage(), DocumentType.NARRATIVES, OutputType.TIMEML, "config.props",  POSTagger.TREETAGGER, false);
+		for (String sentence : doc.getSentences()) {
+			String processed = ht.process(sentence);
+			if(processed.contains("<TIMEX3 ")){
+				List<String> dates = getDates(processed);
+				System.out.println(processed);
+			}
 		}
-		return toReturn;
+		
+		
 	}
+
+	private List<String> getDates(String processed) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 	
 		
 }
