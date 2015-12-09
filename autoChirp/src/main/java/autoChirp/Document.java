@@ -11,6 +11,7 @@ public class Document {
 	private String title;
 	private List<String> sentences;
 	private Language language;
+	private List<String> dates;
 	
 	public Document(String text, String url, String title, Language language){
 		this.text = text;
@@ -42,5 +43,15 @@ public class Document {
 	public List<String> getSentences(){
 		return sentences;
 	}
+
+	public void setDates(List<String> dates) {
+		this.dates = dates;
+	}
+
+	public List<String> getDates() {
+		return dates;
+	}
+	
+	
 
 }

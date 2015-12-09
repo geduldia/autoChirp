@@ -21,7 +21,7 @@ public class WorkflowTest {
 	private static String dbPath = "C:/sqlite/";
 	private static String dbFileName = "autoChirp.db";
 	private static WikipediaParser parser = new WikipediaParser();
-	private static DateDetector d = new DateDetector();
+	private static TweetFactory tweetFactory = new TweetFactory();
 	
 	@BeforeClass
 	public static void dbConnection(){
@@ -36,25 +36,35 @@ public class WorkflowTest {
 	
 	
 	@Test
-	public void getAndParseURLsFromDB() throws ClassNotFoundException, SQLException, DocumentCreationTimeMissingException, SAXException, IOException{
-		Set<String> urls = DBConnector.getURLs();
-		if(urls.isEmpty()) return;
-		Map<Language, List<Document>> docsByLanguage = new HashMap<Language,List< Document>>();	
-		for (String url : urls) {
+	public void workFlowTest() throws ClassNotFoundException, SQLException, DocumentCreationTimeMissingException, SAXException, IOException{
+		DBConnector.createOutputTables();
+		DBConnector.insertURL("https://de.wikipedia.org/wiki/Zweiter_Weltkrieg", 5);
+		Map<String,List<Integer>> urlsAndUserIDs = DBConnector.getURLs();
+		if(urlsAndUserIDs.isEmpty()) return;
+		for (String url : urlsAndUserIDs.keySet()) {
 			Document doc = parser.parse(url);
-			List<Document> docsWithLang = docsByLanguage.get(doc.getLanguage());
-			if(docsWithLang == null) docsWithLang = new ArrayList<Document>();
-			docsWithLang.add(doc);
-			docsByLanguage.put(doc.getLanguage(), docsWithLang);
-		}
-		for (Language lang : docsByLanguage.keySet()) {
-			SentenceSplitter st = new SentenceSplitter(lang);
-			for (Document doc : docsByLanguage.get(lang)) {
-				doc.setSentences(st.splitIntoSentences(doc.getText(),lang));
-				System.out.println(doc.getTitle());
-				d.detectDates(doc);
+			SentenceSplitter st = new SentenceSplitter(doc.getLanguage());
+			doc.setSentences(st.splitIntoSentences(doc.getText(), doc.getLanguage()));
+			Map<String, List<String>> tweetsByDate =  tweetFactory.detectDates(doc);
+			for (int user : urlsAndUserIDs.get(url)) {
+				DBConnector.addTweets(tweetsByDate, user);
 			}
-		}
+			
+			System.out.print("usersIDs:");
+			for (int u : urlsAndUserIDs.get(url)) {
+				System.out.print(u+ "  ");
+			}
+			System.out.println();
+			System.out.println(doc.getTitle());
+			System.out.println(doc.getUrl());
+			System.out.println(doc.getLanguage());
+			for (String date : tweetsByDate.keySet()) {
+				for (String sentence : tweetsByDate.get(date)) {
+					System.out.println(date+ ":  " + sentence);
+				}
+			}
+			System.out.println();
+		}		
 	}
 
 

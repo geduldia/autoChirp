@@ -8,8 +8,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DBConnector {
 	
@@ -56,15 +58,25 @@ public class DBConnector {
 		connection.commit();
 	}
 	
-	public static Set<String>  getURLs() throws SQLException{
-		Set<String> urls = new HashSet<String>();
+	public static Map<String,List<Integer>>  getURLs() throws SQLException{
+		Map<String, List<Integer>> urls = new HashMap<String, List<Integer>>();
 		connection.setAutoCommit(false);
 		Statement stmt = connection.createStatement();
 		String sql = "SELECT url, user_id FROM wikipedia";
 		ResultSet result = stmt.executeQuery(sql);
 		while(result.next()){
-			urls.add(result.getString(1));
+			//urls.put(result.getString(1));
+			String url = result.getString(1);
+			List<Integer> ids = urls.get(url);
+			if(ids == null) ids = new ArrayList<Integer>();
+			ids.add(result.getInt(2));
+			urls.put(url, ids);
 		}
 		return urls;
+	}
+
+	public static void addTweets(Map<String, List<String>> tweetsByDate, int user_id) {
+		// TODO Auto-generated method stub
+		
 	}
 }
