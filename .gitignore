@@ -1,0 +1,5 @@
+.m2/
+autoChirp/config.props
+autoChirp/src/main/resources/autoChirp.db
+autoChirp/src/test/resources/autoChirp.db
+autoChirp/target/
