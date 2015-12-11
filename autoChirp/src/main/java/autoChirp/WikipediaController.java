@@ -11,7 +11,9 @@ public class WikipediaController {
 
     @RequestMapping(value="/", method=RequestMethod.GET, params="url")
     public @ResponseBody String test(@RequestParam("url") String url) {
-        return "Mapped by path" + url + "presence of query parameter! (MappingController)";
+       WikipediaParser parser = new WikipediaParser();
+       Document doc = parser.parse(url);
+       return "title: "+doc.getTitle()+ "\n"+ "lang: "+doc.getLanguage();
     }
 
 }
