@@ -33,7 +33,7 @@ public class DBConnector {
 	public static void createOutputTables()
 			throws SQLException, IOException {
 		StringBuffer sql = new StringBuffer();;
-		BufferedReader in = new BufferedReader(new FileReader("src/java/test/resources/createDatabaseFile.sql"));
+		BufferedReader in = new BufferedReader(new FileReader("src/test/resources/createDatabaseFile.sql"));
 		String line = in.readLine();
 		while(line != null){
 			sql.append(line+"\n");
