@@ -1,12 +1,12 @@
 package autoChirp;
 
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@RestController
+@Controller
 public class WikipediaController {
 
     @RequestMapping(value="/", method=RequestMethod.GET, params="url")
@@ -15,5 +15,4 @@ public class WikipediaController {
        Document doc = parser.parse(url);
        return "title: "+doc.getTitle()+ "\n"+ "lang: "+doc.getLanguage();
     }
-
 }
