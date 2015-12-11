@@ -13,6 +13,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import de.unihd.dbs.heideltime.standalone.DocumentType;
+import de.unihd.dbs.heideltime.standalone.HeidelTimeStandalone;
+import de.unihd.dbs.heideltime.standalone.OutputType;
+import de.unihd.dbs.heideltime.standalone.POSTagger;
 import de.unihd.dbs.heideltime.standalone.exceptions.DocumentCreationTimeMissingException;
 import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
 
@@ -38,7 +42,8 @@ public class WorkflowTest {
 	@Test
 	public void workFlowTest() throws ClassNotFoundException, SQLException, DocumentCreationTimeMissingException, SAXException, IOException{
 		DBConnector.createOutputTables();
-		DBConnector.insertURL("https://de.wikipedia.org/wiki/Zweiter_Weltkrieg", 5);
+		DBConnector.insertURL("https://de.wikipedia.org/wiki/Geschichte_der_Stadt_Köln", 5);
+		DBConnector.insertURL("https://en.wikipedia.org/wiki/Woody_Allen", 2);
 		Map<String,List<Integer>> urlsAndUserIDs = DBConnector.getURLs();
 		if(urlsAndUserIDs.isEmpty()) return;
 		for (String url : urlsAndUserIDs.keySet()) {
@@ -60,12 +65,30 @@ public class WorkflowTest {
 			System.out.println(doc.getLanguage());
 			for (String date : tweetsByDate.keySet()) {
 				for (String sentence : tweetsByDate.get(date)) {
-					System.out.println(date+ ":  " + sentence);
+					System.out.println(sentence);
+					System.out.println();
 				}
 			}
 			System.out.println();
 		}		
 	}
+	
+//	@Test
+//	public void heidelTimeTest() throws DocumentCreationTimeMissingException, SQLException, IOException{
+//		DBConnector.createOutputTables();
+//		DBConnector.insertURL("https://de.wikipedia.org/wiki/Woody_Allen", 5);
+//		Map<String,List<Integer>> urlsAndUserIDs = DBConnector.getURLs();
+//		if(urlsAndUserIDs.isEmpty()) return;
+//		for (String url : urlsAndUserIDs.keySet()) {
+//			Document doc = parser.parse(url);
+//			SentenceSplitter st = new SentenceSplitter(doc.getLanguage());
+//			doc.setSentences(st.splitIntoSentences(doc.getText(), doc.getLanguage()));
+//			HeidelTimeStandalone ht = new HeidelTimeStandalone(doc.getLanguage(), DocumentType.NARRATIVES,
+//					OutputType.TIMEML, "config.props", POSTagger.TREETAGGER, false);
+//			//System.out.println(doc.getText());
+//			ht.process(doc.getText());
+//		}		
+//	}
 
 
 	

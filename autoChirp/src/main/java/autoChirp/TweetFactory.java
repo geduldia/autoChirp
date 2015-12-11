@@ -28,30 +28,63 @@ public class TweetFactory {
 	
 
 
-	public Map<String,List<String>> detectDates(Document doc) throws DocumentCreationTimeMissingException, SAXException, IOException {
+
+//	public Map<String,List<String>> detectDates(Document doc) throws DocumentCreationTimeMissingException, SAXException, IOException {
+//		Map<String, List<String>> sentencesByDate = new HashMap<String, List<String>>();
+//		HeidelTimeStandalone ht = new HeidelTimeStandalone(doc.getLanguage(), DocumentType.NARRATIVES,
+//				OutputType.TIMEML, "config.props", POSTagger.TREETAGGER, false);
+//		int i = 0;
+//		
+//		for (String sentence : doc.getSentences()) {
+//			if(i > 30) break;
+//			i++;
+//			String processed = ht.process(sentence);
+//			List<String> dates = getDates(processed);
+//		
+//			for (String date : dates) {
+//				
+//				List<String> sentenceList = sentencesByDate.get(date);
+//				if(sentenceList == null) sentenceList = new ArrayList<String>();
+//				sentenceList.add(trimToTweet(sentence));
+//				sentencesByDate.put(date, sentenceList);
+//			}
+//		}
+//		
+//		return sentencesByDate;
+//	}
+	
+	public Map<String, List<String>> detectDates(Document doc) throws DocumentCreationTimeMissingException {
 		Map<String, List<String>> sentencesByDate = new HashMap<String, List<String>>();
 		HeidelTimeStandalone ht = new HeidelTimeStandalone(doc.getLanguage(), DocumentType.NARRATIVES,
 				OutputType.TIMEML, "config.props", POSTagger.TREETAGGER, false);
-		int i = 0;
-		for (String sentence : doc.getSentences()) {
-			if(i > 30) break;
-			i++;
-			String processed = ht.process(sentence);
-			List<String> dates = getDates(processed);
-		
+		String toProcess = concatSentences(doc.getSentences());
+		String processed = ht.process(toProcess);
+		String[] sentences = processed.split("#SENTENCE#");
+		for (int i = 0; i < sentences.length;i++) {
+			String sentence = sentences[i];
+			List<String> dates = getDates(sentence);
 			for (String date : dates) {
-				
-				List<String> sentenceList = sentencesByDate.get(date);
-				if(sentenceList == null) sentenceList = new ArrayList<String>();
-				sentenceList.add(trimToTweet(sentence));
-				sentencesByDate.put(date, sentenceList);
-			}
+			
+			List<String> sentenceList = sentencesByDate.get(date);
+			if(sentenceList == null) sentenceList = new ArrayList<String>();
+			sentenceList.add(toTweet(date+": "+doc.getSentences().get(i-1)));
+			sentencesByDate.put(date, sentenceList);
 		}
-		
+		}
 		return sentencesByDate;
 	}
 
-	private String trimToTweet(String sentence) {
+
+	
+	private String concatSentences(List<String> sentences) {
+		StringBuffer sb = new StringBuffer();
+		for (String s : sentences) {
+			sb.append("#SENTENCE#"+s);
+		}
+		return sb.toString();
+	}
+
+	private String toTweet(String sentence) {
 		if(sentence.length() > 140){
 			sentence = sentence.substring(0,141);
 		}

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+import org.cyberneko.html.HTMLConfiguration;
 import org.cyberneko.html.parsers.DOMParser;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -22,6 +24,7 @@ public class WikipediaParser  {
 	
 	public Document parse(String url){
 		try {
+			
 			domParser.parse(url);
 		} catch (SAXException e) {
 			e.printStackTrace();
