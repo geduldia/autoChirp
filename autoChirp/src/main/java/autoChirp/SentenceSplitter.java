@@ -24,7 +24,7 @@ public class SentenceSplitter {
 	}
 	
 	private void setSentenceSplittingModel(Language language){
-		String model = "/data/OpenNLP_SentenceModels/"+language.toString()+"-sent.bin";
+		String model = "data/OpenNLP_SentenceModels/"+language.toString()+"-sent.bin";
 		System.out.println(model);
 		InputStream modelIn = null;
 		try {
