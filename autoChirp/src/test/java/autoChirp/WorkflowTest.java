@@ -22,7 +22,7 @@ import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
 
 public class WorkflowTest {
 	
-	private static String dbPath = "src/test/resources/";
+	private static String dbPath = "/src/test/resources/";
 	private static String dbFileName = "autoChirp.db";
 	private static WikipediaParser parser = new WikipediaParser();
 	private static TweetFactory tweetFactory = new TweetFactory();
