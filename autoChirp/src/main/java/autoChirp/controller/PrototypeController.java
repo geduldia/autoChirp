@@ -1,0 +1,32 @@
+package autoChirp;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class PrototypeController {
+
+	TweetFactory tweeter = new TweetFactory();
+  WikipediaParser parser = new WikipediaParser();
+
+	@RequestMapping(value = "/proto", method = RequestMethod.GET, params = "url")
+	public @ResponseBody ModelAndView protoMV(@RequestParam("url") String url) {
+		Document doc = parser.parse(url);
+		SentenceSplitter splitter = new SentenceSplitter(doc.getLanguage());
+		doc.setSentences(splitter.splitIntoSentences(doc.getText(), doc.getLanguage()));
+		Map<String, List<String>> tweets = tweeter.getTweets(doc);
+
+    ModelAndView mv = new ModelAndView("proto");
+    mv.addObject("tweets", tweets);
+
+    return mv;
+	}
+}

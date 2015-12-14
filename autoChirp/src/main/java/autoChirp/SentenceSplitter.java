@@ -14,17 +14,17 @@ import opennlp.tools.sentdetect.SentenceModel;
 public  class SentenceSplitter {
 	private SentenceModel sentenceModel;
 	private Language language;
-	
+
 	public SentenceSplitter(Language language){
 			setSentenceSplittingModel(language);
 	}
-	
+
 	public SentenceSplitter(){
-		
+
 	}
-	
+
 	private void setSentenceSplittingModel(Language language){
-		String model = "data/OpenNLP_SentenceModels/"+language.toString()+"-sent.bin";
+		String model = "src/main/resources/opennlp/"+language.toString()+"-sent.bin";
 		System.out.println(model);
 		InputStream modelIn = null;
 		try {
@@ -49,7 +49,7 @@ public  class SentenceSplitter {
 		}
 		String[] sentences = null;
 		SentenceDetectorME detector = new SentenceDetectorME(sentenceModel);
-		sentences = detector.sentDetect(text);	
-		return Arrays.asList(sentences);	
+		sentences = detector.sentDetect(text);
+		return Arrays.asList(sentences);
 	}
 }

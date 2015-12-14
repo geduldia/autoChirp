@@ -44,8 +44,7 @@ public class TweetFactory {
 
 	public Map<String, List<String>> getTweets(Document doc) {
 		Map<String, List<String>> tweetsByDate = new TreeMap<String, List<String>>();
-		HeidelTimeStandalone ht = new HeidelTimeStandalone(doc.getLanguage(), DocumentType.NARRATIVES,
-				OutputType.TIMEML, "config.props", POSTagger.TREETAGGER, false);
+		HeidelTimeStandalone ht = new HeidelTimeStandalone(doc.getLanguage(), DocumentType.NARRATIVES, OutputType.TIMEML, "config.props", POSTagger.TREETAGGER, false);
 		String toProcess = concatSentences(doc.getSentences());
 		String processed;
 		try {

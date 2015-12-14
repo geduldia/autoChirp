@@ -1,3 +1,4 @@
+.bash_*
 .m2/
 autoChirp/config.props
 autoChirp/src/main/resources/autoChirp.db
