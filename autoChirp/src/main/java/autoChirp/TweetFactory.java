@@ -53,12 +53,18 @@ public class TweetFactory {
 //		return sentencesByDate;
 //	}
 	
-	public Map<String, List<String>> detectDates(Document doc) throws DocumentCreationTimeMissingException {
+	public Map<String, List<String>> getTweets(Document doc) {
 		Map<String, List<String>> sentencesByDate = new HashMap<String, List<String>>();
 		HeidelTimeStandalone ht = new HeidelTimeStandalone(doc.getLanguage(), DocumentType.NARRATIVES,
 				OutputType.TIMEML, "config.props", POSTagger.TREETAGGER, false);
 		String toProcess = concatSentences(doc.getSentences());
-		String processed = ht.process(toProcess);
+		String processed;
+		try {
+			processed = ht.process(toProcess);
+		} catch (DocumentCreationTimeMissingException e) {
+			e.printStackTrace();
+			return null;
+		}
 		String[] sentences = processed.split("#SENTENCE#");
 		for (int i = 0; i < sentences.length;i++) {
 			String sentence = sentences[i];

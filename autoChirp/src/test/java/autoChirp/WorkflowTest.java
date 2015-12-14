@@ -38,8 +38,7 @@ public class WorkflowTest {
 	}
 
 //	@Test
-//	public void workFlowTest() throws ClassNotFoundException, SQLException, DocumentCreationTimeMissingException,
-//			SAXException, IOException {
+//	public void workFlowTest() throws  SQLException,  IOException {
 //		DBConnector.createOutputTables();
 //		DBConnector.insertURL("https://de.wikipedia.org/wiki/Geschichte_der_Stadt_Köln", 5);
 //		DBConnector.insertURL("https://en.wikipedia.org/wiki/Woody_Allen", 2);

@@ -11,7 +11,7 @@ import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 
-public class SentenceSplitter {
+public  class SentenceSplitter {
 	private SentenceModel sentenceModel;
 	private Language language;
 	
@@ -50,6 +50,6 @@ public class SentenceSplitter {
 		String[] sentences = null;
 		SentenceDetectorME detector = new SentenceDetectorME(sentenceModel);
 		sentences = detector.sentDetect(text);	
-		return Arrays.asList(sentences);
+		return Arrays.asList(sentences);	
 	}
 }
