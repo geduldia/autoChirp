@@ -37,38 +37,35 @@ public class WorkflowTest {
 		}
 	}
 
-//	@Test
-//	public void workFlowTest() throws  SQLException,  IOException {
-//		DBConnector.createOutputTables();
-//		DBConnector.insertURL("https://de.wikipedia.org/wiki/Geschichte_der_Stadt_Köln", 5);
-//		DBConnector.insertURL("https://en.wikipedia.org/wiki/Woody_Allen", 2);
-//		Map<String, List<Integer>> urlsAndUserIDs = DBConnector.getURLs();
-//		if (urlsAndUserIDs.isEmpty())
-//			return;
-//		for (String url : urlsAndUserIDs.keySet()) {
-//			Document doc = parser.parse(url);
-//			SentenceSplitter st = new SentenceSplitter(doc.getLanguage());
-//			doc.setSentences(st.splitIntoSentences(doc.getText(), doc.getLanguage()));
-//			Map<String, List<String>> tweetsByDate = tweetFactory.detectDates(doc);
-//			for (int user : urlsAndUserIDs.get(url)) {
-//				DBConnector.addTweets(tweetsByDate, user);
-//			}
-//
-//			System.out.print("usersIDs:");
-//			for (int u : urlsAndUserIDs.get(url)) {
-//				System.out.print(u + "  ");
-//			}
-//			System.out.println();
-//			System.out.println(doc.getTitle());
-//			System.out.println(doc.getUrl());
-//			System.out.println(doc.getLanguage());
-//			for (String date : tweetsByDate.keySet()) {
-//				for (String sentence : tweetsByDate.get(date)) {
-//					System.out.println(sentence);
-//					System.out.println();
-//				}
-//			}
-//			System.out.println();
-//		}
-//	}
+	@Test
+	public void workFlowTest() throws  SQLException,  IOException {
+		DBConnector.createOutputTables();
+		DBConnector.insertURL("https://de.wikipedia.org/wiki/Geschichte_der_Stadt_Köln", 5);
+		//DBConnector.insertURL("https://en.wikipedia.org/wiki/Woody_Allen", 2);
+		Map<String, List<Integer>> urlsAndUserIDs = DBConnector.getURLs();
+		if (urlsAndUserIDs.isEmpty())
+			return;
+		for (String url : urlsAndUserIDs.keySet()) {
+			Document doc = parser.parse(url);
+			SentenceSplitter st = new SentenceSplitter(doc.getLanguage());
+			doc.setSentences(st.splitIntoSentences(doc.getText(), doc.getLanguage()));
+			Map<String, List<String>> tweetsByDate = tweetFactory.getTweets(doc);
+			DBConnector.addTweets(tweetsByDate, urlsAndUserIDs.get(url), doc.getTitle());
+			System.out.print("usersIDs:");
+			for (int u : urlsAndUserIDs.get(url)) {
+				System.out.print(u + "  ");
+			}
+			System.out.println();
+			System.out.println(doc.getTitle());
+			System.out.println(doc.getUrl());
+			System.out.println(doc.getLanguage());
+			for (String date : tweetsByDate.keySet()) {
+				for (String sentence : tweetsByDate.get(date)) {
+					System.out.println(sentence);
+					System.out.println();
+				}
+			}
+			System.out.println();
+		}
+	}
 }

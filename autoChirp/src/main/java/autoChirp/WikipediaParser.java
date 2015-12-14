@@ -14,14 +14,15 @@ import org.xml.sax.SAXException;
 import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
 
 //TODO Encoding
-public class WikipediaParser  {
+public class WikipediaParser implements Parser {
 	
 	private StringBuilder builder;
 	private boolean hasTitle;
 	private String title;
 	private DOMParser domParser = new DOMParser();
+	private String  regex = "((\\[[0-9]+\\])+(:[0-9]+)?)";
 	
-	
+	@Override
 	public Document parse(String url){
 		try {
 			
@@ -34,6 +35,7 @@ public class WikipediaParser  {
 		builder = new StringBuilder();	
 		hasTitle = false;
 		process(domParser.getDocument().getFirstChild());
+		
 		return new Document(builder.toString().trim(), url, title, getLanguage(url));	
 	}
 
@@ -56,6 +58,11 @@ public class WikipediaParser  {
 		}
 		if (elementName.equals("p")) {
 			String elementContent = node.getTextContent().trim().toLowerCase();
+			Pattern pattern = Pattern.compile(regex);
+			Matcher matcher = pattern.matcher(elementContent);
+			while(matcher.find()){
+				elementContent = elementContent.replace(matcher.group(1), "");
+			}
 			if (elementContent.length() > 0) {
 				builder.append(elementContent).append("\n\n");
 			}
