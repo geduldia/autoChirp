@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Index</title>
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
+<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div class="container">
+
+		<div class="row">
+
+			<div class="col-md-3 well lead">
+        <ul th:each="date, tweet : ${tweets}">
+          <li th:text="${date}"></li>
+          <li th:text="${tweet}"></li>
+        </ul>
+			</div>
+
+			<div class="col-md-8 lead text-left">
+			</div>
+		</div>
+	</div>
+</body>
+</html>

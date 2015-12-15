@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <thyme th:replace="../elements/static :: head"></thyme>
+  <title>Welcome to autoChirp</title>
+</head>
+
+<body>
+  <div class="container">
+    <thyme th:replace="../elements/navigation :: navigation"></thyme>
+
+    <div class="jumbotron">
+      <h1>Welcome to autoChirp</h1>
+      <p class="lead">Use autoChirp to automate Your Twitter experiance today! Never again manually schedule Tweets!</p>
+
+      <form action="/proto" method="get">
+        <div class="input-group">
+          <span class="input-group-addon">Wikipedia-URI</span>
+          <input type="url" name="url" class="form-control" placeholder="https://de.wikipedia.org/wiki/Köln"></input>
+          <span class="input-group-btn"><button class="btn btn-success" type="submit">Parse!</button></span>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <thyme th:replace="../elements/static :: footer"></thyme>
+</body>
+
+</html>
