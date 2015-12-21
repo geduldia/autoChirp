@@ -14,14 +14,26 @@ import org.xml.sax.SAXException;
 import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
 
 //TODO Encoding
+/**
+ * @author geduldia
+ * 
+ * A Parser for Wikipedia-Urls
+ *
+ */
 public class WikipediaParser implements Parser {
 	
 	private StringBuilder builder;
 	private boolean hasTitle;
 	private String title;
 	private DOMParser domParser = new DOMParser();
+	/**
+	 * regex for footnotes
+	 */
 	private String  regex = "((\\[[0-9]+\\])+(:[0-9]+)?)";
 	
+	/* (non-Javadoc)
+	 * @see autoChirp.Parser#parse(java.lang.String)
+	 */
 	@Override
 	public Document parse(String url){
 		try {
@@ -39,6 +51,12 @@ public class WikipediaParser implements Parser {
 		return new Document(builder.toString().trim(), url, title, getLanguage(url));	
 	}
 
+	/**
+	 * returns the language of a wikipedia-article taken from the url
+	 * @param url
+	 * @return language 
+	 * 
+	 */
 	private Language getLanguage(String url) {
 		
 		String lang = url.split("://")[1].substring(0,2);
@@ -52,10 +70,12 @@ public class WikipediaParser implements Parser {
 
 	private void process(Node node) {
 		String elementName = node.getNodeName().toLowerCase().trim();
+		//takes the content of the first h1-element as title
 		if (hasTitle == false && elementName.equals("h1")) {
 			title = node.getTextContent().trim();
 			hasTitle = true;
 		}
+		//takes the content of each p-element as text
 		if (elementName.equals("p")) {
 			String elementContent = node.getTextContent().trim().toLowerCase();
 			Pattern pattern = Pattern.compile(regex);

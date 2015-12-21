@@ -19,7 +19,7 @@ import java.util.Map;
  * 
  * @author geduldia
  * 
- * the database interface DB-i/o)
+ * the database interface
  *
  */
 public class DBConnector {
@@ -38,7 +38,6 @@ public class DBConnector {
 	 */
 	public static Connection connect(String dbFilePath) throws SQLException,
 			ClassNotFoundException {
-
 		// register the driver
 		Class.forName("org.sqlite.JDBC");
 
@@ -51,6 +50,7 @@ public class DBConnector {
 
 	/**
 	 * creates (and overrides) output-tables defined in createDatabaseFile.sql
+	 *
 	 */
 	public static void createOutputTables() {
 		StringBuffer sql = new StringBuffer();;
@@ -82,10 +82,10 @@ public class DBConnector {
 	}
 
 	/**
+	 * inserts a url and user_id into wikipedia-table
 	 * @param url
 	 * @param user_id
 	 * 
-	 * inserts url ans user_id in wikipedia-table
 	 */
 	public static void insertURL(String url, int user_id) {
 		try {
@@ -97,12 +97,13 @@ public class DBConnector {
 			connection.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-		
+		}	
 	}
 
 	/**
-	 * @return all urls and user_ids from wikipedia-table
+	 * selects all urls to parse with the corresponding user-ids
+	 * 
+	 * @return urls and user_ids from wikipedia-table
 	 */
 	public static Map<String,List<Integer>>  getURLs() {
 		Map<String, List<Integer>> urls = new HashMap<String, List<Integer>>();
@@ -112,7 +113,6 @@ public class DBConnector {
 			String sql = "SELECT url, user_id FROM wikipedia";
 			ResultSet result = stmt.executeQuery(sql);
 			while(result.next()){
-				//urls.put(result.getString(1));
 				String url = result.getString(1);
 				List<Integer> ids = urls.get(url);
 				if(ids == null) ids = new ArrayList<Integer>();
@@ -125,16 +125,26 @@ public class DBConnector {
 		return urls;
 	}
 
-	public static void addTweets(Map<String, List<String>> tweetsByDate,List<Integer> user_ids, String title) {
+	
+ /**
+  * Writes the extracted tweets from a single document in the database (Fills the tables groups & tweets) 
+  * 
+  * @param url
+ * @param tweetsByDate - A map of Dates (as Strings) and the corresponding list of tweets 
+ * @param user_ids - The list of users for the current url
+ * @param title - The title of the current document/url
+ */
+public static void addTweets(String url, Map<String, List<String>> tweetsByDate,List<Integer> user_ids, String title) {
 		try {
 			connection.setAutoCommit(false);
-			PreparedStatement prep = connection.prepareStatement("INSERT INTO groups(user_id, group_name, enabled) VALUES(?,?,?)");
+			PreparedStatement prepUsers = connection.prepareStatement("INSERT INTO groups(user_id, group_name, enabled) VALUES(?,?,?)");
 			for (int user : user_ids) {
-				prep.setInt(1, user);
-				prep.setString(2, title);
-				prep.setBoolean(3, false);
-				prep.executeUpdate();
+				prepUsers.setInt(1, user);
+				prepUsers.setString(2, title);
+				prepUsers.setBoolean(3, false);
+				prepUsers.executeUpdate();
 			}
+		/*TODO: Insert into tweets*/
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

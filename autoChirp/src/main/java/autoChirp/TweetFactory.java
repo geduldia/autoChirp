@@ -1,5 +1,6 @@
 package autoChirp;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,39 +14,24 @@ import de.unihd.dbs.heideltime.standalone.OutputType;
 import de.unihd.dbs.heideltime.standalone.POSTagger;
 import de.unihd.dbs.heideltime.standalone.exceptions.DocumentCreationTimeMissingException;
 
+/**
+ * @author geduldia
+ * 
+ * A class to generate date-related tweets from a document using Heideltime as temporal Tagger
+ *
+ */
+
 public class TweetFactory {
 
-	// public Map<String,List<String>> detectDates(Document doc) throws
-	// DocumentCreationTimeMissingException, SAXException, IOException {
-	// Map<String, List<String>> sentencesByDate = new HashMap<String,
-	// List<String>>();
-	// HeidelTimeStandalone ht = new HeidelTimeStandalone(doc.getLanguage(),
-	// DocumentType.NARRATIVES,
-	// OutputType.TIMEML, "config.props", POSTagger.TREETAGGER, false);
-	// int i = 0;
-	//
-	// for (String sentence : doc.getSentences()) {
-	// if(i > 30) break;
-	// i++;
-	// String processed = ht.process(sentence);
-	// List<String> dates = getDates(processed);
-	//
-	// for (String date : dates) {
-	//
-	// List<String> sentenceList = sentencesByDate.get(date);
-	// if(sentenceList == null) sentenceList = new ArrayList<String>();
-	// sentenceList.add(trimToTweet(sentence));
-	// sentencesByDate.put(date, sentenceList);
-	// }
-	// }
-	//
-	// return sentencesByDate;
-	// }
 
-	public Map<String, List<String>> getTweets(Document doc) {
+	/**
+	 * @param document  
+	 * @return tweetsByDate - a map of the detected dates and their including sentences trimmed to a tweet-length of 140 characters
+	 */
+	public Map<String, List<String>> getTweets(Document document) {
 		Map<String, List<String>> tweetsByDate = new TreeMap<String, List<String>>();
-		HeidelTimeStandalone ht = new HeidelTimeStandalone(doc.getLanguage(), DocumentType.NARRATIVES, OutputType.TIMEML, "config.props", POSTagger.TREETAGGER, false);
-		String toProcess = concatSentences(doc.getSentences());
+		HeidelTimeWrapper ht = new HeidelTimeWrapper(document.getLanguage(), DocumentType.NARRATIVES, OutputType.TIMEML, "/heideltime/config.props", POSTagger.TREETAGGER, false);
+		String toProcess = concatSentences(document.getSentences());
 		String processed;
 		try {
 			processed = ht.process(toProcess);
@@ -62,8 +48,8 @@ public class TweetFactory {
 				List<String> sentenceList = tweetsByDate.get(date);
 				if (sentenceList == null)
 					sentenceList = new ArrayList<String>();
-			//	sentenceList.add(toTweet(date + ": " + doc.getSentences().get(i - 1)));
-				sentenceList.add(date + ": " + doc.getSentences().get(i - 1));
+				sentenceList.add(trimToTweet(date + ": " + document.getSentences().get(i - 1)));
+			//	sentenceList.add(date + ": " + document.getSentences().get(i - 1));
 				tweetsByDate.put(date, sentenceList);
 			}
 		}
@@ -78,7 +64,7 @@ public class TweetFactory {
 		return sb.toString();
 	}
 
-	private String toTweet(String sentence) {
+	private String trimToTweet(String sentence) {
 		if (sentence.length() > 140) {
 			sentence = sentence.substring(0, 141);
 		}
@@ -86,7 +72,6 @@ public class TweetFactory {
 	}
 
 	private List<String> getDates(String processed) {
-
 		List<String> dates = new ArrayList<String>();
 		String dateRegex = "<TIMEX3 tid=\"t[0-9]*\" type=\"DATE\" value=\"(.{2,10})\">";
 		String timeRegex = "<TIMEX3 tid=\"t[0-9]*\" type=\"TIME\" value=\"(.{2,50})\">";
