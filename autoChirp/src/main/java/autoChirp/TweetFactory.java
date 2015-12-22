@@ -48,13 +48,11 @@ public class TweetFactory {
 				List<String> sentenceList = tweetsByDate.get(date);
 				if (sentenceList == null)
 					sentenceList = new ArrayList<String>();
-				sentenceList.add(trimToTweet(document.getSentences().get(i - 1)));
-			//	sentenceList.add(date + ": " + document.getSentences().get(i - 1));
+			//	sentenceList.add(trimToTweet(document.getSentences().get(i - 1)));
+				sentenceList.add(date + ": " + document.getSentences().get(i - 1));
 				tweetsByDate.put(date, sentenceList);
 			}
 		}
-		
-		System.out.println(tweetsByDate);
 		return tweetsByDate;
 	}
 
@@ -68,7 +66,8 @@ public class TweetFactory {
 
 	private String trimToTweet(String sentence) {
 		if (sentence.length() > 140) {
-			sentence = sentence.substring(0, 141);
+			sentence = sentence.substring(0, 138);
+			sentence = sentence.substring(0, sentence.lastIndexOf(" "))+"...";
 		}
 		return sentence;
 	}

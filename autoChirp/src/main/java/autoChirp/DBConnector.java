@@ -137,15 +137,28 @@ public class DBConnector {
 public static void addTweets(String url, Map<String, List<String>> tweetsByDate,List<Integer> user_ids, String title) {
 		try {
 			connection.setAutoCommit(false);
-			PreparedStatement prepUsers = connection.prepareStatement("INSERT INTO groups(user_id, group_name, enabled) VALUES(?,?,?)");
+			PreparedStatement prepUsers = connection.prepareStatement("INSERT INTO groups(user_id, group_name, url, enabled) VALUES(?,?,?,?)");
+			PreparedStatement prepTweets = connection.prepareStatement("INSERT INTO tweets(user_id, group_id, scheduled_date, tweet) VALUES(?,?,?,?)");
 			for (int user : user_ids) {
 				prepUsers.setInt(1, user);
 				prepUsers.setString(2, title);
-				prepUsers.setBoolean(3, false);
+				prepUsers.setString(3, url);
+				prepUsers.setBoolean(4, false);
 				prepUsers.executeUpdate();
+				Statement stmt = connection.createStatement();
+				String sql = "SELECT group_id FROM groups WHERE url = '"+url+"' AND user_id = '"+user+"';";	
+				ResultSet result = stmt.executeQuery(sql);
+				int group_id = result.getInt(1);
+				for (String date : tweetsByDate.keySet()) {
+					for (String  tweet : tweetsByDate.get(date)) {
+						prepTweets.setInt(1, user);
+						prepTweets.setInt(2, group_id);
+						prepTweets.setString(3, date);
+						prepTweets.setString(4, tweet);
+						prepTweets.executeUpdate();
+					}
+				}		
 			}
-		/*TODO: Insert into tweets*/
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
