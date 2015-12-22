@@ -29,6 +29,6 @@ public class PrototypeController {
 		Map<String, List<String>> tweets = tweeter.getTweets(doc);
     ModelAndView mv = new ModelAndView("proto");
     mv.addObject("tweets", tweets);
-   return mv;
+    return mv;
 	}
 }

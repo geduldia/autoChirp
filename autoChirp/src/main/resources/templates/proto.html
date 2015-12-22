@@ -12,9 +12,9 @@
 		<div class="row">
 
 			<div class="col-md-3 well lead">
-        <ul th:each="date, tweet : ${tweets}">
-          <li th:text="${date}"></li>
-          <li th:text="${tweet}"></li>
+        <ul th:each="tweet : ${tweets}">
+          <li th:text="${tweet.key}"></li>
+          <li th:text="${tweet.value}"></li>
         </ul>
 			</div>
 
