@@ -37,7 +37,7 @@ public class WikipediaParser implements Parser {
 	@Override
 	public Document parse(String url){
 		try {
-			
+			domParser.setProperty("http://cyberneko.org/html/properties/default-encoding" , "UTF-8");
 			domParser.parse(url);
 		} catch (SAXException e) {
 			e.printStackTrace();

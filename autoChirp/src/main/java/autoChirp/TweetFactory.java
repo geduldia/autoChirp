@@ -84,6 +84,7 @@ public class TweetFactory {
 		String time = null;
 		while (matcher.find()) {
 			date = matcher.group(1);
+			//only dates with at least a specific month
 			if (date.contains("-")) {
 				dates.add(date);
 			}
@@ -94,5 +95,4 @@ public class TweetFactory {
 		}
 		return dates;
 	}
-
 }
