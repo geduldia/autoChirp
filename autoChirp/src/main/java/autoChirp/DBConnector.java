@@ -52,11 +52,11 @@ public class DBConnector {
 	 * creates (and overrides) output-tables defined in createDatabaseFile.sql
 	 *
 	 */
-	public static void createOutputTables() {
+	public static void createOutputTables(String dbCreationFile) {
 		StringBuffer sql = new StringBuffer();;
 		BufferedReader in;
 		try {
-			in = new BufferedReader(new FileReader("src/test/resources/createDatabaseFile.sql"));
+			in = new BufferedReader(new FileReader(dbCreationFile));
 			String line = in.readLine();
 			while(line != null){
 				sql.append(line+"\n");
@@ -96,8 +96,12 @@ public class DBConnector {
 			stmt.close();
 			connection.commit();
 		} catch (SQLException e) {
+			if(e.getMessage().equals("columns user_id, url are not unique")){
+				System.out.println("Already in DB: "+ url + " with user UserID "+ user_id);
+				return;
+			}
 			e.printStackTrace();
-		}	
+		}
 	}
 
 	/**
@@ -119,6 +123,8 @@ public class DBConnector {
 				ids.add(result.getInt(2));
 				urls.put(url, ids);
 			}
+			stmt.close();
+			connection.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -134,7 +140,7 @@ public class DBConnector {
  * @param user_ids - The list of users for the current url
  * @param title - The title of the current document/url
  */
-public static void addTweets(String url, Map<String, List<String>> tweetsByDate,List<Integer> user_ids, String title) {
+public static void insertTweets(String url, Map<String, List<String>> tweetsByDate,List<Integer> user_ids, String title) {
 		try {
 			connection.setAutoCommit(false);
 			PreparedStatement prepUsers = connection.prepareStatement("INSERT INTO groups(user_id, group_name, url, enabled) VALUES(?,?,?,?)");
@@ -159,8 +165,44 @@ public static void addTweets(String url, Map<String, List<String>> tweetsByDate,
 					}
 				}		
 			}
+			prepUsers.close();
+			prepTweets.close();
+			connection.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+		
+	}
+
+	public static void insertNewUser(String twitter_handle, String oauthToken, String oauthTokenSecret){
+		try {
+			connection.setAutoCommit(false);
+			Statement stmt = connection.createStatement();
+			String sql = "INSERT INTO users (twitter_handle, oauth_token, oauth_token_secret) VALUES ('"+twitter_handle+"', "+"'"+oauthToken+"', "+"'"+oauthTokenSecret+"' )";
+			stmt.executeUpdate(sql);
+			stmt.close();
+			connection.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	public static String[] getOAuthTokenForUserID(int userID) {
+		try {
+			connection.setAutoCommit(false);
+			String sql = "SELECT twitter_handle, oauth_token, oauth_token_secret FROM users WHERE user_id = '"+userID+"';";
+			Statement stmt = connection.createStatement();
+			ResultSet result = stmt.executeQuery(sql);
+			String[] toReturn = new String[3];
+			toReturn[0] = result.getString(1);
+			toReturn[1] = result.getString(2);
+			toReturn[2] = result.getString(3);
+			return toReturn;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 		
 	}
