@@ -80,15 +80,26 @@ public class DBConnectorTest {
 	
 	@Test
 	public void insertAndGetOAuthTokenTest(){
-		DBConnector.insertNewUser("twitter_handle", "oauthToken", "oauthTokenSecret");
-		DBConnector.insertNewUser("twitter_handle2", "oauthToken2", "oauthTokenSecret2");
-		String[] userInfo = DBConnector.getOAuthTokenForUserID(1);
+		int user_id = DBConnector.insertNewUser("twitter_handle", "oauthToken", "oauthTokenSecret");
+		Assert.assertEquals(1, user_id);
+		user_id = DBConnector.insertNewUser("twitter_handle2", "oauthToken2", "oauthTokenSecret2");
+		Assert.assertEquals(2, user_id);
+		String[] userInfo = DBConnector.getUserConfig(1);
 		Assert.assertEquals("twitter_handle", userInfo[0]);
 		Assert.assertEquals("oauthToken", userInfo[1]);
 		Assert.assertEquals("oauthTokenSecret", userInfo[2]);
-		userInfo = DBConnector.getOAuthTokenForUserID(2);
+		userInfo = DBConnector.getUserConfig(2);
 		Assert.assertEquals("twitter_handle2", userInfo[0]);
 		Assert.assertEquals("oauthToken2", userInfo[1]);
 		Assert.assertEquals("oauthTokenSecret2", userInfo[2]);
 	}
+	
+	@Test
+	public void insertAndGetTwitterConfigurationTest(){
+		DBConnector.insertTwitterConfiguration("test_callback_url", "test_consumer_key", "test_consumer_secret");
+		String[] twitterConfig = DBConnector.getTwitterConfiguration();
+		Assert.assertEquals("test_callback_url", twitterConfig[0]);
+		Assert.assertEquals("test_consumer_key", twitterConfig[1]);
+		Assert.assertEquals("test_consumer_secret", twitterConfig[2]);
+		}
 }
