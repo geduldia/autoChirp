@@ -23,7 +23,7 @@ public class WorkflowTest {
 
 	private static  String dbPath = "src/test/resources/";
 	private static String dbFileName = "autoChirp.db";
-	private static String dbCreationFileName = "src/test/resources/autoChirp.db";
+	private static String dbCreationFileName = "src/test/resources/createDatabaseFile.db";
 	private  static WikipediaParser parser = new WikipediaParser();
 	private static TweetFactory tweetFactory = new TweetFactory();
 
