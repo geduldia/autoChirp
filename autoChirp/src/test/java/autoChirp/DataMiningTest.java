@@ -19,11 +19,11 @@ import de.unihd.dbs.heideltime.standalone.POSTagger;
 import de.unihd.dbs.heideltime.standalone.exceptions.DocumentCreationTimeMissingException;
 import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
 
-public class WorkflowTest {
+public class DataMiningTest {
 
 	private static  String dbPath = "src/test/resources/";
 	private static String dbFileName = "autoChirp.db";
-	private static String dbCreationFileName = "src/test/resources/createDatabaseFile.db";
+	private static String dbCreationFileName = "src/test/resources/createDatabaseFile.sql";
 	private  static WikipediaParser parser = new WikipediaParser();
 	private static TweetFactory tweetFactory = new TweetFactory();
 
@@ -31,6 +31,7 @@ public class WorkflowTest {
 	public static void dbConnection() {
 		try {
 			DBConnector.connect(dbPath + dbFileName);
+			DBConnector.createOutputTables(dbCreationFileName);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -39,8 +40,8 @@ public class WorkflowTest {
 	}
 
 	@Test
-	public void workFlowTest() throws  SQLException,  IOException {
-		DBConnector.createOutputTables(dbCreationFileName);
+	public void dataMiningTest() throws  SQLException,  IOException {
+		
 		//DBConnector.insertURL("https://de.wikipedia.org/wiki/Zweiter_Weltkrieg", 5);
 		DBConnector.insertURL("https://en.wikipedia.org/wiki/History_of_New_York", 5);
 		//DBConnector.insertURL("https://en.wikipedia.org/wiki/Woody_Allen", 2);
