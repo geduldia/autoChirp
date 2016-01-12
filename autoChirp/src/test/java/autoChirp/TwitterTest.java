@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -54,12 +55,16 @@ public class TwitterTest {
 		}
 		catch(SQLException e){
 			e.printStackTrace();
-		}	
+		}
+		//get all new and enabled tweets
 		Map<Integer,Map<String,List<String>>> allNewTweets = DBConnector.getAllNewTweets();
+		Assert.assertEquals((Integer)user_id, allNewTweets.keySet().iterator().next());
+		Assert.assertEquals(3, allNewTweets.get(user_id).get("2017-01-15 12:00:00").size());
+		Assert.assertEquals("next_tweet2", allNewTweets.get(user_id).get("2017-01-16 12:00:00").get(1));
 		for (Integer user : user_ids) {
 			//TODO: Create TwitterConnection
 		}
-		System.out.println(allNewTweets);
+		
 	}
 	
 
