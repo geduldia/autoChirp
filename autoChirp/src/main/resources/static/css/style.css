@@ -1,4 +1,24 @@
-.container {
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
+/* NOSCRIPT */
+[data-toggle="dropdown"]:focus + .dropdown-menu {
+  display: block; }
+
+/* GLOBBAL */
+.wrapper .container {
+  margin-top: 60px; }
+
+/* FOOTER */
+html {
+  position: relative;
+  min-height: 100%; }
+  html body {
+    margin-bottom: 51px; }
+    html body #footer {
+      background-color: #eeeeee;
+      bottom: 0;
+      height: 51px;
+      position: absolute;
+      width: 100%; }
+      html body #footer .container {
+        margin-top: 15px; }
+
+/*# sourceMappingURL=style.css.map */

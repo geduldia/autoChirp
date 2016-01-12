@@ -1,0 +1,38 @@
+/* NOSCRIPT */
+[data-toggle="dropdown"]:focus + .dropdown-menu {
+    display: block;
+}
+// NOSCRIPT
+
+/* GLOBBAL */
+.wrapper {
+  .container {
+    margin-top: 60px;
+  }
+}
+// GLOBAL
+
+/* FOOTER */
+$footer-height: 51px;
+
+html {
+  position: relative;
+  min-height: 100%;
+
+  body {
+    margin-bottom: $footer-height;
+
+    #footer {
+      background-color: #eeeeee;
+      bottom: 0;
+      height: $footer-height;
+      position: absolute;
+      width: 100%;
+
+      .container {
+        margin-top: 15px;
+      }
+    }
+  }
+}
+// FOOTER

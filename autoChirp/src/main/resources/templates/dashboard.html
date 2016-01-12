@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="../elements/include :: head (title='Dashboard')"></head>
+
+<body>
+  <nav th:replace="../elements/include :: navbar"></nav>
+
+  <div class="wrapper">
+    <div class="container">
+      <h2>Dashboard</h2>
+      <div class="row">
+        <div class="col-md-8">
+          <div class="panel panel-default">
+            <div class="panel-heading">Top upcoming chirps</div>
+            <table class="table table-condensed table-hover">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Group</th>
+                  <th>Content</th>
+                  <th>When</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td>Lyrics</td>
+                  <td>Diese Shows füllen mich aus und auch mein Portemonnaie, also hebt die Hände wenn das für Euch in Ordnung geht</td>
+                  <td>1d 22m 34s</td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td>General</td>
+                  <td>Just need to say, autoChirp is awesome! Try it and You'll be convinced, I promise!</td>
+                  <td>12d 2h 15s</td>
+                </tr>
+                <tr>
+                  <th scope="row">3</th>
+                  <td>Lyrics</td>
+                  <td>It's a wonderful night, You gotta take it from me, it's a wonderful night, come on and break it on down</td>
+                  <td>76d 18h 56s</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">Summary</div>
+            <ul class="list-group">
+              <li class="list-group-item">
+                <strong>22</strong> active groups</li>
+              <li class="list-group-item">
+                <strong>107</strong> scheduled chirps</li>
+              <li class="list-group-item">
+                <strong>0</strong> emitted chirps</li>
+              <li class="list-group-item">
+                <strong>1d 22m 34s</strong> until next chirp</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <footer th:replace="../elements/include :: footer"></footer>
+  <div th:replace="../elements/include :: scripts"></div>
+</body>
+
+</html>
