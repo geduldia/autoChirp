@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="../elements/include :: head (title='Dashboard')"></head>
+
+<body>
+  <nav th:replace="../elements/include :: navbar"></nav>
+
+  <div class="wrapper">
+    <div class="container">
+      <h2>Dashboard</h2>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-default">
+            <div class="panel-heading">Parsed Tweets</div>
+            <table class="table table-condensed table-hover">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Content</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="tweet : ${tweets}">
+                  <td th:text="${tweet.key}"></td>
+                  <td th:text="${tweet.value}"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <footer th:replace="../elements/include :: footer"></footer>
+  <div th:replace="../elements/include :: scripts"></div>
+</body>
+
+</html>

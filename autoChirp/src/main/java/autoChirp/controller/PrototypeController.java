@@ -18,16 +18,21 @@ import autoChirp.WikipediaParser;
 @Controller
 public class PrototypeController {
 
-	 TweetFactory tweeter = new TweetFactory();
-     WikipediaParser parser = new WikipediaParser();
+	TweetFactory tweeter = new TweetFactory();
+  WikipediaParser parser = new WikipediaParser();
 
-	@RequestMapping(value = "/proto", method = RequestMethod.GET, params = "url")
-	public @ResponseBody ModelAndView protoMV(@RequestParam("url") String url) {
+  @RequestMapping(value = "/proto")
+	public ModelAndView proto() {
+		return new ModelAndView("proto");
+	}
+
+	@RequestMapping(value = "/protoview", method = RequestMethod.GET, params = "url")
+	public @ResponseBody ModelAndView protoview(@RequestParam("url") String url) {
 		Document doc = parser.parse(url);
 		SentenceSplitter splitter = new SentenceSplitter();
 		doc.setSentences(splitter.splitIntoSentences(doc.getText(), doc.getLanguage()));
 		Map<String, List<String>> tweets = tweeter.getTweets(doc);
-    ModelAndView mv = new ModelAndView("proto");
+    ModelAndView mv = new ModelAndView("protoview");
     mv.addObject("tweets", tweets);
     return mv;
 	}

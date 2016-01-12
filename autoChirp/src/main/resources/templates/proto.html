@@ -1,26 +1,32 @@
 <!DOCTYPE html>
-<html lang="de" xmlns:th="http://www.thymeleaf.org">
-<head>
-<title>Index</title>
-<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
-<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
-</head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="../elements/include :: head (title='Home')"></head>
+
 <body>
-	<div class="container">
+  <nav th:replace="../elements/include :: navbar"></nav>
 
-		<div class="row">
+  <div class="wrapper">
+    <div class="jumbotron">
+      <div class="container">
+        <h1>Welcome to <i>autoChirp</i>!</h1>
+        <p>This tool will help You automate Your daily tweets. Use it to spread Your words based on a custom schedule.</p>
+        <form action="/protoview" method="get">
+          <div class="input-group">
+            <span class="input-group-addon">Wikipedia-URI</span>
+            <input type="url" name="url" class="form-control" placeholder="https://de.wikipedia.org/wiki/Köln"></input>
+            <span class="input-group-btn">
+              <button class="btn btn-success" type="submit">Parse!</button>
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
-			<div class="col-md-3 well lead">
-        <ul th:each="tweet : ${tweets}">
-          <li th:text="${tweet.key}"></li>
-          <li th:text="${tweet.value}"></li>
-        </ul>
-			</div>
 
-			<div class="col-md-8 lead text-left">
-			</div>
-		</div>
-	</div>
+  <footer th:replace="../elements/include :: footer"></footer>
+  <div th:replace="../elements/include :: scripts"></div>
 </body>
+
 </html>
