@@ -34,7 +34,7 @@ public class TwitterTest {
 	public void twitterTest(){
 		
 		//TODO : read Keys from Congfig-Datei (gitigore)
-		int user_id = DBConnector.insertNewUser("geduldich", "4217919309-b2i2FSL5037BWirv4cakEPueDcruEM8j8aYpqQw", "ut1IkjOZiAptnzup4b5TPUipLCmFAg10Fd3cxC15Iq7au");
+		int user_id = DBConnector.insertNewUser("", "", "");
 		Map<String, List<String>> tweetsByDate = new HashMap<String, List<String>>();
 		List<String> tweets = Arrays.asList("tweet1", "tweet2", "tweet3");
 		tweetsByDate.put("2017-01-15 12:00:00", tweets);
