@@ -14,8 +14,10 @@ public class TweetScheduler {
 	public static void scheduleInitialTweets(Map<Integer, Map<String, List<String>>> initialTweets) {
 
 		for (Integer user : initialTweets.keySet()) {
+			System.out.println("user: " + user);
 			Map<String, List<String>> tweetsForUser = initialTweets.get(user);
 			for (String date : tweetsForUser.keySet()) {
+				System.out.println("date: " + date);
 				LocalDateTime ldt = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 				LocalDateTime now;
 				Duration d;
@@ -23,7 +25,13 @@ public class TweetScheduler {
 				now = LocalDateTime.now();
 				d = Duration.between(now, ldt);
 				delay = d.getSeconds();
+				System.out.println("tweet in: " + delay);
 				List<String> tweetsForDate = tweetsForUser.get(date);
+				System.out.print("toTweet: ");
+				for (String string : tweetsForDate) {
+					System.out.print(string+", ");
+				}
+				System.out.println();
 				ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 				scheduler.schedule(new TwitterTask(user, tweetsForDate), delay, TimeUnit.SECONDS);
 			}

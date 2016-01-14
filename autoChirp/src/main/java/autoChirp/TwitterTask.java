@@ -8,12 +8,20 @@ import org.springframework.social.twitter.api.Tweet;
 
 public class TwitterTask extends TimerTask {
 	
-	private static List<String> toTweet;
-	private static int user_id;
+	private  List<String> toTweet;
+	private  int user_id;
 
-	public TwitterTask(int user_id, List<String> tweet){
-		TwitterTask.user_id = user_id;
-		TwitterTask.toTweet = tweet;
+	public TwitterTask(int user_id, List<String> tweets){
+		setUserID(user_id);
+		setTweets(tweets);
+	}
+
+	private void setTweets(List<String> tweets) {
+		this.toTweet = tweets;
+	}
+
+	private void setUserID(int user_id) {
+		this.user_id = user_id;
 	}
 
 	@Override

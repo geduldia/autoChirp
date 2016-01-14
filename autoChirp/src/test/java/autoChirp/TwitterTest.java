@@ -47,25 +47,27 @@ public class TwitterTest {
 	@Test
 	public void startApplicationTwitterTest() throws IOException {
 
-		// TODO : read Keys from Congfig-Datei (gitigore)
-		int user_id = DBConnector.insertNewUser("", "", "");
+		//insert a new user
+		int user_id = DBConnector.insertNewUser("tw_handle", "token", "tokensecret");
+		//generate test-tweets
 		Map<String, List<String>> testTweetsByDate = new HashMap<String, List<String>>();
 		List<String> testTweets = Arrays.asList("tweet1", "tweet2", "tweet3");
-		testTweetsByDate.put("2016-01-12 22:17:00", testTweets);
+		testTweetsByDate.put("2016-01-14 12:33:00", testTweets);
 		testTweets = Arrays.asList("next_tweet1", "next_tweet2");
-		testTweetsByDate.put("2016-01-12 22:17:05", testTweets);
+		testTweetsByDate.put("2016-01-14 12:33:05", testTweets);
+			
 		List<Integer> user_ids = new ArrayList<Integer>();
 		user_ids.add(user_id);
+		
 		DBConnector.insertTweets("test_url", testTweetsByDate, user_ids, "test_title");
-		// getAllGropIDs to update their status
+		// update group-status to enabled = true
 		DBConnector.updateGroupStatus(1, true);
 		// get all new enabled tweets
 		Map<Integer, Map<String, List<String>>> allNewTweets = DBConnector.getAllNewTweets();
 		System.out.println(allNewTweets);
+		
+		//schedule tweets
 		TweetScheduler.scheduleInitialTweets(allNewTweets);
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-
-		in.readLine();
 	}
 
 }
