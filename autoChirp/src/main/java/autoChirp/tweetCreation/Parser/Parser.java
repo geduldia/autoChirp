@@ -1,4 +1,6 @@
-package autoChirp;
+package autoChirp.tweetCreation.Parser;
+
+import autoChirp.tweetCreation.Document;
 
 /**
  * @author geduldia

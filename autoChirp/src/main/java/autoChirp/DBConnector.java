@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import autoChirp.tweetCreation.Tweet;
+
 /**
  * 
  * @author Alena
@@ -177,7 +179,7 @@ public class DBConnector {
 	 * 
 	 * 
 	 */
-	public static boolean insertTweets(String url, Map<String, List<String>> tweetsByDate, List<Integer> user_ids,
+	public static boolean insertTweets(String url, List<Tweet> toInsert, List<Integer> user_ids,
 			String title) {
 		try {
 			connection.setAutoCommit(false);
@@ -195,15 +197,13 @@ public class DBConnector {
 				String sql = "SELECT group_id FROM groups WHERE url = '" + url + "' AND user_id = '" + user + "';";
 				ResultSet result = stmt.executeQuery(sql);
 				int group_id = result.getInt(1);
-				for (String date : tweetsByDate.keySet()) {
-					for (String tweet : tweetsByDate.get(date)) {
-						prepTweets.setInt(1, user);
-						prepTweets.setInt(2, group_id);
-						prepTweets.setString(3, date);
-						prepTweets.setString(4, tweet);
-						prepTweets.executeUpdate();
-					}
-				}
+				for (Tweet tweet : toInsert) {
+					prepTweets.setInt(1, user);
+					prepTweets.setInt(2, group_id);
+					prepTweets.setString(3, tweet.getTweetDate());
+					prepTweets.setString(4, tweet.getContent());
+					prepTweets.executeUpdate();
+				}		
 			}
 			prepUsers.close();
 			prepTweets.close();
@@ -361,8 +361,8 @@ public class DBConnector {
 	 * @param group_id
 	 * @return A map of dates (key) and the associated list of tweets (value)
 	 */
-	public static Map<String, List<String>> getAllNewTweetsForUser(int user_id, int group_id) {
-		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();
+	public static List<Tweet> getAllNewTweetsForUser(int user_id, int group_id) {
+		List<Tweet> toReturn = new ArrayList<Tweet>();
 		try {
 			connection.setAutoCommit(false);
 			Statement stmt = connection.createStatement();
@@ -372,12 +372,7 @@ public class DBConnector {
 				while (tweets.next()) {
 					String date = tweets.getString(4);
 					String tweet = tweets.getString(5);
-					List<String> tweetsForDate = toReturn.get(date);
-					if (tweetsForDate == null) {
-						tweetsForDate = new ArrayList<String>();
-					}
-					tweetsForDate.add(tweet);
-					toReturn.put(date, tweetsForDate);
+					toReturn.add(new Tweet(date,tweet));
 				}
 			} catch (SQLException e) {
 				System.out.println("DBConnector.getAllNewTweets: no new tweets to schedule");
@@ -400,8 +395,8 @@ public class DBConnector {
 	 *         tweetdate (value)
 	 */
 
-	public static Map<Integer, Map<String, List<String>>> getAllNewTweets() {
-		Map<Integer, Map<String, List<String>>> toReturn = new HashMap<Integer, Map<String, List<String>>>();
+	public static Map<Integer, List<Tweet>> getAllNewTweets() {
+		Map<Integer, List<Tweet>> toReturn = new HashMap<Integer, List<Tweet>>();
 		ResultSet group_ids = null;
 		try {
 			connection.setAutoCommit(true);
@@ -431,17 +426,12 @@ public class DBConnector {
 				}
 				while (tweets.next()) {
 					String date = tweets.getString(4);
-					String tweet = tweets.getString(5);
-					Map<String, List<String>> tweetsForUser = toReturn.get(user_id);
+					String content = tweets.getString(5);
+					List<Tweet> tweetsForUser = toReturn.get(user_id);
 					if (tweetsForUser == null) {
-						tweetsForUser = new HashMap<String, List<String>>();
+						tweetsForUser = new ArrayList<Tweet>();
 					}
-					List<String> tweetsForDate = tweetsForUser.get(date);
-					if (tweetsForDate == null) {
-						tweetsForDate = new ArrayList<String>();
-					}
-					tweetsForDate.add(tweet);
-					tweetsForUser.put(date, tweetsForDate);
+					tweetsForUser.add(new Tweet(date,content));
 					toReturn.put(user_id, tweetsForUser);
 				}
 			}

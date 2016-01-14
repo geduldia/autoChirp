@@ -1,4 +1,4 @@
-package autoChirp;
+package autoChirp.tweetCreation;
 
 import java.util.List;
 

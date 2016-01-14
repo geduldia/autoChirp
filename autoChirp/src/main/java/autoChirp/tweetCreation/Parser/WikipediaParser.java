@@ -1,4 +1,4 @@
-package autoChirp;
+package autoChirp.tweetCreation.Parser;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -11,6 +11,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import autoChirp.tweetCreation.Document;
 import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
 
 //TODO Encoding

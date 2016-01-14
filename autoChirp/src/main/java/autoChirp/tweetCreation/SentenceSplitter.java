@@ -1,4 +1,4 @@
-package autoChirp;
+package autoChirp.tweetCreation;
 
 import java.io.IOException;
 import java.io.InputStream;

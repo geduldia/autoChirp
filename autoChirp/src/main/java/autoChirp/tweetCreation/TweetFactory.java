@@ -1,4 +1,4 @@
-package autoChirp;
+package autoChirp.tweetCreation;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -6,6 +6,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -38,8 +40,8 @@ public class TweetFactory {
 	 * @return tweetsByDate - a map of the detected dates and their including
 	 *         sentences trimmed to a tweet-length of 140 characters @throws
 	 */
-	public Map<String, List<String>> getTweets(Document document) {
-		Map<String, List<String>> tweetsByDate = new TreeMap<String, List<String>>();
+	public List<Tweet> getTweets(Document document) {
+		List<Tweet> toReturn = new ArrayList<Tweet>();
 		HeidelTimeWrapper ht = new HeidelTimeWrapper(document.getLanguage(), DocumentType.NARRATIVES, OutputType.TIMEML,
 				"/heideltime/config.props", POSTagger.TREETAGGER, false);
 		String toProcess = concatSentences(document.getSentences());
@@ -54,18 +56,16 @@ public class TweetFactory {
 		for (int i = 0; i < sentences.length; i++) {
 			String sentence = sentences[i];
 			List<String> origDates = getDates(sentence);
+			Tweet tweet;
 			for (String date : origDates) {
 				String tweetDate = getTweetDate(date);
-				List<String> sentenceList = tweetsByDate.get(tweetDate);
-				if (sentenceList == null){
-					sentenceList = new ArrayList<String>();
-				}		
-				sentenceList.add(date + ": " + document.getSentences().get(i - 1));
-			    tweetsByDate.put(tweetDate, sentenceList);
-			}
+				//List<String> sentenceList = tweetsByDate.get(tweetDate);
+				tweet = new Tweet(tweetDate,trimToTweet(document.getSentences().get(i - 1)));		
+			    toReturn.add(tweet);			}
 		}
 		currentYear = LocalDateTime.now().getYear();
-		return tweetsByDate;
+		Collections.sort(toReturn);
+		return toReturn;
 	}
 
 	private String concatSentences(List<String> sentences) {

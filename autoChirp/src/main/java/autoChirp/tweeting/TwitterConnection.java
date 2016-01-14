@@ -1,4 +1,4 @@
-package autoChirp;
+package autoChirp.tweeting;
 
 import java.util.List;
 import java.util.Map;
@@ -6,6 +6,7 @@ import java.util.Map;
 import com.twitter.hbc.httpclient.auth.Authentication;
 import com.twitter.hbc.httpclient.auth.OAuth1;
 
+import autoChirp.DBConnector;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;

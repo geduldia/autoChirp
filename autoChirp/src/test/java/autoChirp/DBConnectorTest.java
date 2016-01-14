@@ -1,6 +1,7 @@
 package autoChirp;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -10,6 +11,8 @@ import java.util.TreeMap;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import autoChirp.tweetCreation.Tweet;
 
 /**
  * 
@@ -51,14 +54,14 @@ public class DBConnectorTest {
 
 	@Test
 	public void insertAndGetTweetsTest() throws SQLException {
-		Map<String, List<String>> testTweetsByDate = new TreeMap<String, List<String>>();
-		List<String> tweets = Arrays.asList("tweet1", "tweet2", "tweet3");
-		testTweetsByDate.put("2016-02-03 12:00:00", tweets);
-		testTweetsByDate.put("2016-02-03 15:00:00", tweets);
-		testTweetsByDate.put("1999-11-12 13:23:12", tweets);
+		List<Tweet> tweets = new ArrayList<Tweet>();
+		Tweet tweet = new Tweet("1999-11-12 13:23:12", "tweet1");
+		tweets.add(tweet);
+		tweet = new Tweet("2013-11-12 23:23:12", "tweet2");
+		tweets.add(tweet);
 		List<Integer> userIds = Arrays.asList(1, 2, 3);
-		DBConnector.insertTweets("test_URL1", testTweetsByDate, userIds, "test_title1");
-		DBConnector.insertTweets("test_URL2", testTweetsByDate, userIds, "test_title2");
+		DBConnector.insertTweets("test_URL1", tweets, userIds, "test_title1");
+		DBConnector.insertTweets("test_URL2", tweets, userIds, "test_title2");
 		//TODO  read tweets
 	}
 
