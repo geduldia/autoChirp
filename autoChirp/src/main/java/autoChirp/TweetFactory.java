@@ -53,11 +53,7 @@ public class TweetFactory {
 		String[] sentences = processed.split("#SENTENCE#");
 		for (int i = 0; i < sentences.length; i++) {
 			String sentence = sentences[i];
-			System.out.println("sentence: " + sentence);
 			List<String> origDates = getDates(sentence);
-			for (String string : origDates) {
-				System.out.println(string);
-			}
 			for (String date : origDates) {
 				String tweetDate = getTweetDate(date);
 				List<String> sentenceList = tweetsByDate.get(tweetDate);
