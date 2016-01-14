@@ -81,7 +81,7 @@ public class DBConnectorTest {
 	@Test
 	public void insertAndGetTwitterConfigurationTest() {
 		DBConnector.insertTwitterConfiguration("test_callback_url", "test_consumer_key", "test_consumer_secret");
-		String[] twitterConfig = DBConnector.getTwitterConfiguration();
+		String[] twitterConfig = DBConnector.getAppConfig();
 		Assert.assertEquals("test_callback_url", twitterConfig[0]);
 		Assert.assertEquals("test_consumer_key", twitterConfig[1]);
 		Assert.assertEquals("test_consumer_secret", twitterConfig[2]);

@@ -272,7 +272,7 @@ public class DBConnector {
 	 * @return String-Array with twitter_callback_url (0), twitter_consumer_key
 	 *         (1) twitter_consumer_secret (2)
 	 */
-	public static String[] getTwitterConfiguration() {
+	public static String[] getAppConfig() {
 		try {
 			connection.setAutoCommit(false);
 			Statement stmt = connection.createStatement();
