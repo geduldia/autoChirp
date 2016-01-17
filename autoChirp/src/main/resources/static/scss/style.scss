@@ -1,6 +1,6 @@
 /* NOSCRIPT */
 [data-toggle="dropdown"]:focus + .dropdown-menu {
-    display: block;
+  display: block;
 }
 // NOSCRIPT
 
@@ -11,6 +11,35 @@
   }
 }
 // GLOBAL
+
+/* NAVBAR */
+#navbar {
+  .navbar-nav > li > form {
+    padding: 8px 10px;
+  }
+
+  .navbar-image {
+    border-radius: 3px;
+    border: 1px solid #9d9d9d;
+    margin: -8px 0;
+    max-height: 34px;
+
+    &:hover, &:active {
+      border-color: #ffffff;
+    }
+  }
+
+  .active {
+    .navbar-image {
+      border-color: #ffffff;
+    }
+  }
+
+  :hover {
+    text-decoration: none;
+  }
+}
+// NAVBAR
 
 /* FOOTER */
 $footer-height: 51px;

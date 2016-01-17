@@ -6,6 +6,21 @@
 .wrapper .container {
   margin-top: 60px; }
 
+/* NAVBAR */
+#navbar .navbar-nav > li > form {
+  padding: 8px 10px; }
+#navbar .navbar-image {
+  border-radius: 3px;
+  border: 1px solid #9d9d9d;
+  margin: -8px 0;
+  max-height: 34px; }
+  #navbar .navbar-image:hover, #navbar .navbar-image:active {
+    border-color: #ffffff; }
+#navbar .active .navbar-image {
+  border-color: #ffffff; }
+#navbar :hover {
+  text-decoration: none; }
+
 /* FOOTER */
 html {
   position: relative;
