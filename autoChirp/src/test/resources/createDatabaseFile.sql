@@ -28,7 +28,7 @@ CREATE TABLE tweets (
   tweet_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
   group_id INTEGER DEFAULT NULL,
-  scheduled_date NOT NULL,
+  scheduled_date datetime NOT NULL,
   tweet VARCHAR(140) NOT NULL,
   CONSTRAINT FK_USERS_USERID_TWEETS_USERID FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
