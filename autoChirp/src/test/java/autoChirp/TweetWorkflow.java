@@ -127,7 +127,7 @@ public class TweetWorkflow {
 				ldt.plusSeconds(45);
 				String tweetDate =  ldt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 				List<Tweet> tweets = new ArrayList<Tweet>();
-				tweets.add(new Tweet(tweetDate, "Niemand hat die Absicht, eine Mauer zu errichten!"));
+				tweets.add(new Tweet(tweetDate, "Hallo Welt"));
 					
 				List<Integer> user_ids = new ArrayList<Integer>();
 				user_ids.add(user_id);
