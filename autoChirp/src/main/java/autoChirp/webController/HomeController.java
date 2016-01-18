@@ -1,4 +1,4 @@
-package autoChirp.controller;
+package autoChirp.webController;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@SessionAttributes("twitterAccount")
+@SessionAttributes("twitter")
 public class HomeController {
 
 @RequestMapping(value = "/")
-public String Index() {
+public String index() {
         return "redirect:/home";
 }
 

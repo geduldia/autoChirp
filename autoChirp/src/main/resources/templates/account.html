@@ -1,15 +1,69 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="../elements/include :: head (title='Login')"></head>
+<head th:replace="../elements/include :: head (title='Account details')"></head>
 
 <body>
   <nav th:replace="../elements/include :: navbar"></nav>
 
-  <div class="wrapper">
+  <div th:unless="${twitter != null}" class="wrapper">
     <div class="jumbotron">
       <div class="container">
-        <h1>Account details</h1>
+        <h1>Not authorized.</h1>
+      </div>
+    </div>
+  </div>
+
+  <div th:if="${twitter != null}" class="wrapper">
+    <div class="container">
+      <div class="row">
+
+        <div class="col-md-6">
+          <div class="panel panel-inverse">
+            <div class="panel-heading">Account details</div>
+            <div class="panel-body">
+              <dl class="dl-horizontal">
+                <dt>Account id</dt>
+                <dd>0</dd>
+                <dt>Group count</dt>
+                <dd>42</dd>
+                <dt>Tweet count</dt>
+                <dd>1337</dd>
+              </dl>
+            </div>
+            <div class="panel-footer text-right">
+              <a th:href="@{/account/delete}" class="btn btn-danger">
+                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete account
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="panel panel-primary">
+            <div class="panel-heading">Twitter connection</div>
+            <div class="panel-body">
+              <dl class="dl-horizontal">
+                <dt>Twitter handle</dt>
+                <dd>
+                  <a th:href="${twitter.url}" th:text="'@' + ${twitter.handle}"></a>
+                </dd>
+                <dt>Full name</dt>
+                <dd th:text="${twitter.name}"></dd>
+                <dt>Twitter bio</dt>
+                <dd th:text="${twitter.description}"></dd>
+                <dt>Protected</dt>
+                <dd th:text="${twitter.protected}"></dd>
+              </dl>
+            </div>
+            <div class="panel-footer text-right">
+              <a th:href="@{/account/logout}" class="btn btn-danger">
+                <span class="glyphicon glyphicon-off" aria-hidden="true"></span> Logout
+              </a>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>

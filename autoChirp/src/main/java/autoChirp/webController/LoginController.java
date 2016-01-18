@@ -1,4 +1,4 @@
-package autoChirp.controller;
+package autoChirp.webController;
 
 import javax.inject.Inject;
 import org.springframework.social.connect.ConnectionFactoryLocator;
@@ -24,7 +24,7 @@ protected String connectView(String providerId) {
 
 @Override
 protected String connectedView(String providerId){
-        return "redirect:/account";
+        return "redirect:/account/login";
 }
 
 }
