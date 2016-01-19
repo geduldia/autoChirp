@@ -21,8 +21,8 @@
               </thead>
               <tbody>
                 <tr th:each="tweet : ${tweets}">
-                  <td th:text="${tweet.key}"></td>
-                  <td th:text="${tweet.value}"></td>
+                  <td th:text="${tweet.tweetDate}"></td>
+                  <td th:text="${tweet.content}"></td>
                 </tr>
               </tbody>
             </table>

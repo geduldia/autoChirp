@@ -67,17 +67,8 @@ public ModelAndView urlpost(Model model, @RequestParam("url") String url) {
         SentenceSplitter splitter = new SentenceSplitter();
         doc.setSentences(splitter.splitIntoSentences(doc.getText(), doc.getLanguage()));
         List<Tweet> tweetsList = tweeter.getTweets(doc);
-        Map<String, List<String> > tweets = new HashMap<String, List<String> >();
-        for (Tweet tweet : tweetsList) {
-                List<String> tweetsForDate = tweets.get(tweet.getTweetDate());
-                if(tweetsForDate == null) {
-                        tweetsForDate = new ArrayList<String>();
-                }
-                tweetsForDate.add(tweet.getContent());
-                tweets.put(tweet.getTweetDate(), tweetsForDate);
-        }
         ModelAndView mv = new ModelAndView("parsetest");
-        mv.addObject("tweets", tweets);
+        mv.addObject("tweets", tweetsList);
         return mv;
 }
 
