@@ -9,8 +9,6 @@ html {
     margin-top: 60px; }
 
 /* NAVBAR */
-.navbar-inverse .navbar-nav .btn-link:hover, .navbar-inverse .navbar-nav .btn-link:active {
-  text-decoration: none; }
 .navbar-inverse .navbar-nav > li > a > img,
 .navbar-inverse .navbar-nav > .active > a > img {
   border-radius: 3px;
@@ -22,8 +20,6 @@ html {
     border-color: #ffffff; }
 .navbar-inverse .navbar-nav > .active > a > img {
   border: 1px solid #ffffff; }
-.navbar-inverse .navbar-nav > li > form {
-  padding: 8px 10px; }
 
 /* HELP-SIDEBAR */
 .fixed {

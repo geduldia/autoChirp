@@ -35,13 +35,9 @@
           <li th:classappend="${#httpServletRequest.requestURI.equals('/contact')} ? 'active'"><a th:href="@{/contact}">Contact</a></li>
           <li th:classappend="${#httpServletRequest.requestURI.equals('/help')} ? 'active'"><a th:href="@{/help}">Help</a></li>
         </ul>
-        <ul th:unless="${twitter != null}" class="nav navbar-nav navbar-right">
-          <li>
-            <form th:action="@{/connect/twitter}" method="post">
-              <button class="btn btn-link" type="submit">Login</button>
-            </form>
-          </li>
-        </ul>
+        <form th:unless="${twitter != null}" th:action="@{/connect/twitter}" method="post" class="navbar-form navbar-right">
+          <button class="btn btn-primary" type="submit">Login with Twitter</button>
+        </form>
         <ul th:if="${twitter != null}" class="nav navbar-nav navbar-right">
           <li th:classappend="${#httpServletRequest.requestURI.equals('/dashboard')} ? 'active'"><a th:href="@{/dashboard}">Dashboard</a></li>
           <li th:classappend="${#httpServletRequest.requestURI.startsWith('/tweets')} ? 'active'" class="dropdown">
@@ -62,7 +58,8 @@
           </li>
           <li th:classappend="${#httpServletRequest.requestURI.equals('/tests')} ? 'active'"><a th:href="@{/tests}">Tests</a></li>
           <li th:classappend="${#httpServletRequest.requestURI.equals('/account')} ? 'active'">
-            <a th:href="@{/account}" class="image"><img th:src="${twitter.image}"></img></a>
+            <a th:href="@{/account}" class="image"><img th:src="${twitter.image}"></img>
+            </a>
           </li>
         </ul>
       </div>
@@ -74,8 +71,8 @@
       &copy;
       <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}"></span>
       <a href="mailto:geduldia@smail.uni-koeln.de">Alena Geduldig</a>,
-      <a href="mailto:philip.schildkamp@smail.uni-koeln.de">Philip Schildkamp</a>
-      (<a href="http://www.uni-koeln.de">Universität zu Köln</a>)
+      <a href="mailto:philip.schildkamp@smail.uni-koeln.de">Philip Schildkamp</a> (
+      <a href="http://www.uni-koeln.de">Universität zu Köln</a>)
     </div>
   </footer>
 

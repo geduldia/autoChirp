@@ -27,8 +27,8 @@ public TweetsController(ConnectionRepository connectionRepository, Twitter twitt
 
 @RequestMapping(value = "/dashboard")
 public ModelAndView dashboard(Model model) {
-        // if (!model.containsAttribute("twitter"))
-        //         return new ModelAndView("redirect:/account");
+        if (!model.containsAttribute("twitter"))
+                return new ModelAndView("redirect:/account");
 
         ModelAndView mv = new ModelAndView("dashboard");
         return mv;

@@ -16,12 +16,6 @@ html {
 // GLOBAL
 /* NAVBAR */
 .navbar-inverse .navbar-nav {
-  .btn-link {
-    &:hover,
-    &:active {
-      text-decoration: none;
-    }
-  }
   > li > a > img,
   > .active > a > img {
     border-radius: 3px;
@@ -37,9 +31,6 @@ html {
   }
   > .active > a > img {
     border: 1px solid #ffffff;
-  }
-  > li > form {
-    padding: 8px 10px;
   }
 }
 // NAVBAR
