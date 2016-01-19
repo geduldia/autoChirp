@@ -15,6 +15,7 @@ import org.springframework.social.twitter.api.TimelineOperations;
 import org.springframework.social.twitter.api.TweetData;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,12 +37,18 @@ public TestsController(ConnectionRepository connectionRepository, Twitter twitte
 }
 
 @RequestMapping(value = "/tests", method = RequestMethod.GET)
-public ModelAndView tests() {
+public ModelAndView tests(Model model) {
+        if (!model.containsAttribute("twitter"))
+                return new ModelAndView("redirect:/account");
+
         return new ModelAndView("tests");
 }
 
 @RequestMapping(value = "/tests", method = RequestMethod.POST, params = "tweet")
-public ModelAndView tweetpost(@RequestParam("tweet") String tweet) {
+public ModelAndView tweetpost(Model model, @RequestParam("tweet") String tweet) {
+        if (!model.containsAttribute("twitter"))
+                return new ModelAndView("redirect:/account");
+
         TimelineOperations timelineOperations = twitterConnection.timelineOperations();
         TweetData tweetData = new TweetData(tweet);
         timelineOperations.updateStatus(tweetData);
@@ -50,7 +57,10 @@ public ModelAndView tweetpost(@RequestParam("tweet") String tweet) {
 }
 
 @RequestMapping(value = "/tests", method = RequestMethod.POST, params = "url")
-public ModelAndView urlpost(@RequestParam("url") String url) {
+public ModelAndView urlpost(Model model, @RequestParam("url") String url) {
+        if (!model.containsAttribute("twitter"))
+                return new ModelAndView("redirect:/account");
+
         TweetFactory tweeter = new TweetFactory();
         WikipediaParser parser = new WikipediaParser();
         Document doc = parser.parse(url);

@@ -60,6 +60,7 @@
               <li><a th:href="@{/groups/import}">Import group</a></li>
             </ul>
           </li>
+          <li th:classappend="${#httpServletRequest.requestURI.equals('/tests')} ? 'active'"><a th:href="@{/tests}">Tests</a></li>
           <li th:classappend="${#httpServletRequest.requestURI.equals('/account')} ? 'active'">
             <a th:href="@{/account}" class="image"><img th:src="${twitter.image}"></img></a>
           </li>

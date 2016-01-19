@@ -17,7 +17,12 @@
   <div th:if="${twitter != null}" class="wrapper">
     <div class="container">
       <div class="row">
-
+        <div class="col-md-12">
+          <h2>Account details</h2>
+          <hr></hr>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-md-6">
           <div class="panel panel-inverse">
             <div class="panel-heading">Account details</div>
@@ -38,7 +43,6 @@
             </div>
           </div>
         </div>
-
         <div class="col-md-6">
           <div class="panel panel-primary">
             <div class="panel-heading">Twitter connection</div>
@@ -46,7 +50,7 @@
               <dl class="dl-horizontal">
                 <dt>Twitter handle</dt>
                 <dd>
-                  <a th:href="${twitter.url}" th:text="'@' + ${twitter.handle}"></a>
+                  <a th:href="${twitter.url}" th:text="'@' + ${twitter.handle}" target="_blank"></a>
                 </dd>
                 <dt>Full name</dt>
                 <dd th:text="${twitter.name}"></dd>
@@ -63,7 +67,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>

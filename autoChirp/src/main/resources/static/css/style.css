@@ -25,6 +25,49 @@ html {
 .navbar-inverse .navbar-nav > li > form {
   padding: 8px 10px; }
 
+/* HELP-SIDEBAR */
+.fixed {
+  position: fixed; }
+
+/* sidebar */
+.bs-docs-sidebar {
+  margin-bottom: 20px;
+  margin-top: 20px;
+  padding-left: 20px; }
+  .bs-docs-sidebar .nav > li > a {
+    color: #9d9d9d;
+    border-left: 2px solid transparent;
+    font-weight: 400;
+    padding: 4px 20px; }
+  .bs-docs-sidebar .nav > li > .active > a,
+  .bs-docs-sidebar .nav > li > a:hover,
+  .bs-docs-sidebar .nav > li > a:focus {
+    background-color: transparent;
+    border-left-color: #080808;
+    color: #080808;
+    text-decoration: none; }
+  .bs-docs-sidebar .nav .nav > li > a {
+    padding-bottom: 1px;
+    padding-left: 30px;
+    padding-top: 1px; }
+  .bs-docs-sidebar .nav .nav > .active > a,
+  .bs-docs-sidebar .nav .nav > .active:hover > a,
+  .bs-docs-sidebar .nav .nav > .active:focus > a {
+    font-weight: 500; }
+  .bs-docs-sidebar .nav > .active > a,
+  .bs-docs-sidebar .nav > .active:hover > a,
+  .bs-docs-sidebar .nav > .active:focus > a {
+    font-weight: 700; }
+  .bs-docs-sidebar .nav ul.nav {
+    display: none; }
+  .bs-docs-sidebar .nav > .active > ul.nav {
+    display: block; }
+
+.bs-docs-content *[id].group,
+.bs-docs-content *[id].subgroup {
+  padding-top: 60px;
+  margin-top: -60px; }
+
 /* PANEL-INVERSE */
 .panel-inverse {
   border-color: #080808; }
@@ -47,5 +90,11 @@ html {
       width: 100%; }
       html body #footer .container {
         margin-top: 15px; }
+
+/* CUSTOM */
+.well-condensed *:first-child {
+  margin-top: 0; }
+.well-condensed *:last-child {
+  margin-bottom: 0; }
 
 /*# sourceMappingURL=style.css.map */

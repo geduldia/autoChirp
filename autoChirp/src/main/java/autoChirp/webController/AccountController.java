@@ -37,14 +37,16 @@ public String login(Model model) {
         if (connectionRepository.findPrimaryConnection(Twitter.class) != null) {
                 UserOperations userOperations = twitterConnection.userOperations();
                 TwitterProfile twitterProfile = userOperations.getUserProfile();
+//                Use this to extract the access token:
+//                ConnectionData twitterConnectionData = twitterConnection.createData();
 
-                Hashtable twitter = new Hashtable();
+                Hashtable<String, String> twitter = new Hashtable<String, String>();
                 twitter.put("name", twitterProfile.getName());
                 twitter.put("handle", twitterProfile.getScreenName());
                 twitter.put("description", twitterProfile.getDescription());
                 twitter.put("url", twitterProfile.getProfileUrl());
                 twitter.put("image", twitterProfile.getProfileImageUrl());
-                twitter.put("protected", twitterProfile.isProtected());
+                twitter.put("protected", String.valueOf(twitterProfile.isProtected()));
 
                 model.addAttribute("twitter", twitter);
         }
