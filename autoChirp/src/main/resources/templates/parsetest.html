@@ -10,23 +10,26 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <div class="panel panel-default">
-            <div class="panel-heading">Parsed Tweets</div>
-            <table class="table table-condensed table-hover">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Content</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr th:each="tweet : ${tweets}">
-                  <td th:text="${tweet.tweetDate}"></td>
-                  <td th:text="${tweet.content}"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <h2>Parsed tweets preview</h2>
+          <hr></hr>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <table class="table table-condensed table-hover">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Content</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="tweet : ${tweets}">
+                <td th:text="${tweet.key}"></td>
+                <td th:text="${tweet.value}"></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
