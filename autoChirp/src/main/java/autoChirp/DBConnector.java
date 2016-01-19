@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import autoChirp.tweetCreation.Tweet;
+import autoChirp.tweetCreation.TweetGroup;
 
 /**
  * 
@@ -179,8 +180,7 @@ public class DBConnector {
 	 * 
 	 * 
 	 */
-	public static boolean insertTweets(String url, List<Tweet> toInsert, List<Integer> user_ids,
-			String title) {
+	public static boolean insertTweets(String url, TweetGroup toInsert, List<Integer> user_ids) {
 		try {
 			connection.setAutoCommit(false);
 			PreparedStatement prepUsers = connection
@@ -189,7 +189,7 @@ public class DBConnector {
 					.prepareStatement("INSERT INTO tweets(user_id, group_id, scheduled_date, tweet) VALUES(?,?,?,?)");
 			for (int user : user_ids) {
 				prepUsers.setInt(1, user);
-				prepUsers.setString(2, title);
+				prepUsers.setString(2, toInsert.title);
 				prepUsers.setString(3, url);
 				prepUsers.setBoolean(4, false);
 				prepUsers.executeUpdate();
@@ -197,7 +197,7 @@ public class DBConnector {
 				String sql = "SELECT group_id FROM groups WHERE url = '" + url + "' AND user_id = '" + user + "';";
 				ResultSet result = stmt.executeQuery(sql);
 				int group_id = result.getInt(1);
-				for (Tweet tweet : toInsert) {
+				for (Tweet tweet : toInsert.tweets) {
 					prepTweets.setInt(1, user);
 					prepTweets.setInt(2, group_id);
 					prepTweets.setString(3, tweet.getTweetDate());
@@ -440,6 +440,35 @@ public class DBConnector {
 			e.printStackTrace();
 			return toReturn;
 		}
+		return toReturn;
+	}
+	
+	public static List<TweetGroup> getActiveGroupsForUser(int user_id){
+		List<TweetGroup> toReturn = new ArrayList<TweetGroup>();
+		try {
+			connection.setAutoCommit(false);
+			Statement stmt = connection.createStatement();
+			String sql = "SELECT group_id, group_name FROM groups WHERE (user_id = '"+user_id+"' AND enabled ='true')";
+			ResultSet result = stmt.executeQuery(sql);
+			while(result.next()){
+				TweetGroup group = new TweetGroup(result.getString(2));
+				int group_id = result.getInt(1);
+				Statement stmt2 = connection.createStatement();
+				String sql2 = "SELECT tweet, scheduled_date FROM tweets WHERE(group_id = '"+group_id+"' AND user_id ='"+user_id+"')";
+				ResultSet result2 = stmt2.executeQuery(sql2);
+				Tweet tweet;
+				while(result2.next()){
+					String content = result.getString(1);
+					String tweetDate = result.getString(2);
+					tweet = new Tweet(tweetDate, content);
+					group.addTweet(tweet);
+				}
+				toReturn.add(group);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 		return toReturn;
 	}
 }

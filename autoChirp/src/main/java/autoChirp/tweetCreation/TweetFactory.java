@@ -40,8 +40,9 @@ public class TweetFactory {
 	 * @return tweetsByDate - a map of the detected dates and their including
 	 *         sentences trimmed to a tweet-length of 140 characters @throws
 	 */
-	public List<Tweet> getTweets(Document document) {
-		List<Tweet> toReturn = new ArrayList<Tweet>();
+	public TweetGroup getTweets(Document document) {
+		TweetGroup group = new TweetGroup(document.getTitle());
+		List<Tweet> tweets = new ArrayList<Tweet>();
 		HeidelTimeWrapper ht = new HeidelTimeWrapper(document.getLanguage(), DocumentType.NARRATIVES, OutputType.TIMEML,
 				"/heideltime/config.props", POSTagger.TREETAGGER, false);
 		String toProcess = concatSentences(document.getSentences());
@@ -61,11 +62,12 @@ public class TweetFactory {
 				String tweetDate = getTweetDate(date);
 				//List<String> sentenceList = tweetsByDate.get(tweetDate);
 				tweet = new Tweet(tweetDate,trimToTweet(document.getSentences().get(i - 1)));		
-			    toReturn.add(tweet);			}
+			    tweets.add(tweet);			}
 		}
 		currentYear = LocalDateTime.now().getYear();
-		Collections.sort(toReturn);
-		return toReturn;
+		Collections.sort(tweets);
+		group.setTweets(tweets);
+		return group;
 	}
 
 	private String concatSentences(List<String> sentences) {

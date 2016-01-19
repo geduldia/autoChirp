@@ -5,6 +5,8 @@ import autoChirp.tweetCreation.Parser.WikipediaParser;
 import autoChirp.tweetCreation.SentenceSplitter;
 import autoChirp.tweetCreation.Tweet;
 import autoChirp.tweetCreation.TweetFactory;
+import autoChirp.tweetCreation.TweetGroup;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +68,8 @@ public ModelAndView urlpost(Model model, @RequestParam("url") String url) {
         Document doc = parser.parse(url);
         SentenceSplitter splitter = new SentenceSplitter();
         doc.setSentences(splitter.splitIntoSentences(doc.getText(), doc.getLanguage()));
-        List<Tweet> tweetsList = tweeter.getTweets(doc);
+        TweetGroup group = tweeter.getTweets(doc);
+        List<Tweet> tweetsList = group.tweets;
         ModelAndView mv = new ModelAndView("parsetest");
         mv.addObject("tweets", tweetsList);
         return mv;

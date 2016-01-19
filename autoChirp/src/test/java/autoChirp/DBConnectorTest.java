@@ -6,13 +6,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import autoChirp.tweetCreation.Tweet;
+import autoChirp.tweetCreation.TweetGroup;
 
 /**
  * 
@@ -59,9 +59,11 @@ public class DBConnectorTest {
 		tweets.add(tweet);
 		tweet = new Tweet("2013-11-12 23:23:12", "tweet2");
 		tweets.add(tweet);
+		TweetGroup group = new TweetGroup("test_title1");
+		group.setTweets(tweets);
 		List<Integer> userIds = Arrays.asList(1, 2, 3);
-		DBConnector.insertTweets("test_URL1", tweets, userIds, "test_title1");
-		DBConnector.insertTweets("test_URL2", tweets, userIds, "test_title2");
+		DBConnector.insertTweets("test_URL1", group, userIds);
+		DBConnector.insertTweets("test_URL2", group, userIds);
 		//TODO  read tweets
 	}
 
@@ -89,5 +91,30 @@ public class DBConnectorTest {
 		Assert.assertEquals("test_consumer_key", twitterConfig[1]);
 		Assert.assertEquals("test_consumer_secret", twitterConfig[2]);
 	}
+	
+	@Test 
+	public void insertAndGetGroups(){
+		List<Integer> userIds = Arrays.asList(1, 2, 3);
+		List<Tweet> tweets = new ArrayList<Tweet>();
+		Tweet tweet = new Tweet("1999-11-12 13:23:12", "tweet1");
+		tweets.add(tweet);
+		tweet = new Tweet("2013-11-12 23:23:12", "tweet2");
+		tweets.add(tweet);
+		TweetGroup group = new TweetGroup("test_title1");
+		group.setTweets(tweets);
+		DBConnector.insertTweets("url", group, userIds);
+		group = new TweetGroup("test_title2");
+		tweets.add(new Tweet("2015-11-12 14:23:12", "tweet3"));
+		group.setTweets(tweets);
+		DBConnector.insertTweets("test_url2", group,userIds );
+		List<TweetGroup> groups = DBConnector.getActiveGroupsForUser(2);
+		Assert.assertTrue(groups.size() == 0);
+		DBConnector.updateGroupStatus(1, true);
+		groups = DBConnector.getActiveGroupsForUser(1);
+		Assert.assertTrue(groups.size() != 0);
+		System.out.println(groups.get(0).tweets.size());
+	}
+	
+
 	
 }

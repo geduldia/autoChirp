@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import autoChirp.tweetCreation.Tweet;
+import autoChirp.tweetCreation.TweetGroup;
 import autoChirp.tweeting.TweetScheduler;
 
 public class TweetWorkflow {
@@ -65,17 +64,18 @@ public class TweetWorkflow {
 		
 		//generate test-tweets
 		LocalDateTime ldt = LocalDateTime.now();
-		ldt.plusSeconds(45);
+		ldt = ldt.plusSeconds(10);
 		String tweetDate =  ldt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		List<Tweet> tweets = new ArrayList<Tweet>();
 		tweets.add(new Tweet(tweetDate, "Grundstücksverkehrsgenehmigungszuständigkeitsüber-tragungsverordnung"));
 		tweets.add(new Tweet(tweetDate, "Ich geh nur mal kurz raus und bleibe vielleicht eine Weile"));
-			
+		TweetGroup group = new TweetGroup("test_title");	
+		group.setTweets(tweets);
 		List<Integer> user_ids = new ArrayList<Integer>();
 		user_ids.add(user_id);
 		
 		//insert test-tweets
-		DBConnector.insertTweets("test_url", tweets, user_ids, "test_title");
+		DBConnector.insertTweets("test_url", group, user_ids);
 		
 		// update group-status to enabled = true
 		DBConnector.updateGroupStatus(1, true);
@@ -84,7 +84,7 @@ public class TweetWorkflow {
 		Map<Integer, List<Tweet>> allNewTweets = DBConnector.getAllNewTweets();
 		
 		//schedule tweets
-		TweetScheduler.scheduleInitialTweets(allNewTweets);
+		//TweetScheduler.scheduleInitialTweets(allNewTweets);
         
 		
 		//program has to run until all tweets are tweeted
@@ -124,16 +124,17 @@ public class TweetWorkflow {
 				int user_id = DBConnector.insertNewUser(secrets[0], secrets[1], secrets[2]);
 				//generate test-tweets
 				LocalDateTime ldt = LocalDateTime.now();
-				ldt.plusSeconds(45);
+				ldt = ldt.plusSeconds(10);
 				String tweetDate =  ldt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 				List<Tweet> tweets = new ArrayList<Tweet>();
-				tweets.add(new Tweet(tweetDate, "Guten Morgen!"));
-					
+				tweets.add(new Tweet(tweetDate, "Test-Tweet3"));
+				TweetGroup group = new TweetGroup("test_title");	
+				group.setTweets(tweets);
 				List<Integer> user_ids = new ArrayList<Integer>();
 				user_ids.add(user_id);
 				
 				//insert test-tweets
-				DBConnector.insertTweets("test_url", tweets, user_ids, "test_title");
+				DBConnector.insertTweets("test_url", group, user_ids);
 				
 				// update group-status to enabled = true
 				DBConnector.updateGroupStatus(1, true);
@@ -142,7 +143,7 @@ public class TweetWorkflow {
 				List<Tweet> newTweets = DBConnector.getAllNewTweetsForUser(user_id, 1);
 				
 				//schedule tweets
-				TweetScheduler.scheduleGroup(newTweets, user_id);
+				//TweetScheduler.scheduleGroup(newTweets, user_id);
 		        
 				
 				//program has to run until all tweets are tweeted
