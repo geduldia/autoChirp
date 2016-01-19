@@ -13,6 +13,7 @@ import autoChirp.tweetCreation.Document;
 import autoChirp.tweetCreation.SentenceSplitter;
 import autoChirp.tweetCreation.Tweet;
 import autoChirp.tweetCreation.TweetFactory;
+import autoChirp.tweetCreation.TweetGroup;
 import autoChirp.tweetCreation.Parser.WikipediaParser;
 
 public class TweetCreationWorkflow {
@@ -53,14 +54,14 @@ public class TweetCreationWorkflow {
 			Document doc = parser.parse(url);
 			SentenceSplitter st = new SentenceSplitter(doc.getLanguage());
 			doc.setSentences(st.splitIntoSentences(doc.getText(), doc.getLanguage()));
-			List<Tweet> tweets = tweetFactory.getTweets(doc);
-			DBConnector.insertTweets(url, tweets, urlsAndUserIDs.get(url), doc.getTitle());
+			TweetGroup group = tweetFactory.getTweets(doc);
+			DBConnector.insertTweets(url, group, urlsAndUserIDs.get(url));
 
 			System.out.println("Title: " + doc.getTitle());
 			System.out.println("URL: " + doc.getUrl());
 			System.out.println("Language: " + doc.getLanguage());
 			System.out.println();
-			for (Tweet tweet : tweets) {
+			for (Tweet tweet : group.tweets) {
 				System.out.print(tweet.getTweetDate()+": ");
 				System.out.println(tweet.getContent());
 			}
