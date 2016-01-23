@@ -124,7 +124,7 @@ public class TweetWorkflow {
 				int user_id = DBConnector.insertNewUser(secrets[0], secrets[1], secrets[2]);
 				//generate test-tweets
 				LocalDateTime ldt = LocalDateTime.now();
-				ldt = ldt.plusSeconds(10);
+				ldt = ldt.plusSeconds(50);
 				String tweetDate =  ldt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 				List<Tweet> tweets = new ArrayList<Tweet>();
 				tweets.add(new Tweet(tweetDate, "Test-Tweet3"));

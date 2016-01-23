@@ -463,8 +463,11 @@ public class DBConnector {
 					tweet = new Tweet(tweetDate, content);
 					group.addTweet(tweet);
 				}
+				
 				toReturn.add(group);
+				stmt2.close();
 			}
+			stmt.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
