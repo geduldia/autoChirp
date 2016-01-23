@@ -62,16 +62,16 @@ public class DBConnectorTest {
 		TweetGroup group = new TweetGroup("test_title1");
 		group.setTweets(tweets);
 		List<Integer> userIds = Arrays.asList(1, 2, 3);
-		DBConnector.insertTweets("test_URL1", group, userIds);
-		DBConnector.insertTweets("test_URL2", group, userIds);
+		DBConnector.insertTweetGroup("test_URL1", group, userIds);
+		DBConnector.insertTweetGroup("test_URL2", group, userIds);
 		//TODO  read tweets
 	}
 
 	@Test
 	public void insertAndGetOAuthTokenTest() {
-		int user_id = DBConnector.insertNewUser("twitter_handle", "oauthToken", "oauthTokenSecret");
+		int user_id = DBConnector.insertNewUser(9, "oauthToken", "oauthTokenSecret");
 		Assert.assertEquals(1, user_id);
-		user_id = DBConnector.insertNewUser("twitter_handle2", "oauthToken2", "oauthTokenSecret2");
+		user_id = DBConnector.insertNewUser(10, "oauthToken2", "oauthTokenSecret2");
 		Assert.assertEquals(2, user_id);
 		String[] userInfo = DBConnector.getUserConfig(1);
 		Assert.assertEquals("twitter_handle", userInfo[0]);
@@ -102,11 +102,11 @@ public class DBConnectorTest {
 		tweets.add(tweet);
 		TweetGroup group = new TweetGroup("test_title1");
 		group.setTweets(tweets);
-		DBConnector.insertTweets("url", group, userIds);
+		DBConnector.insertTweetGroup("url", group, userIds);
 		group = new TweetGroup("test_title2");
 		tweets.add(new Tweet("2015-11-12 14:23:12", "tweet3"));
 		group.setTweets(tweets);
-		DBConnector.insertTweets("test_url2", group,userIds );
+		DBConnector.insertTweetGroup("test_url2", group,userIds );
 		List<TweetGroup> groups = DBConnector.getActiveGroupsForUser(2);
 		Assert.assertTrue(groups.size() == 0);
 		DBConnector.updateGroupStatus(1, true);

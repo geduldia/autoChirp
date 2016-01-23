@@ -60,7 +60,7 @@ public class TweetWorkflow {
 		DBConnector.insertTwitterConfiguration("", secrets[3], secrets[4]);
 		
 		//insert new user
-		int user_id = DBConnector.insertNewUser(secrets[0], secrets[1], secrets[2]);
+		int user_id = DBConnector.insertNewUser(2, secrets[1], secrets[2]);
 		
 		//generate test-tweets
 		LocalDateTime ldt = LocalDateTime.now();
@@ -75,13 +75,13 @@ public class TweetWorkflow {
 		user_ids.add(user_id);
 		
 		//insert test-tweets
-		DBConnector.insertTweets("test_url", group, user_ids);
+		DBConnector.insertTweetGroup("test_url", group, user_ids);
 		
 		// update group-status to enabled = true
 		DBConnector.updateGroupStatus(1, true);
 
 		// get all new enabled tweets
-		Map<Integer, List<Tweet>> allNewTweets = DBConnector.getAllNewTweets();
+		Map<Integer, List<Tweet>> allNewTweets = DBConnector.getAllTweets();
 		
 		//schedule tweets
 		//TweetScheduler.scheduleInitialTweets(allNewTweets);
@@ -121,7 +121,7 @@ public class TweetWorkflow {
 				//insert App-Configs in DB
 				DBConnector.insertTwitterConfiguration("", secrets[3], secrets[4]);
 				//insert new user
-				int user_id = DBConnector.insertNewUser(secrets[0], secrets[1], secrets[2]);
+				int user_id = DBConnector.insertNewUser(3, secrets[1], secrets[2]);
 				//generate test-tweets
 				LocalDateTime ldt = LocalDateTime.now();
 				ldt = ldt.plusSeconds(50);
@@ -134,13 +134,13 @@ public class TweetWorkflow {
 				user_ids.add(user_id);
 				
 				//insert test-tweets
-				DBConnector.insertTweets("test_url", group, user_ids);
+				DBConnector.insertTweetGroup("test_url", group, user_ids);
 				
 				// update group-status to enabled = true
 				DBConnector.updateGroupStatus(1, true);
 
 				// get all new enabled tweets
-				List<Tweet> newTweets = DBConnector.getAllNewTweetsForUser(user_id, 1);
+				List<Tweet> newTweets = DBConnector.getTweetsForUser(user_id, 1);
 				
 				//schedule tweets
 				//TweetScheduler.scheduleGroup(newTweets, user_id);

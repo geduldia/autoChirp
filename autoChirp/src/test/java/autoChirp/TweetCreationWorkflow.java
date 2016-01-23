@@ -55,7 +55,7 @@ public class TweetCreationWorkflow {
 			SentenceSplitter st = new SentenceSplitter(doc.getLanguage());
 			doc.setSentences(st.splitIntoSentences(doc.getText(), doc.getLanguage()));
 			TweetGroup group = tweetFactory.getTweets(doc);
-			DBConnector.insertTweets(url, group, urlsAndUserIDs.get(url));
+			DBConnector.insertTweetGroup(url, group, urlsAndUserIDs.get(url));
 
 			System.out.println("Title: " + doc.getTitle());
 			System.out.println("URL: " + doc.getUrl());

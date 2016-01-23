@@ -30,7 +30,7 @@
             <div class="panel-body">
               <dl class="dl-horizontal">
                 <dt>Account id</dt>
-                <dd>0</dd>
+                <dd th:text="${twitter.user_id}"></dd>
                 <dt>Group count</dt>
                 <dd>42</dd>
                 <dt>Tweet count</dt>
@@ -53,6 +53,8 @@
                 <dd>
                   <a th:href="${twitter.url}" th:text="'@' + ${twitter.handle}" target="_blank"></a>
                 </dd>
+                <dt>Twitter ID</dt>
+                <dd th:text="${twitter.twitter_id}"></dd>
                 <dt>Full name</dt>
                 <dd th:text="${twitter.name}"></dd>
                 <dt>Twitter bio</dt>

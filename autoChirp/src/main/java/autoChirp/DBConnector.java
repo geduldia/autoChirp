@@ -168,7 +168,7 @@ public class DBConnector {
 	/**
 	 * Writes the extracted tweets from a single document into the database
 	 * 
-	 * @param url
+	 * @param description
 	 *            - the url of the document
 	 * @param tweetsByDate
 	 *            - A map of dates (key) and the associated list of tweets
@@ -180,7 +180,7 @@ public class DBConnector {
 	 * 
 	 * 
 	 */
-	public static boolean insertTweets(String url, TweetGroup toInsert, List<Integer> user_ids) {
+	public static boolean insertTweetGroup(String description, TweetGroup toInsert, List<Integer> user_ids) {
 		try {
 			connection.setAutoCommit(false);
 			PreparedStatement prepUsers = connection
@@ -190,11 +190,11 @@ public class DBConnector {
 			for (int user : user_ids) {
 				prepUsers.setInt(1, user);
 				prepUsers.setString(2, toInsert.title);
-				prepUsers.setString(3, url);
+				prepUsers.setString(3, description);
 				prepUsers.setBoolean(4, false);
 				prepUsers.executeUpdate();
 				Statement stmt = connection.createStatement();
-				String sql = "SELECT group_id FROM groups WHERE url = '" + url + "' AND user_id = '" + user + "';";
+				String sql = "SELECT group_id FROM groups WHERE url = '" + description + "' AND user_id = '" + user + "';";
 				ResultSet result = stmt.executeQuery(sql);
 				int group_id = result.getInt(1);
 				for (Tweet tweet : toInsert.tweets) {
@@ -291,6 +291,29 @@ public class DBConnector {
 			return null;
 		}
 	}
+	
+	public static int checkForUser(long twitter_id){
+		try {
+			connection.setAutoCommit(false);
+			String sql = "SELECT twitter_id, user_id FROM users WHERE (twitter_id = '"+twitter_id+"')";
+			Statement stmt = connection.createStatement();
+			ResultSet result = stmt.executeQuery(sql);
+			if(!result.next()){
+				stmt.close();
+				return -1;
+			}
+			else {
+				int user_id = result.getInt(2);
+				stmt.close();
+				return user_id;
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -2;
+		}
+	}
 
 	/**
 	 * creates a new user in the users-table
@@ -300,17 +323,17 @@ public class DBConnector {
 	 * @param oauthTokenSecret
 	 * @return the user_id of the new user or -1 if insertion was not successful
 	 */
-	public static int insertNewUser(String twitter_handle, String oauthToken, String oauthTokenSecret) {
+	public static int insertNewUser(long twitter_id, String oauthToken, String oauthTokenSecret) {
 		try {
 			connection.setAutoCommit(false);
 			Statement stmt = connection.createStatement();
-			String sql = "INSERT INTO users (twitter_handle, oauth_token, oauth_token_secret) VALUES ('"
-					+ twitter_handle + "', " + "'" + oauthToken + "', " + "'" + oauthTokenSecret + "' )";
+			String sql = "INSERT INTO users (twitter_id, oauth_token, oauth_token_secret) VALUES ('"
+					+ twitter_id + "', " + "'" + oauthToken + "', " + "'" + oauthTokenSecret + "' )";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			connection.commit();
 			stmt = connection.createStatement();
-			sql = "SELECT user_id FROM users WHERE (twitter_handle = '" + twitter_handle + "' AND oauth_token = '"
+			sql = "SELECT user_id FROM users WHERE (twitter_id = '" + twitter_id + "' AND oauth_token = '"
 					+ oauthToken + "' AND oauth_token_secret ='" + oauthTokenSecret + "')";
 			ResultSet result = stmt.executeQuery(sql);
 			int toReturn = result.getInt(1);
@@ -318,7 +341,7 @@ public class DBConnector {
 			connection.commit();
 			return toReturn;
 		} catch (SQLException e) {
-			System.out.println("DBConnector.insertNewUser: couldnt insert the new user " + twitter_handle);
+			System.out.println("DBConnector.insertNewUser: couldnt insert the new user " + twitter_id);
 			e.printStackTrace();
 			return -1;
 		}
@@ -335,12 +358,12 @@ public class DBConnector {
 	public static String[] getUserConfig(int userID) {
 		try {
 			connection.setAutoCommit(false);
-			String sql = "SELECT twitter_handle, oauth_token, oauth_token_secret FROM users WHERE user_id = '" + userID
+			String sql = "SELECT twitter_id, oauth_token, oauth_token_secret FROM users WHERE user_id = '" + userID
 					+ "';";
 			Statement stmt = connection.createStatement();
 			ResultSet result = stmt.executeQuery(sql);
 			String[] toReturn = new String[3];
-			toReturn[0] = result.getString(1);
+			toReturn[0] = Integer.toString(result.getInt(1));
 			toReturn[1] = result.getString(2);
 			toReturn[2] = result.getString(3);
 			stmt.close();
@@ -361,7 +384,7 @@ public class DBConnector {
 	 * @param group_id
 	 * @return A map of dates (key) and the associated list of tweets (value)
 	 */
-	public static List<Tweet> getAllNewTweetsForUser(int user_id, int group_id) {
+	public static List<Tweet> getTweetsForUser(int user_id, int group_id) {
 		List<Tweet> toReturn = new ArrayList<Tweet>();
 		try {
 			connection.setAutoCommit(false);
@@ -395,7 +418,7 @@ public class DBConnector {
 	 *         tweetdate (value)
 	 */
 
-	public static Map<Integer, List<Tweet>> getAllNewTweets() {
+	public static Map<Integer, List<Tweet>> getAllTweets() {
 		Map<Integer, List<Tweet>> toReturn = new HashMap<Integer, List<Tweet>>();
 		ResultSet group_ids = null;
 		try {
