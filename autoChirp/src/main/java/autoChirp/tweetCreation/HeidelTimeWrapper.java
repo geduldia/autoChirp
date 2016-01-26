@@ -17,17 +17,17 @@ import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
 
 /**
  * @author geduldia
- * 
- * 
+ *
+ *
  * A Wrapper-Class for HeideltimeStandalone
- * 
+ *
  * Overrides the readConfigsFile()  Method to avoid using a FileInputStrean
  *
  */
 public class HeidelTimeWrapper extends HeidelTimeStandalone {
 
 	/**
-	 * 
+	 *
 	 * @param language
 	 * @param typeToProcess
 	 * @param outputType
@@ -44,23 +44,23 @@ public class HeidelTimeWrapper extends HeidelTimeStandalone {
 		setPosTagger(posTagger);
 		readConfigFile(configPath);
 		initialize(language, typeToProcess, outputType, configPath, posTagger, doIntervalTagging);
-	
+
 	}
-	
+
 
 	/**
-	 * @param configPath - Path to config.prps
+	 * @param configPath - Path to config.props
 	 */
 	public static void readConfigFile(String configPath) {
 		InputStream configStream = null;
 		try {
 			configStream = HeidelTimeWrapper.class.getResourceAsStream(configPath);
-			
+
 			Properties props = new Properties();
 			props.load(configStream);
 
 			Config.setProps(props);
-			
+
 			configStream.close();
 		} catch (FileNotFoundException e) {
 			System.exit(-1);

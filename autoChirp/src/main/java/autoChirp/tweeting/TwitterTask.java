@@ -32,8 +32,9 @@ public class TwitterTask extends TimerTask {
 
 	@Override
 	public void run() {
-		TwitterConnection tc = new TwitterConnection();
-		tc.run(user_id, toTweet.getContent());
+		// TwitterConnection tc = new TwitterConnection();
+		// tc.run(user_id, toTweet.getContent());
+    System.out.println("This should now tweet: " + toTweet.getContent());
 	}
 
 }

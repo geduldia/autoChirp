@@ -14,37 +14,26 @@ import org.springframework.context.ApplicationContext;
 @SpringBootApplication
 public class Application {
 
-	@Value("${dbFilePath}")
-	private String dbFilePath;
+@Value("${dbFilePath}")
+private String dbFilePath;
 
-	@Value("${createDatabaseFile}")
-	private String createDatabaseFile;
+@Value("${createDatabaseFile}")
+private String createDatabaseFile;
 
-	public static void main(String[] args) throws IOException {
+public static void main(String[] args) throws IOException {
+        ApplicationContext ctx = SpringApplication.run(Application.class, args);
+}
 
-		ApplicationContext ctx = SpringApplication.run(Application.class, args);
+@PostConstruct
+private void connectDatabase(){
+        File file = new File(dbFilePath);
 
-		System.out.println("Let's inspect the beans provided by Spring Boot:");
-
-		String[] beanNames = ctx.getBeanDefinitionNames();
-		Arrays.sort(beanNames);
-		for (String beanName : beanNames) {
-			System.out.println(beanName);
-		}
-		
-
-	}
-	@PostConstruct
-	private void connectDB(){
-		System.out.println(dbFilePath);
-		File file = new File(dbFilePath);
-
-		if (!file.exists()) {
-			DBConnector.connect(dbFilePath);
-			DBConnector.createOutputTables(createDatabaseFile);
-		} else {
-			DBConnector.connect(dbFilePath);
-		}
-	}
+        if (!file.exists()) {
+                DBConnector.connect(dbFilePath);
+                DBConnector.createOutputTables(createDatabaseFile);
+        } else {
+                DBConnector.connect(dbFilePath);
+        }
+}
 
 }

@@ -3,7 +3,8 @@
 .sass-cache
 start.sh
 autoChirp/config.props
-autoChirp/src/main/resources/autoChirp.db*
-autoChirp/src/main/resources/heideltime
+autoChirp/src/main/resources/database/autoChirp.db*
+autoChirp/src/main/resources/heideltime/config.props
+autoChirp/src/main/resources/heideltime/languages
 autoChirp/src/test/resources/autoChirp.db*
 autoChirp/target
