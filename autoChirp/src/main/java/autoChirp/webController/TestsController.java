@@ -1,17 +1,9 @@
 package autoChirp.webController;
 
-import autoChirp.tweetCreation.Document;
-import autoChirp.tweetCreation.Parser.WikipediaParser;
-import autoChirp.tweetCreation.SentenceSplitter;
-import autoChirp.tweetCreation.Tweet;
-import autoChirp.tweetCreation.TweetFactory;
-import autoChirp.tweetCreation.TweetGroup;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 import javax.inject.Inject;
+
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.twitter.api.TimelineOperations;
 import org.springframework.social.twitter.api.TweetData;
@@ -21,9 +13,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+
+import autoChirp.preProcessing.Document;
+import autoChirp.preProcessing.SentenceSplitter;
+import autoChirp.preProcessing.parser.WikipediaParser;
+import autoChirp.tweetCreation.Tweet;
+import autoChirp.tweetCreation.TweetFactory;
+import autoChirp.tweetCreation.TweetGroup;
 
 @Controller
 @SessionAttributes("twitter")
@@ -64,15 +62,12 @@ public ModelAndView urlpost(Model model, @RequestParam("url") String url) {
         //         return new ModelAndView("redirect:/account");
 
         TweetFactory tweeter = new TweetFactory();
-        WikipediaParser parser = new WikipediaParser();
-        Document doc = parser.parse(url);
-        SentenceSplitter splitter = new SentenceSplitter();
-        doc.setSentences(splitter.splitIntoSentences(doc.getText(), doc.getLanguage()));
-        TweetGroup group = tweeter.getTweets(doc);
+        TweetGroup group = tweeter.getTweetsFromUrl(url, new WikipediaParser(), "description");
         List<Tweet> tweetsList = group.tweets;
         ModelAndView mv = new ModelAndView("parsetest");
         mv.addObject("tweets", tweetsList);
         return mv;
+
 }
 
 

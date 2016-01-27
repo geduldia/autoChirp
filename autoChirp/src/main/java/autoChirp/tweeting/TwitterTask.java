@@ -18,23 +18,14 @@ public class TwitterTask extends TimerTask {
 	private int user_id;
 
 	public TwitterTask(int user_id, Tweet tweet) {
-		setUserID(user_id);
-		setTweet(tweet);
-	}
-
-	private void setTweet(Tweet tweet) {
-		this.toTweet = tweet;
-	}
-
-	private void setUserID(int user_id) {
 		this.user_id = user_id;
+		this.toTweet = tweet;
 	}
 
 	@Override
 	public void run() {
-		// TwitterConnection tc = new TwitterConnection();
-		// tc.run(user_id, toTweet.getContent());
-    System.out.println("This should now tweet: " + toTweet.getContent());
+		TwitterConnection tc = new TwitterConnection();
+		tc.run(user_id, toTweet);
 	}
 
 }

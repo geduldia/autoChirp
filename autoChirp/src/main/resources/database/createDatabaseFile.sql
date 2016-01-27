@@ -18,7 +18,7 @@ CREATE TABLE groups (
   group_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
   group_name VARCHAR(255) DEFAULT NULL,
-  url VARCHAR(255) NOT NULL,
+  description VARCHAR(255) NOT NULL,
   enabled bool DEFAULT FALSE,
   CONSTRAINT FK_USERS_USERID_GROUPS_USERID FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
@@ -28,9 +28,10 @@ CREATE TABLE tweets (
   tweet_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
   group_id INTEGER DEFAULT NULL,
-  scheduled_date datetime NOT NULL,
+  scheduled_date VARCHAR(20) NOT NULL,
   tweet VARCHAR(140) NOT NULL,
   scheduled bool DEFAULT FALSE,
+  tweeted bool DEFAULT FALSE,
   CONSTRAINT FK_USERS_USERID_TWEETS_USERID FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 

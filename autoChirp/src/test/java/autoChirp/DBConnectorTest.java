@@ -2,10 +2,7 @@ package autoChirp;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -26,7 +23,7 @@ public class DBConnectorTest {
 
 	private static String dbPath = "src/test/resources";
 	private static String dbFileName = "autoChirp.db";
-	private static String dbCreationFileName = "src/test/resources/createDatabaseFile.sql";
+	private static String dbCreationFileName = "src/main/resources/database/createDatabaseFile.sql";
 
 	@BeforeClass
 	//connect and reset database
@@ -35,22 +32,7 @@ public class DBConnectorTest {
 		DBConnector.createOutputTables(dbCreationFileName);
 	}
 
-	@Test
-	public void insertAndGetUrlsTest() {
-		DBConnector.isertUrl("https://en.wikipedia.org/wiki/History_of_Denmark", 1);
-		DBConnector.isertUrl("https://en.wikipedia.org/wiki/History_of_Denmark", 1);
-		DBConnector.isertUrl("https://en.wikipedia.org/wiki/History_of_Denmark", 2);
-		DBConnector.isertUrl("https://de.wikipedia.org/wiki/Britney_Spears", 2);
-		Map<String, List<Integer>> urlsAnUserIDs = DBConnector.getUrls();
-		Iterator<String> iterator = urlsAnUserIDs.keySet().iterator();
-		Assert.assertEquals(2, urlsAnUserIDs.size());
-		String url = iterator.next();
-		Assert.assertEquals("https://en.wikipedia.org/wiki/History_of_Denmark", url);
-		Assert.assertEquals(2, urlsAnUserIDs.get(url).size());
-		url = iterator.next();
-		Assert.assertEquals("https://de.wikipedia.org/wiki/Britney_Spears", url);
-		Assert.assertEquals(1, urlsAnUserIDs.get(url).size());
-	}
+	
 
 	@Test
 	public void insertAndGetTweetsTest() throws SQLException {
@@ -59,11 +41,10 @@ public class DBConnectorTest {
 		tweets.add(tweet);
 		tweet = new Tweet("2013-11-12 23:23:12", "tweet2");
 		tweets.add(tweet);
-		TweetGroup group = new TweetGroup("test_title1");
+		TweetGroup group = new TweetGroup("test_title1", "description");
 		group.setTweets(tweets);
-		List<Integer> userIds = Arrays.asList(1, 2, 3);
-		DBConnector.insertTweetGroup("test_URL1", group, userIds);
-		DBConnector.insertTweetGroup("test_URL2", group, userIds);
+		DBConnector.insertTweetGroup(group, 1);
+		DBConnector.insertTweetGroup(group, 2);
 		//TODO  read tweets
 	}
 
@@ -74,11 +55,11 @@ public class DBConnectorTest {
 		user_id = DBConnector.insertNewUser(10, "oauthToken2", "oauthTokenSecret2");
 		Assert.assertEquals(2, user_id);
 		String[] userInfo = DBConnector.getUserConfig(1);
-		Assert.assertEquals("twitter_handle", userInfo[0]);
+		Assert.assertEquals("9", userInfo[0]);
 		Assert.assertEquals("oauthToken", userInfo[1]);
 		Assert.assertEquals("oauthTokenSecret", userInfo[2]);
 		userInfo = DBConnector.getUserConfig(2);
-		Assert.assertEquals("twitter_handle2", userInfo[0]);
+		Assert.assertEquals("10", userInfo[0]);
 		Assert.assertEquals("oauthToken2", userInfo[1]);
 		Assert.assertEquals("oauthTokenSecret2", userInfo[2]);
 	}
@@ -94,25 +75,25 @@ public class DBConnectorTest {
 	
 	@Test 
 	public void insertAndGetGroups(){
-		List<Integer> userIds = Arrays.asList(1, 2, 3);
 		List<Tweet> tweets = new ArrayList<Tweet>();
 		Tweet tweet = new Tweet("1999-11-12 13:23:12", "tweet1");
 		tweets.add(tweet);
 		tweet = new Tweet("2013-11-12 23:23:12", "tweet2");
 		tweets.add(tweet);
-		TweetGroup group = new TweetGroup("test_title1");
+		TweetGroup group = new TweetGroup("title", "description");
 		group.setTweets(tweets);
-		DBConnector.insertTweetGroup("url", group, userIds);
-		group = new TweetGroup("test_title2");
+		DBConnector.insertTweetGroup(group, 10);
+		group = new TweetGroup("title", "description");
 		tweets.add(new Tweet("2015-11-12 14:23:12", "tweet3"));
 		group.setTweets(tweets);
-		DBConnector.insertTweetGroup("test_url2", group,userIds );
-		List<TweetGroup> groups = DBConnector.getActiveGroupsForUser(2);
-		Assert.assertTrue(groups.size() == 0);
-		DBConnector.updateGroupStatus(1, true);
-		groups = DBConnector.getActiveGroupsForUser(1);
-		Assert.assertTrue(groups.size() != 0);
-		System.out.println(groups.get(0).tweets.size());
+		DBConnector.insertTweetGroup(group,10 );
+		List<Integer> groupIDs = DBConnector.getGroupIDsForUser(10);
+		for (Integer groupID : groupIDs) {
+			group = DBConnector.getTweetGroupForUser(10, groupID);
+			Assert.assertTrue(group.description.equals("description"));
+			Assert.assertTrue(group.title.equals("title"));
+			Assert.assertTrue(group.enabled == false);
+		}
 	}
 	
 

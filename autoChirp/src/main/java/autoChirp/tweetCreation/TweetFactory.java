@@ -14,6 +14,11 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import autoChirp.preProcessing.Document;
+import autoChirp.preProcessing.HeidelTimeWrapper;
+import autoChirp.preProcessing.SentenceSplitter;
+import autoChirp.preProcessing.parser.Parser;
+import autoChirp.preProcessing.parser.WikipediaParser;
 import de.unihd.dbs.heideltime.standalone.DocumentType;
 import de.unihd.dbs.heideltime.standalone.OutputType;
 import de.unihd.dbs.heideltime.standalone.POSTagger;
@@ -29,10 +34,14 @@ import de.unihd.dbs.heideltime.standalone.exceptions.DocumentCreationTimeMissing
 
 public class TweetFactory {
 
-	int currentYear;
+	private int currentYear;
 
 	public TweetFactory() {
 		currentYear = LocalDateTime.now().getYear();
+	}
+	
+	public TweetGroup getTweetsFromUrl(String url, Parser parser){
+		return getTweetsFromUrl(url, parser, url);
 	}
 
 	/**
@@ -40,12 +49,29 @@ public class TweetFactory {
 	 * @return tweetsByDate - a map of the detected dates and their including
 	 *         sentences trimmed to a tweet-length of 140 characters @throws
 	 */
-	public TweetGroup getTweets(Document document) {
-		TweetGroup group = new TweetGroup(document.getTitle());
+	public TweetGroup getTweetsFromUrl(String url, Parser parser, String description) {	
+		Document doc = createDocument(url, parser);
+		String[] processedSentences = tagDatesWithHeideltime(doc);
 		List<Tweet> tweets = new ArrayList<Tweet>();
-		HeidelTimeWrapper ht = new HeidelTimeWrapper(document.getLanguage(), DocumentType.NARRATIVES, OutputType.TIMEML,
+		for (int i = 0; i < processedSentences.length; i++) {
+			String sentence = processedSentences[i];
+			List<String> origDates = extractDates(sentence);
+			Tweet tweet;
+			for (String date : origDates) {
+				String tweetDate = getTweetDate(date);
+				tweet = new Tweet(tweetDate,trimToTweet(doc.getSentences().get(i - 1)));		
+			    tweets.add(tweet);			}
+		}
+		currentYear = LocalDateTime.now().getYear();
+		TweetGroup group = new TweetGroup(doc.getTitle(), description);
+		group.setTweets(tweets);
+		return group;
+	}
+
+	private String[] tagDatesWithHeideltime(Document doc) {
+		HeidelTimeWrapper ht = new HeidelTimeWrapper(doc.getLanguage(), DocumentType.NARRATIVES, OutputType.TIMEML,
 				"/heideltime/config.props", POSTagger.TREETAGGER, false);
-		String toProcess = concatSentences(document.getSentences());
+		String toProcess = concatSentences(doc.getSentences());
 		String processed;
 		try {
 			processed = ht.process(toProcess);
@@ -53,21 +79,14 @@ public class TweetFactory {
 			e.printStackTrace();
 			return null;
 		}
-		String[] sentences = processed.split("#SENTENCE#");
-		for (int i = 0; i < sentences.length; i++) {
-			String sentence = sentences[i];
-			List<String> origDates = getDates(sentence);
-			Tweet tweet;
-			for (String date : origDates) {
-				String tweetDate = getTweetDate(date);
-				//List<String> sentenceList = tweetsByDate.get(tweetDate);
-				tweet = new Tweet(tweetDate,trimToTweet(document.getSentences().get(i - 1)));		
-			    tweets.add(tweet);			}
-		}
-		currentYear = LocalDateTime.now().getYear();
-		Collections.sort(tweets);
-		group.setTweets(tweets);
-		return group;
+		return processed.split("#SENTENCE#");
+	}
+
+	private Document createDocument(String url, Parser parser) {
+		Document doc = parser.parse(url);
+        SentenceSplitter splitter = new SentenceSplitter();
+        doc.setSentences(splitter.splitIntoSentences(doc.getText(), doc.getLanguage()));
+        return doc;
 	}
 
 	private String concatSentences(List<String> sentences) {
@@ -86,7 +105,7 @@ public class TweetFactory {
 		return sentence;
 	}
 
-	private List<String> getDates(String processed) {
+	private List<String> extractDates(String processed) {
 		List<String> dates = new ArrayList<String>();
 		String dateRegex = "type=\"DATE\" value=\"([0-9|XXXX]{4}-[0-9]{2}(-[0-9]{2})?)\">";
 		String timeRegex = "type=\"TIME\" value=\"(([0-9]{4}|XXXX)-[0-9]{2}(-[0-9]{2})?)(( [A-Z]{2,4})|(T[0-9]{2}:[0-9]{2}(:[0-9]{2})?))\">";
@@ -110,7 +129,7 @@ public class TweetFactory {
 		return dates;
 	}
 
-	public String getTweetDate(String origDate) {
+	private String getTweetDate(String origDate) {
 		boolean midnight = false;
 		if (origDate.contains(" 00:00")) {
 			midnight = true;
@@ -131,7 +150,6 @@ public class TweetFactory {
 			}
 		
 		}
-		//LocalDateTime ldtOriginal = LocalDateTime.parse(origDate, dtfb.toFormatter());
 		LocalDateTime ldt = LocalDateTime.of(currentYear, ldtOriginal.getMonth(), ldtOriginal.getDayOfMonth(),
 				ldtOriginal.getHour(), ldtOriginal.getMinute());
 		LocalDateTime today = LocalDateTime.now();
