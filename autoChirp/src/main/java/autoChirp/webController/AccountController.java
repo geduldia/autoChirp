@@ -16,56 +16,56 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 @Controller
-@RequestMapping("/account")
-@SessionAttributes("twitter")
+@SessionAttributes("account")
 public class AccountController {
 
 private ConnectionRepository connectionRepository;
-private Twitter twitterConnection;
+private Twitter twitter;
 
 @Inject
-public AccountController(ConnectionRepository connectionRepository, Twitter twitterConnection) {
+public AccountController(ConnectionRepository connectionRepository, Twitter twitter) {
         this.connectionRepository = connectionRepository;
-        this.twitterConnection = twitterConnection;
+        this.twitter = twitter;
 }
 
-@RequestMapping("")
+@RequestMapping("/account")
 public String account() {
         return "account";
 }
 
-@RequestMapping("/login")
+@RequestMapping("/account/login")
 public String login(Model model) {
         if (connectionRepository.findPrimaryConnection(Twitter.class) != null) {
-                Connection<Twitter> connection = connectionRepository.getPrimaryConnection(Twitter.class);
-                UserOperations userOperations = twitterConnection.userOperations();
+                UserOperations userOperations = twitter.userOperations();
                 TwitterProfile twitterProfile = userOperations.getUserProfile();
-                long twitter_id = userOperations.getProfileId();
-                int user_id = DBConnector.checkForUser(twitter_id);
+                Connection<Twitter> twitterConnection = connectionRepository.getPrimaryConnection(Twitter.class);
 
-                if(user_id == -1) {
-                        ConnectionData twitterConnectionData =   connection.createData();
+                long twitterID = userOperations.getProfileId();
+                int userID = DBConnector.checkForUser(twitterID);
+
+                if (userID == -1) {
+                        ConnectionData twitterConnectionData = twitterConnection.createData();
                         String token = twitterConnectionData.getAccessToken();
                         String secret = twitterConnectionData.getSecret();
-                        user_id = DBConnector.insertNewUser(twitter_id, token, secret);
+                        userID = DBConnector.insertNewUser(twitterID, token, secret);
                 }
 
-                Hashtable<String, String> twitter = new Hashtable<String, String>();
-                twitter.put("user_id", Integer.toString(user_id));
-                twitter.put("twitter_id", Long.toString(twitter_id));
-                twitter.put("name", twitterProfile.getName());
-                twitter.put("handle", twitterProfile.getScreenName());
-                twitter.put("description", twitterProfile.getDescription());
-                twitter.put("url", twitterProfile.getProfileUrl());
-                twitter.put("image", twitterProfile.getProfileImageUrl());
-                twitter.put("protected", String.valueOf(twitterProfile.isProtected()));
-                model.addAttribute("twitter", twitter);
+                Hashtable<String, String> account = new Hashtable<String, String>();
+                account.put("userID", Integer.toString(userID));
+                account.put("twitterID", Long.toString(twitterID));
+                account.put("name", twitterProfile.getName());
+                account.put("handle", twitterProfile.getScreenName());
+                account.put("description", twitterProfile.getDescription());
+                account.put("url", twitterProfile.getProfileUrl());
+                account.put("image", twitterProfile.getProfileImageUrl());
+                account.put("protected", String.valueOf(twitterProfile.isProtected()));
+                model.addAttribute("account", account);
         }
 
         return "redirect:/account";
 }
 
-@RequestMapping("/logout")
+@RequestMapping("/account/logout")
 public String logout(SessionStatus sessionStatus) {
         connectionRepository.removeConnections("twitter");
         sessionStatus.setComplete();

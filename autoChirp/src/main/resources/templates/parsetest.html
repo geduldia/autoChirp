@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="../elements/include :: head (title='Parse test')"></head>
+<head th:replace="../elements/header (title='Parse test')"></head>
 
 <body>
-  <nav th:replace="../elements/include :: navbar"></nav>
+  <nav th:replace="../elements/navbar"></nav>
 
   <div class="wrapper">
     <div class="container">
@@ -36,8 +36,8 @@
   </div>
 
 
-  <footer th:replace="../elements/include :: footer"></footer>
-  <div th:replace="../elements/include :: scripts"></div>
+  <footer th:replace="../elements/footer"></footer>
+  <div th:replace="../elements/scripts"></div>
 </body>
 
 </html>

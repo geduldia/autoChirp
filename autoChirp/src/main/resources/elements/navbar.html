@@ -1,0 +1,48 @@
+<nav th:fragment="navbar" class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a th:href="@{/home}" class="navbar-brand">autoChirp</a>
+    </div>
+    <div id="navbar" class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li th:classappend="${#httpServletRequest.requestURI.equals('/home')} ? 'active'"><a th:href="@{/home}">Home</a></li>
+        <li th:classappend="${#httpServletRequest.requestURI.equals('/about')} ? 'active'"><a th:href="@{/about}">About</a></li>
+        <li th:classappend="${#httpServletRequest.requestURI.equals('/contact')} ? 'active'"><a th:href="@{/contact}">Contact</a></li>
+        <li th:classappend="${#httpServletRequest.requestURI.equals('/help')} ? 'active'"><a th:href="@{/help}">Help</a></li>
+      </ul>
+      <form th:unless="${account != null}" th:action="@{/connect/twitter}" method="post" class="navbar-form navbar-right">
+        <button class="btn btn-primary" type="submit">Login with Twitter</button>
+      </form>
+      <ul th:if="${account != null}" class="nav navbar-nav navbar-right">
+        <li th:classappend="${#httpServletRequest.requestURI.equals('/dashboard')} ? 'active'"><a th:href="@{/dashboard}">Dashboard</a></li>
+        <li th:classappend="${#httpServletRequest.requestURI.startsWith('/tweets')} ? 'active'" class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tweets <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a th:href="@{/tweets/view}">View tweets</a></li>
+            <li><a th:href="@{/tweets/add}">Add new tweet</a></li>
+          </ul>
+        </li>
+        <li th:classappend="${#httpServletRequest.requestURI.startsWith('/groups')} ? 'active'" class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Groups <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a th:href="@{/groups/view}">View groups</a></li>
+            <li><a th:href="@{/groups/add}">Add new group</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a th:href="@{/groups/import}">Import group</a></li>
+          </ul>
+        </li>
+        <li th:classappend="${#httpServletRequest.requestURI.equals('/tests')} ? 'active'"><a th:href="@{/tests}">Tests</a></li>
+        <li th:classappend="${#httpServletRequest.requestURI.equals('/account')} ? 'active'">
+          <a th:href="@{/account}" class="image"><img th:src="${account.image}"></img>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

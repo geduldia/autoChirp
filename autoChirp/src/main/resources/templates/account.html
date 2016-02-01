@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="../elements/include :: head (title='Account details')"></head>
+<head th:replace="../elements/header (title='Account details')"></head>
 
 <body>
-  <nav th:replace="../elements/include :: navbar"></nav>
+  <nav th:replace="../elements/navbar"></nav>
 
-  <div th:unless="${twitter != null}" class="wrapper">
+  <div th:unless="${account != null}" class="wrapper">
     <div class="jumbotron">
       <div class="container">
         <h1><strong>Not authorized.</strong> Please login.</h1>
@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <div th:if="${twitter != null}" class="wrapper">
+  <div th:if="${account != null}" class="wrapper">
     <div class="container">
       <div class="row">
         <div class="col-md-12">
@@ -30,7 +30,7 @@
             <div class="panel-body">
               <dl class="dl-horizontal">
                 <dt>Account id</dt>
-                <dd th:text="${twitter.user_id}"></dd>
+                <dd th:text="${account.userID}"></dd>
                 <dt>Group count</dt>
                 <dd>42</dd>
                 <dt>Tweet count</dt>
@@ -51,16 +51,16 @@
               <dl class="dl-horizontal">
                 <dt>Twitter handle</dt>
                 <dd>
-                  <a th:href="${twitter.url}" th:text="'@' + ${twitter.handle}" target="_blank"></a>
+                  <a th:href="${account.url}" th:text="'@' + ${account.handle}" target="_blank"></a>
                 </dd>
                 <dt>Twitter ID</dt>
-                <dd th:text="${twitter.twitter_id}"></dd>
+                <dd th:text="${account.twitterID}"></dd>
                 <dt>Full name</dt>
-                <dd th:text="${twitter.name}"></dd>
+                <dd th:text="${account.name}"></dd>
                 <dt>Twitter bio</dt>
-                <dd th:text="${twitter.description}"></dd>
+                <dd th:text="${account.description}"></dd>
                 <dt>Protected</dt>
-                <dd th:text="${twitter.protected}"></dd>
+                <dd th:text="${account.protected}"></dd>
               </dl>
             </div>
             <div class="panel-footer text-right">
@@ -74,8 +74,8 @@
     </div>
   </div>
 
-  <footer th:replace="../elements/include :: footer"></footer>
-  <div th:replace="../elements/include :: scripts"></div>
+  <footer th:replace="../elements/footer"></footer>
+  <div th:replace="../elements/scripts"></div>
 </body>
 
 </html>
