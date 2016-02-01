@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="../elements/header (title='Tweet')"></head>
+
+<body>
+  <nav th:replace="../elements/navbar"></nav>
+
+  <div class="wrapper">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Tweet details
+            <small>View and edit Your tweet</small></h2>
+          <hr></hr>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label for="tweetGroup" class="col-sm-2 control-label">Group Mapping</label>
+              <div class="col-sm-10">
+                <input type="text" list="tweetGroups" class="form-control" id="tweetGroup" name="tweetGroup" placeholder="Enter new group name or select from dropdown"
+                  th:value="${#httpServletRequest.requestURI.startsWith('/tweets/add')} ? '' : tweetEntry.groupID"
+                  th:disabled="${#httpServletRequest.requestURI.startsWith('/tweets/view/')}">
+                </input>
+                <!--
+                <datalist th:unless="${#httpServletRequest.requestURI.startsWith('/tweets/view/')}" id="tweetGroups">
+                  <option th:each="tweetGroup : ${tweetGroups}" th:label="${tweetGroup.title}" th:value="tweetGroup.groupID"></option>
+                </datalist>
+                -->
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="content" class="col-sm-2 control-label">Tweet Content</label>
+              <div class="col-sm-10">
+                <textarea class="form-control" id="content" name="content" rows="3" placeholder="Maximum 140 characters"
+                  th:text="${#httpServletRequest.requestURI.startsWith('/tweets/add')} ? '' : ${tweetEntry.content}"
+                  th:disabled="${#httpServletRequest.requestURI.startsWith('/tweets/view/')}">
+                </textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="tweetDate" class="col-sm-2 control-label">Scheduling</label>
+              <div class="col-sm-10">
+                <input type="datetime" class="form-control" id="tweetDate" name="tweetDate" placeholder="YYYY-MM-DD HH:MM:SS"
+                  th:value="${#httpServletRequest.requestURI.startsWith('/tweets/add')} ? '' : ${tweetEntry.tweetDate}"
+                  th:disabled="${#httpServletRequest.requestURI.startsWith('/tweets/view/')}">
+                </input>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <a th:unless="${#httpServletRequest.requestURI.startsWith('/tweets/add')}" th:href="@{/tweets/delete/} + ${tweetEntry.tweetID}" class="btn btn-danger">
+                  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete tweet
+                </a>
+                <a th:if="${#httpServletRequest.requestURI.startsWith('/tweets/view/')}" th:href="@{/tweets/edit/} + ${tweetEntry.tweetID}" class="btn btn-primary">
+                  <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit tweet
+                </a>
+                <button th:unless="${#httpServletRequest.requestURI.startsWith('/tweets/view/')}" type="submit" class="btn btn-success">
+                  <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save tweet</button>
+              </div>
+            </div>
+            <input th:if="${#httpServletRequest.requestURI.startsWith('/tweets/edit/')}" type="hidden" id="tweetID" name="tweetID" value="${tweetEntry.tweetID}">
+            </input>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer th:replace="../elements/footer"></footer>
+  <div th:replace="../elements/scripts"></div>
+</body>
+
+</html>
