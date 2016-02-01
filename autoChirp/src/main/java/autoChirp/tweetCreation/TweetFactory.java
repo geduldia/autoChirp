@@ -25,29 +25,50 @@ import de.unihd.dbs.heideltime.standalone.POSTagger;
 import de.unihd.dbs.heideltime.standalone.exceptions.DocumentCreationTimeMissingException;
 
 /**
- * @author geduldia
+ * @author Alena Geduldig
  * 
- *         A class to generate date-related tweets from a document using
- *         Heideltime as temporal Tagger
+ *         A class to generate Tweets and TweetGroups from different input-data
  *
  */
 
 public class TweetFactory {
 
+	// is needed for tweetDate creation
 	private int currentYear;
 
 	public TweetFactory() {
 		currentYear = LocalDateTime.now().getYear();
 	}
 	
+	/**
+	 * creates a TweetGroup-Object from the given url. Uses the url as group-title
+	 *    1. Creates a Document-object with the given Parser
+	 *    2. Splits text into sentences using the SentenceSplitter
+	 *    3. Tags dates using HeidelTime
+	 *    4. Calculates the tweetDate for each tagged date and initialize Tweet-object
+	 *    5. Initializes TweetGroup
+	 * @param url
+	 * @param parser
+	 *        - the appropriate parser for the given url (e.g. WikipediaParser for Wikipedia-urls)
+	 * @return a new TweetGroup-object
+	 */
 	public TweetGroup getTweetsFromUrl(String url, Parser parser){
 		return getTweetsFromUrl(url, parser, url);
 	}
 
 	/**
-	 * @param document
-	 * @return tweetsByDate - a map of the detected dates and their including
-	 *         sentences trimmed to a tweet-length of 140 characters @throws
+	 * creates a TweetGroup-Object from the given url.
+	 *    1. Creates a Document-object with the given Parser
+	 *    2. Splits text into sentences using the SentenceSplitter
+	 *    3. Tags dates using HeidelTime
+	 *    4. Calculates the tweetDate for each tagged date and initialize Tweet-object
+	 *    5. Initializes TweetGroup
+	 * @param url 
+	 * @param parser
+	 *        - the appropriate parser for the given url (e.g. WikipediaParser for Wikipedia-urls)
+	 * @param description
+	 *        - description-attribute for the created TweetGroup
+	 * @return a new TweetGroup-object
 	 */
 	public TweetGroup getTweetsFromUrl(String url, Parser parser, String description) {	
 		Document doc = createDocument(url, parser);
@@ -68,10 +89,14 @@ public class TweetFactory {
 		return group;
 	}
 
-	private String[] tagDatesWithHeideltime(Document doc) {
-		HeidelTimeWrapper ht = new HeidelTimeWrapper(doc.getLanguage(), DocumentType.NARRATIVES, OutputType.TIMEML,
+	/**
+	 * @param document
+	 * @return a list of date-tagged sentences
+	 */
+	private String[] tagDatesWithHeideltime(Document document) {
+		HeidelTimeWrapper ht = new HeidelTimeWrapper(document.getLanguage(), DocumentType.NARRATIVES, OutputType.TIMEML,
 				"/heideltime/config.props", POSTagger.TREETAGGER, false);
-		String toProcess = concatSentences(doc.getSentences());
+		String toProcess = concatSentences(document.getSentences());
 		String processed;
 		try {
 			processed = ht.process(toProcess);
@@ -82,10 +107,15 @@ public class TweetFactory {
 		return processed.split("#SENTENCE#");
 	}
 
+	/**
+	 * @param url
+	 * @param parser
+	 * @return
+	 */
 	private Document createDocument(String url, Parser parser) {
 		Document doc = parser.parse(url);
-        SentenceSplitter splitter = new SentenceSplitter();
-        doc.setSentences(splitter.splitIntoSentences(doc.getText(), doc.getLanguage()));
+        SentenceSplitter splitter = new SentenceSplitter(doc.getLanguage());
+        doc.setSentences(splitter.splitIntoSentences(doc.getText()));
         return doc;
 	}
 

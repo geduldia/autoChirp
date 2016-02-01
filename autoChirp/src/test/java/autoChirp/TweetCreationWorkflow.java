@@ -51,8 +51,8 @@ public class TweetCreationWorkflow {
 				DBConnector.insertTweetGroup(group, user);
 			}
 			for (Tweet tweet : group.tweets) {
-				System.out.print(tweet.getTweetDate()+": ");
-				System.out.println(tweet.getContent());
+				System.out.print(tweet.tweetDate+": ");
+				System.out.println(tweet.content);
 			}
 			System.out.println();
 		}

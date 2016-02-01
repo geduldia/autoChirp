@@ -3,10 +3,10 @@ package autoChirp.preProcessing.parser;
 import autoChirp.preProcessing.Document;
 
 /**
- * @author geduldia
+ * @author Alena Geduldig
  * 
  * A simple Interface for a Parser (e.g. WikipediaParser)
- * It just ensures that each Parser has to return a Document-Object consisting of text, title, url and language.
+ * Ensures that each Parser has to return a Document-Object consisting of text, title, url and language.
  *
  */
 
@@ -15,9 +15,9 @@ public interface Parser {
 	
 	
 	/**
-	 * creates a Document-Object from an url including text title, url and langauge
-	 * @param url - to parse
-	 * @return
+	 * creates a Document-Object from an url including text, title, url and langauge
+	 * @param url 
+	 * @return a document object
 	 */
 	public Document parse(String url);
 	

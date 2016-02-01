@@ -198,8 +198,8 @@ public class DBConnector {
 				for (Tweet tweet : tweetGroup.tweets) {
 					prepTweets.setInt(1, userID);
 					prepTweets.setInt(2, group_id);
-					prepTweets.setString(3, tweet.getTweetDate());
-					prepTweets.setString(4, tweet.getContent());
+					prepTweets.setString(3, tweet.tweetDate);
+					prepTweets.setString(4, tweet.content);
 					prepTweets.setBoolean(5, false);
 					prepTweets.setBoolean(6, false);
 					prepTweets.executeUpdate();
@@ -446,7 +446,7 @@ public class DBConnector {
 		try {
 			connection.setAutoCommit(false);
 			Statement stmt = connection.createStatement();
-			String sql = "UPDATE tweets SET tweeted = 'true' WHERE (tweet_id = '"+tweet.getTweetID()+"')";
+			String sql = "UPDATE tweets SET tweeted = 'true' WHERE (tweet_id = '"+tweet.tweetID+"')";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			connection.commit();
@@ -460,7 +460,7 @@ public class DBConnector {
 		try {
 			connection.setAutoCommit(false);
 			Statement stmt = connection.createStatement();
-			String sql = "UPDATE tweets SET scheduled = 'true' WHERE (tweet_id = '"+tweet.getTweetID()+"')";
+			String sql = "UPDATE tweets SET scheduled = 'true' WHERE (tweet_id = '"+tweet.tweetID+"')";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			connection.commit();

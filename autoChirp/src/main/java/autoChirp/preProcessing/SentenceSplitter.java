@@ -10,7 +10,7 @@ import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 
 /**
- * @author geduldia
+ * @author Alena Geduldig
  * 
  * A class to split text into sentences using the OpenNLP SentenceDetector
  *
@@ -18,25 +18,22 @@ import opennlp.tools.sentdetect.SentenceModel;
 
 
 public  class SentenceSplitter {
-	
-	
+		
 	private SentenceModel sentenceModel;
 	private Language language;
 	
 	/**
+	 * initialize a SentenceSplitter for the given language
 	 * @param language
 	 */
 	public SentenceSplitter(Language language){
 			setSentenceSplittingModel(language);
 	}
 	
-	public SentenceSplitter(){
-		
-	}
 	
 	/**
+	 * loads the SentenceModel for the given language
 	 * @param language
-	 * loads the sentencemodel for a given language
 	 * 
 	 */
 	private void setSentenceSplittingModel(Language language){
@@ -60,14 +57,12 @@ public  class SentenceSplitter {
 	}
 
 	/**
-	 * @param text - text to split
+	 * @param text
+	 *        - text to split
 	 * @param language
-	 * @return
+	 * @return list of sentences
 	 */
-	public List<String> splitIntoSentences(String text, Language language){
-		if(this.language != language){
-			setSentenceSplittingModel(language);
-		}
+	public List<String> splitIntoSentences(String text){
 		String[] sentences = null;
 		SentenceDetectorME detector = new SentenceDetectorME(sentenceModel);
 		sentences = detector.sentDetect(text);	

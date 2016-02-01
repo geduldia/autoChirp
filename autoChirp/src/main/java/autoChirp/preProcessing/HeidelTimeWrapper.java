@@ -16,12 +16,12 @@ import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
 
 
 /**
- * @author geduldia
+ * @author Alena Geduldig, Philip Schildkamp
  *
  *
  * A Wrapper-Class for HeideltimeStandalone
  *
- * Overrides the readConfigsFile()  Method to avoid using a FileInputStrean
+ * Overrides the readConfigsFile()- Method to avoid using a FileInputStrean
  *
  */
 public class HeidelTimeWrapper extends HeidelTimeStandalone {
@@ -49,18 +49,16 @@ public class HeidelTimeWrapper extends HeidelTimeStandalone {
 
 
 	/**
-	 * @param configPath - Path to config.props
+	 * @param configPath 
+	 *        - Path to config.props
 	 */
 	public static void readConfigFile(String configPath) {
 		InputStream configStream = null;
 		try {
 			configStream = HeidelTimeWrapper.class.getResourceAsStream(configPath);
-
 			Properties props = new Properties();
 			props.load(configStream);
-
 			Config.setProps(props);
-
 			configStream.close();
 		} catch (FileNotFoundException e) {
 			System.exit(-1);

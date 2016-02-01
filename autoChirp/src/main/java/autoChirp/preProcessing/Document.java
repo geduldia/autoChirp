@@ -6,9 +6,10 @@ import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
 
 
 /**
- * @author geduldia
+ * @author Alena Geduldig
  * 
- * represents a document created from an url consisting of plain-text, url, title, and language.
+ * Represents a document created from an url. 
+ * Consists of text, url, title, and language.
  * 
  *
  */
@@ -27,8 +28,6 @@ public class Document {
 	 * @param title
 	 * @param language
 	 */
-
-	
 	public Document(String text, String url, String title, Language language){
 		this.text = text;
 		this.url = url;
@@ -67,7 +66,8 @@ public class Document {
 	}
 	
 	/**
-	 * @param sentences  - text splitted into sentences
+	 * @param sentences  
+	 *        - text splitted into sentences
 	 */
 	public void setSentences(List<String> sentences){
 		this.sentences = sentences;
@@ -81,7 +81,6 @@ public class Document {
 	}
 
 
-	
 	
 
 }

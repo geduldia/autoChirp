@@ -21,7 +21,7 @@ import autoChirp.tweetCreation.TweetGroup;
 
 public class DBConnectorTest {
 
-	private static String dbPath = "src/test/resources";
+	private static String dbPath = "src/test/resources/";
 	private static String dbFileName = "autoChirp.db";
 	private static String dbCreationFileName = "src/main/resources/database/createDatabaseFile.sql";
 

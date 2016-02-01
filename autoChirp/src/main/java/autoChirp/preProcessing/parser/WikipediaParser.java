@@ -4,21 +4,18 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
-import org.cyberneko.html.HTMLConfiguration;
 import org.cyberneko.html.parsers.DOMParser;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import autoChirp.preProcessing.Document;
 import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
 
-//TODO Encoding
+
 /**
- * @author geduldia
+ * @author Alena Geduldig
  * 
- * A Parser for Wikipedia-Urls
+ * A Parser for Wikipedia-urls
  *
  */
 public class WikipediaParser implements Parser {
@@ -27,9 +24,7 @@ public class WikipediaParser implements Parser {
 	private boolean hasTitle;
 	private String title;
 	private DOMParser domParser = new DOMParser();
-	/**
-	 * regex for footnotes
-	 */
+	// regex for footnotes in wikipedis
 	private String  regex = "((\\[[0-9]+\\])+(:[0-9]+)?)";
 	
 	/* (non-Javadoc)
@@ -53,22 +48,30 @@ public class WikipediaParser implements Parser {
 	}
 
 	/**
-	 * returns the language of a wikipedia-article taken from the url
+	 * returns the language of a wikipedia-article taken from its url
 	 * @param url
 	 * @return language 
 	 * 
 	 */
 	private Language getLanguage(String url) {
-		
 		String lang = url.split("://")[1].substring(0,2);
-		if(lang.equals("de")){
-			return Language.GERMAN;
-		}
-		else{
+		switch (lang) {
+		case "en": return Language.ENGLISH;
+		case "de": return Language.GERMAN;
+		case "fr": return Language.FRENCH;
+		case "es": return Language.SPANISH;
+		default:
+			System.out.println("WARNING: unknown Language!  ");
 			return Language.ENGLISH;
 		}
+		
+		
 	}
-
+	/**
+	 * appends the content of each p-element to the documents text
+	 * and selects the first h1-element as title
+	 * @param node
+	 */
 	private void process(Node node) {
 		String elementName = node.getNodeName().toLowerCase().trim();
 		//takes the content of the first h1-element as title
@@ -99,6 +102,14 @@ public class WikipediaParser implements Parser {
 		if (hasTitle == false) {
 			title = "ohne Titel";
 		}
+	}
+	/**
+	 * sets the documents title to the given string
+	 * @param title
+	 */
+	public void setTitle(String title){
+		this.hasTitle = true;
+		this.title = title;
 	}
 
 }
