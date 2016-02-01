@@ -55,17 +55,20 @@ public class WikipediaParser implements Parser {
 	 */
 	private Language getLanguage(String url) {
 		String lang = url.split("://")[1].substring(0,2);
-		switch (lang) {
-		case "en": return Language.ENGLISH;
-		case "de": return Language.GERMAN;
-		case "fr": return Language.FRENCH;
-		case "es": return Language.SPANISH;
-		default:
-			System.out.println("WARNING: unknown Language!  ");
+		if(lang.equals("en")){
 			return Language.ENGLISH;
 		}
-		
-		
+		if(lang.equals("de")){
+			return Language.GERMAN;
+		}
+		if(lang.equals("fr")){
+			return Language.FRENCH;
+		}
+		if(lang.equals("es")){
+			return Language.SPANISH;
+		}
+		System.out.println("WARNING: unknown Language!  ");
+		return Language.ENGLISH;		
 	}
 	/**
 	 * appends the content of each p-element to the documents text
