@@ -24,7 +24,7 @@ import autoChirp.tweetCreation.TweetFactory;
 import autoChirp.tweetCreation.TweetGroup;
 
 @Controller
-@SessionAttributes("twitter")
+@SessionAttributes("account")
 public class TestsController {
 
 private ConnectionRepository connectionRepository;
@@ -38,16 +38,14 @@ public TestsController(ConnectionRepository connectionRepository, Twitter twitte
 
 @RequestMapping(value = "/tests", method = RequestMethod.GET)
 public ModelAndView tests(Model model) {
-        // if (!model.containsAttribute("twitter"))
-        //         return new ModelAndView("redirect:/account");
+        if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
 
         return new ModelAndView("tests");
 }
 
 @RequestMapping(value = "/tests", method = RequestMethod.POST, params = "tweet")
 public ModelAndView tweetpost(Model model, @RequestParam("tweet") String tweet) {
-        // if (!model.containsAttribute("twitter"))
-        //         return new ModelAndView("redirect:/account");
+        if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
 
         TimelineOperations timelineOperations = twitterConnection.timelineOperations();
         TweetData tweetData = new TweetData(tweet);
@@ -58,8 +56,7 @@ public ModelAndView tweetpost(Model model, @RequestParam("tweet") String tweet) 
 
 @RequestMapping(value = "/tests", method = RequestMethod.POST, params = "url")
 public ModelAndView urlpost(Model model, @RequestParam("url") String url) {
-        // if (!model.containsAttribute("twitter"))
-        //         return new ModelAndView("redirect:/account");
+        if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
 
         TweetFactory tweeter = new TweetFactory();
         TweetGroup group = tweeter.getTweetsFromUrl(url, new WikipediaParser(), "description");

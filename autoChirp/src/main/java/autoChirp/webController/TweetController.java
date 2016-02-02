@@ -33,13 +33,13 @@ public ModelAndView dashboard(Model model) {
 public ModelAndView viewGroups(Model model) {
         if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
 
-        List<TweetGroup> tweetsGroups = new ArrayList<TweetGroup>();
+        List<TweetGroup> tweetGroups = new ArrayList<TweetGroup>();
 
-        for (int i = 1; i < 11; i++)
-                tweetsGroups.add(new TweetGroup("Gruppe " + i, "Jaja, ist alles dassselbe. Einfach für die Datenstruktur.", i != 5));
+        for (int i = 0; i < 10; i++)
+          tweetGroups.add(new TweetGroup("String title [" + i + "]", "String description [" + i + "]", i != 5));
 
         ModelAndView mv = new ModelAndView("groups");
-        mv.addObject("tweetsGroups", tweetsGroups);
+        mv.addObject("tweetGroups", tweetGroups);
 
         return mv;
 }
@@ -49,9 +49,14 @@ public ModelAndView viewGroup(Model model, @PathVariable int groupID) {
         if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
 
         TweetGroup tweetGroup = new TweetGroup("String title", "String description", true);
+        List<Tweet> tweetsList = new ArrayList<Tweet>();
+
+        for (int i = 0; i < 20; i++)
+                tweetsList.add(new Tweet("String tweetDate [" + i + "]", "String content [" + i + "]", i, true, false));
 
         ModelAndView mv = new ModelAndView("group");
         mv.addObject("tweetGroup", tweetGroup);
+        mv.addObject("tweetsList", tweetsList);
 
         return mv;
 }
@@ -97,8 +102,8 @@ public ModelAndView viewTweets(Model model) {
 
         List<Tweet> tweetsList = new ArrayList<Tweet>();
 
-        for (int i = 1; i < 21; i++)
-                tweetsList.add(new Tweet("Zeiteinheit " + i, "Jaja, ist alles dassselbe. Einfach für die Datenstruktur."));
+        for (int i = 0; i < 20; i++)
+                tweetsList.add(new Tweet("String tweetDate [" + i + "]", "String content [" + i + "]", i, true, false));
 
         ModelAndView mv = new ModelAndView("tweets");
         mv.addObject("tweetsList", tweetsList);
@@ -110,7 +115,7 @@ public ModelAndView viewTweets(Model model) {
 public ModelAndView viewTweet(Model model, @PathVariable int tweetID) {
         if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
 
-        Tweet tweetEntry = new Tweet("bald", "Der inhalt dieses feinen tweets", tweetID, true, true);
+        Tweet tweetEntry = new Tweet("String tweetDate", "String content", tweetID, true, true);
 
         ModelAndView mv = new ModelAndView("tweet");
         mv.addObject("tweetEntry", tweetEntry);
@@ -122,7 +127,14 @@ public ModelAndView viewTweet(Model model, @PathVariable int tweetID) {
 public ModelAndView addTweet(Model model) {
         if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
 
+        List<TweetGroup> tweetGroups = new ArrayList<TweetGroup>();
+
+        for (int i = 0; i < 10; i++)
+          tweetGroups.add(new TweetGroup("String title [" + i + "]", "String description [" + i + "]"));
+
         ModelAndView mv = new ModelAndView("tweet");
+        mv.addObject("tweetGroups", tweetGroups);
+
         return mv;
 }
 
@@ -130,9 +142,14 @@ public ModelAndView addTweet(Model model) {
 public ModelAndView editTweet(Model model, @PathVariable int tweetID) {
         if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
 
-        Tweet tweetEntry = new Tweet("bald", "Der inhalt dieses feinen tweets", tweetID, true, true);
+        Tweet tweetEntry = new Tweet("String tweetDate", "String content", tweetID, true, true);
+        List<TweetGroup> tweetGroups = new ArrayList<TweetGroup>();
+
+        for (int i = 0; i < 10; i++)
+          tweetGroups.add(new TweetGroup("String title [" + i + "]", "String description [" + i + "]"));
 
         ModelAndView mv = new ModelAndView("tweet");
+        mv.addObject("tweetGroups", tweetGroups);
         mv.addObject("tweetEntry", tweetEntry);
 
         return mv;
@@ -143,14 +160,6 @@ public String deleteTweet(Model model, @PathVariable int tweetID) {
         if (!model.containsAttribute("account")) return "redirect:/account";
 
         return "redirect:/tweets/view";
-}
-
-@RequestMapping(value = "/tweets/direct")
-public ModelAndView tweet(Model model) {
-        if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
-
-        ModelAndView mv = new ModelAndView("direct");
-        return mv;
 }
 
 }

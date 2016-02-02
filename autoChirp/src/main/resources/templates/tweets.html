@@ -18,20 +18,6 @@
       <div class="row">
         <div class="col-md-12">
           <div class="panel panel-primary">
-            <div class="panel-heading">&nbsp;
-              <span class="pull-right">
-              <a class="btn btn-default btn-xs" href="#" role="button">Show disabled tweets</a>
-              <div class="btn-group">
-                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Entries per page <span class="caret"></span></button>
-                <ul class="dropdown-menu">
-                  <li><a href="#">Display 10 entries</a></li>
-                  <li><a href="#">Display 25 entries</a></li>
-                  <li><a href="#">Display 50 entries</a></li>
-                </ul>
-              </div>
-              </span>
-            </div>
             <table class="table table-hover">
               <thead>
                 <tr>
@@ -47,8 +33,8 @@
                   <td th:text="${tweetEntry.content}"></td>
                   <td th:text="${tweetEntry.tweetDate}" class="text-center"></td>
                   <td class="text-right">
-                    <a th:href="@{/tweets/view/} + ${tweetEntry.tweetID}"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
-                    <a th:href="@{/tweets/edit/} + ${tweetEntry.tweetID}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+                    <a th:href="@{/tweets/view/} + ${tweetEntry.tweetID}">View</a> |
+                    <a th:href="@{/tweets/edit/} + ${tweetEntry.tweetID}">Edit</a>
                   </td>
                 </tr>
               </tbody>
