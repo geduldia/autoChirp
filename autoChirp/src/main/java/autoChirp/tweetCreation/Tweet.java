@@ -10,6 +10,7 @@ public class Tweet implements Comparable<Tweet> {
 	public String tweetDate;
 	public String content;
 	public int tweetID;
+	public int groupID;
 	public boolean scheduled;
 	public boolean tweeted;
 	
@@ -22,12 +23,13 @@ public class Tweet implements Comparable<Tweet> {
 	 * @param scheduled
 	 * @param tweeted
 	 */
-	public Tweet(String tweetDate, String content, int tweetID, boolean scheduled, boolean tweeted){
+	public Tweet(String tweetDate, String content, int tweetID, int groupID, boolean scheduled, boolean tweeted){
 		this.tweetDate = tweetDate;
 		this.content = content;
 		this.tweetID = tweetID;
 		this.scheduled = scheduled;
 		this.tweeted = tweeted;
+		this.groupID = groupID;
 	}
 	
 	/**
@@ -35,10 +37,10 @@ public class Tweet implements Comparable<Tweet> {
 	 * @param tweetDate
 	 * @param content
 	 */
-	public Tweet(String tweetDate, String content){
-		this.tweetDate = tweetDate;
-		this.content = content;
-	}
+//	public Tweet(String tweetDate, String content){
+//		this.tweetDate = tweetDate;
+//		this.content = content;
+//	}
 	
 	
 	

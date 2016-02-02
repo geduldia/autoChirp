@@ -1,13 +1,17 @@
 package autoChirp.webController;
 
+import autoChirp.DBConnector;
 import autoChirp.tweetCreation.Tweet;
 import autoChirp.tweetCreation.TweetGroup;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.stereotype.Controller;
@@ -97,13 +101,12 @@ public String deleteGroup(Model model, @PathVariable int groupID) {
 }
 
 @RequestMapping(value = "/tweets/view")
-public ModelAndView viewTweets(Model model) {
+public ModelAndView viewTweets(Model model, HttpSession session) {
         if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
-
-        List<Tweet> tweetsList = new ArrayList<Tweet>();
-
-        for (int i = 0; i < 20; i++)
-                tweetsList.add(new Tweet("String tweetDate [" + i + "]", "String content [" + i + "]", i, true, false));
+        int userID = Integer.parseInt(((Hashtable<String,String>) session.getAttribute("account")).get("userID"));
+        System.out.println(userID);
+        
+        List<Tweet> tweetsList = DBConnector.getTweetsForUser(userID,true, false);
 
         ModelAndView mv = new ModelAndView("tweets");
         mv.addObject("tweetsList", tweetsList);
