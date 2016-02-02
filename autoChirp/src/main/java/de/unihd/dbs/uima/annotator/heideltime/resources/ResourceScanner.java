@@ -51,7 +51,7 @@ public class ResourceScanner {
     filePath = filePath.replace("!/", "");
 
     File jarFile = new File(filePath);
-
+    System.out.println("jarfile: "+jarFile.getPath());
 		if (jarFile.isFile()) {
 			// scan the interior of a jar file
 			JarFile jar = null;
@@ -82,15 +82,15 @@ public class ResourceScanner {
 			// File outFolder = jarFile.getParentFile();
 			// this.scanValidOutsideResourcesFolder(outFolder);
 		}
-    // else {
-		// 	// scan the immediate folders of the local classpath
-		// 	this.scanValidOutsideResourcesFolder(jarFile);
-		// 	// scan the folder "../resources" if it exists
-		// 	File outFolder = new File(jarFile.getParentFile(), path);
-		// 	if(outFolder.exists()) {
-		// 		this.scanValidOutsideResourcesFolder(outFolder);
-		// 	}
-		// }
+     else {
+		 	// scan the immediate folders of the local classpath
+		 	this.scanValidOutsideResourcesFolder(jarFile);
+		 	// scan the folder "../resources" if it exists
+		 	File outFolder = new File(jarFile.getParentFile(), path);
+		 	if(outFolder.exists()) {
+		 		this.scanValidOutsideResourcesFolder(outFolder);
+		 	}
+		 }
 
 		// populate languages list
 		languages.addAll(repatterns.keySet());
@@ -183,9 +183,8 @@ public class ResourceScanner {
 		Pattern repatternPattern = Pattern.compile("resources_repattern_(.+)\\.txt$");
 		Pattern normalizationPattern = Pattern.compile("resources_normalization_(.+)\\.txt$");
 		Pattern rulePattern = Pattern.compile("resources_rules_(.+)\\.txt$");
-
+		resourcePath = new File(resourcePath.getPath()+"/heideltime/languages");
 		File[] pathContents = resourcePath.listFiles();
-
 		for (File supposedLanguagePath : pathContents) {
 			String language = supposedLanguagePath.getName();
 			if (supposedLanguagePath.isDirectory()) {
