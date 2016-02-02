@@ -22,11 +22,11 @@
               <label for="tweetGroup" class="col-sm-2 control-label">Group Mapping</label>
               <div class="col-sm-10">
                 <input type="text" list="tweetGroups" class="form-control" id="tweetGroup" name="tweetGroup" placeholder="Enter new group name or select from dropdown"
-                  th:value="${#httpServletRequest.requestURI.startsWith('/tweets/add')} ? '' : tweetEntry.groupID"
-                  th:disabled="${#httpServletRequest.requestURI.startsWith('/tweets/view/')}">
+                  th:value="${#httpServletRequest.requestURI.startsWith('/tweets/add')} ? '' : ${tweetEntry.groupName}"
+                  th:disabled="!${#httpServletRequest.requestURI.startsWith('/tweets/add')}">
                 </input>
                 <datalist th:unless="${#httpServletRequest.requestURI.startsWith('/tweets/view/')}" id="tweetGroups">
-                  <option th:each="tweetGroup : ${tweetGroups}" th:label="${tweetGroup.title}" th:value="tweetGroup.groupID">[[${tweetGroup.title}]]</option>
+                  <option th:each="tweetGroup : ${tweetGroups}" th:label="${tweetGroup.title}" th:value="tweetGroup.groupID"></option>
                 </datalist>
               </div>
             </div>

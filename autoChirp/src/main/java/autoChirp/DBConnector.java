@@ -509,9 +509,35 @@ public class DBConnector {
 	}
 	
 	
+	public static Tweet getTweetByID(int tweetID){
+		Tweet toReturn = null;
+		try {
+			connection.setAutoCommit(false);
+			Statement stmt = connection.createStatement();
+			String sql = "SELECT * FROM tweets WHERE (tweet_id = '"+tweetID+"')";
+			ResultSet result = stmt.executeQuery(sql);
+			toReturn = new Tweet(result.getString(4), result.getString(5), result.getInt(1), result.getInt(3), result.getBoolean(6), result.getBoolean(7));
+		} catch (SQLException e) {
+			System.out.print("DBConnector.getGroupIDsForUser: ");
+			e.printStackTrace();
+		}
+		return toReturn;
+	}
 	
-	
-	
+	public static String getGroupTitle(int groupID){
+		String toReturn = null;
+		try {
+			connection.setAutoCommit(false);
+			Statement stmt = connection.createStatement();
+			String sql = "SELECT group_name FROM groups WHERE (group_id = '"+groupID+"')";
+			ResultSet result = stmt.executeQuery(sql);
+			toReturn = result.getString(1);
+		} catch (SQLException e) {
+			System.out.print("DBConnector.getGroupIDsForUser: ");
+			e.printStackTrace();
+		}
+		return toReturn;
+	}
 //	
 //	/**
 //	 * selects all new (= not yet scheduled) tweets for a specific user and
