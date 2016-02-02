@@ -61,9 +61,6 @@ public String login(HttpSession session) {
                 session.setAttribute("account", account);
         }
 
-System.out.println("AccountController:");
-System.out.println(session.getAttribute("account") == null);
-
         return "redirect:/account";
 }
 

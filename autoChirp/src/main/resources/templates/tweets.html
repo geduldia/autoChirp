@@ -15,7 +15,12 @@
           <hr></hr>
         </div>
       </div>
-      <div class="row">
+      <div th:if="${#lists.isEmpty(tweetsList)}" class="row">
+        <div class="col-md-12">
+          <h3 class="text-danger">You don't have any tweets yet!</h3>
+        </div>
+      </div>
+      <div th:unless="${#lists.isEmpty(tweetsList)}" class="row">
         <div class="col-md-12">
           <div class="panel panel-primary">
             <table class="table table-hover">
