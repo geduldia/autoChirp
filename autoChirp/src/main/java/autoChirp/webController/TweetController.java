@@ -10,7 +10,6 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
@@ -25,16 +24,16 @@ import autoChirp.tweetCreation.TweetGroup;
 public class TweetController {
 
 @RequestMapping(value = "/dashboard")
-public ModelAndView dashboard(Model model) {
-        if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
+public ModelAndView dashboard(HttpSession session) {
+        if (session.getAttribute("account") == null) return new ModelAndView("redirect:/account");
 
         ModelAndView mv = new ModelAndView("dashboard");
         return mv;
 }
 
 @RequestMapping(value = "/groups/view")
-public ModelAndView viewGroups(Model model) {
-        if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
+public ModelAndView viewGroups(HttpSession session) {
+        if (session.getAttribute("account") == null) return new ModelAndView("redirect:/account");
 
         List<TweetGroup> tweetGroups = new ArrayList<TweetGroup>();
 
@@ -48,8 +47,8 @@ public ModelAndView viewGroups(Model model) {
 }
 
 @RequestMapping(value = "/groups/view/{groupID}")
-public ModelAndView viewGroup(Model model, @PathVariable int groupID) {
-        if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
+public ModelAndView viewGroup(HttpSession session, @PathVariable int groupID) {
+        if (session.getAttribute("account") == null) return new ModelAndView("redirect:/account");
 
         TweetGroup tweetGroup = new TweetGroup("String title", "String description", true);
         List<Tweet> tweetsList = new ArrayList<Tweet>();
@@ -65,24 +64,24 @@ public ModelAndView viewGroup(Model model, @PathVariable int groupID) {
 }
 
 @RequestMapping(value = "/groups/add")
-public ModelAndView addGroup(Model model) {
-        if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
+public ModelAndView addGroup(HttpSession session) {
+        if (session.getAttribute("account") == null) return new ModelAndView("redirect:/account");
 
         ModelAndView mv = new ModelAndView("group");
         return mv;
 }
 
 @RequestMapping(value = "/groups/import")
-public ModelAndView importGroup(Model model) {
-        if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
+public ModelAndView importGroup(HttpSession session) {
+        if (session.getAttribute("account") == null) return new ModelAndView("redirect:/account");
 
         ModelAndView mv = new ModelAndView("import");
         return mv;
 }
 
 @RequestMapping(value = "/groups/edit/{groupID}")
-public ModelAndView editGroup(Model model, @PathVariable int groupID) {
-        if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
+public ModelAndView editGroup(HttpSession session, @PathVariable int groupID) {
+        if (session.getAttribute("account") == null) return new ModelAndView("redirect:/account");
 
         TweetGroup tweetGroup = new TweetGroup("String title", "String description", true);
 
@@ -93,39 +92,39 @@ public ModelAndView editGroup(Model model, @PathVariable int groupID) {
 }
 
 @RequestMapping(value = "/groups/delete/{groupID}")
-public String deleteGroup(Model model, @PathVariable int groupID) {
-        if (!model.containsAttribute("account")) return "redirect:/account";
+public String deleteGroup(HttpSession session, @PathVariable int groupID) {
+        if (session.getAttribute("account") == null) return "redirect:/account";
 
         return "redirect:/groups/view";
 }
 
 @RequestMapping(value = "/tweets/view")
-public ModelAndView viewTweets(Model model, HttpSession session) {
-        if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
+public ModelAndView viewTweets(HttpSession session) {
+        if (session.getAttribute("account") == null) return new ModelAndView("redirect:/account");
         int userID = Integer.parseInt(((Hashtable<String,String>) session.getAttribute("account")).get("userID"));
         System.out.println(userID);
-        
+
         List<Tweet> tweetsList = DBConnector.getTweetsForUser(userID,true, false);
         Map<Tweet,String> tweetsByGroupNames = new TreeMap<Tweet,String>();
         for (Tweet tweet : tweetsList) {
 			String groupTitle = DBConnector.getTweetGroupForUser(userID, tweet.groupID).title;
 			tweetsByGroupNames.put(tweet, groupTitle);
 		}
-        
+
 /////////ONLY FPR TESTING//////
         Tweet tweet = new Tweet("date", "blabla", 1, 1, true, false);
         tweetsByGroupNames.put(tweet, "title");
 //////////////////////////////////
-        
-        
+
+
         ModelAndView mv = new ModelAndView("tweets");
         mv.addObject("tweetsList", tweetsByGroupNames);
         return mv;
 }
 
 @RequestMapping(value = "/tweets/view/{tweetID}")
-public ModelAndView viewTweet(Model model, @PathVariable int tweetID) {
-        if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
+public ModelAndView viewTweet(HttpSession session, @PathVariable int tweetID) {
+        if (session.getAttribute("account") == null) return new ModelAndView("redirect:/account");
 
         Tweet tweetEntry = new Tweet("String tweetDate", "String content", tweetID,0, true, true);
 
@@ -136,8 +135,8 @@ public ModelAndView viewTweet(Model model, @PathVariable int tweetID) {
 }
 
 @RequestMapping(value = "/tweets/add")
-public ModelAndView addTweet(Model model) {
-        if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
+public ModelAndView addTweet(HttpSession session) {
+        if (session.getAttribute("account") == null) return new ModelAndView("redirect:/account");
 
         List<TweetGroup> tweetGroups = new ArrayList<TweetGroup>();
 
@@ -151,8 +150,8 @@ public ModelAndView addTweet(Model model) {
 }
 
 @RequestMapping(value = "/tweets/edit/{tweetID}")
-public ModelAndView editTweet(Model model, @PathVariable int tweetID) {
-        if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
+public ModelAndView editTweet(HttpSession session, @PathVariable int tweetID) {
+        if (session.getAttribute("account") == null) return new ModelAndView("redirect:/account");
 
         Tweet tweetEntry = new Tweet("String tweetDate", "String content", tweetID,0, true, true);
         List<TweetGroup> tweetGroups = new ArrayList<TweetGroup>();
@@ -168,8 +167,8 @@ public ModelAndView editTweet(Model model, @PathVariable int tweetID) {
 }
 
 @RequestMapping(value = "/tweets/delete/{tweetID}")
-public String deleteTweet(Model model, @PathVariable int tweetID) {
-        if (!model.containsAttribute("account")) return "redirect:/account";
+public String deleteTweet(HttpSession session, @PathVariable int tweetID) {
+        if (session.getAttribute("account") == null) return "redirect:/account";
 
         return "redirect:/tweets/view";
 }
