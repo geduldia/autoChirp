@@ -1,5 +1,7 @@
 package autoChirp.tweetCreation;
 
+import autoChirp.DBConnector;
+
 /**
  * 
  * @author Alena Geduldig
@@ -37,10 +39,12 @@ public class Tweet implements Comparable<Tweet> {
 	 * @param tweetDate
 	 * @param content
 	 */
-//	public Tweet(String tweetDate, String content){
-//		this.tweetDate = tweetDate;
-//		this.content = content;
-//	}
+	public Tweet(String tweetDate, String content){
+		this.tweetDate = tweetDate;
+		this.content = content;
+	}
+	
+
 	
 	
 	

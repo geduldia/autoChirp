@@ -1,25 +1,24 @@
 package autoChirp.webController;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.ModelAndView;
+
 import autoChirp.DBConnector;
 import autoChirp.tweetCreation.Tweet;
 import autoChirp.tweetCreation.TweetGroup;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.social.connect.ConnectionRepository;
-import org.springframework.social.twitter.api.Twitter;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @SessionAttributes({"account", "config"})
@@ -56,7 +55,7 @@ public ModelAndView viewGroup(Model model, @PathVariable int groupID) {
         List<Tweet> tweetsList = new ArrayList<Tweet>();
 
         for (int i = 0; i < 20; i++)
-                tweetsList.add(new Tweet("String tweetDate [" + i + "]", "String content [" + i + "]", i, true, false));
+                tweetsList.add(new Tweet("String tweetDate [" + i + "]", "String content [" + i + "]", i,0, true, false));
 
         ModelAndView mv = new ModelAndView("group");
         mv.addObject("tweetGroup", tweetGroup);
@@ -107,10 +106,20 @@ public ModelAndView viewTweets(Model model, HttpSession session) {
         System.out.println(userID);
         
         List<Tweet> tweetsList = DBConnector.getTweetsForUser(userID,true, false);
-
+        Map<Tweet,String> tweetsByGroupNames = new TreeMap<Tweet,String>();
+        for (Tweet tweet : tweetsList) {
+			String groupTitle = DBConnector.getTweetGroupForUser(userID, tweet.groupID).title;
+			tweetsByGroupNames.put(tweet, groupTitle);
+		}
+        
+/////////ONLY FPR TESTING//////
+        Tweet tweet = new Tweet("date", "blabla", 1, 1, true, false);
+        tweetsByGroupNames.put(tweet, "title");
+//////////////////////////////////
+        
+        
         ModelAndView mv = new ModelAndView("tweets");
-        mv.addObject("tweetsList", tweetsList);
-
+        mv.addObject("tweetsList", tweetsByGroupNames);
         return mv;
 }
 
@@ -118,7 +127,7 @@ public ModelAndView viewTweets(Model model, HttpSession session) {
 public ModelAndView viewTweet(Model model, @PathVariable int tweetID) {
         if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
 
-        Tweet tweetEntry = new Tweet("String tweetDate", "String content", tweetID, true, true);
+        Tweet tweetEntry = new Tweet("String tweetDate", "String content", tweetID,0, true, true);
 
         ModelAndView mv = new ModelAndView("tweet");
         mv.addObject("tweetEntry", tweetEntry);
@@ -145,7 +154,7 @@ public ModelAndView addTweet(Model model) {
 public ModelAndView editTweet(Model model, @PathVariable int tweetID) {
         if (!model.containsAttribute("account")) return new ModelAndView("redirect:/account");
 
-        Tweet tweetEntry = new Tweet("String tweetDate", "String content", tweetID, true, true);
+        Tweet tweetEntry = new Tweet("String tweetDate", "String content", tweetID,0, true, true);
         List<TweetGroup> tweetGroups = new ArrayList<TweetGroup>();
 
         for (int i = 0; i < 10; i++)

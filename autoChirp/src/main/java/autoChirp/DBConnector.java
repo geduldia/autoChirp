@@ -429,7 +429,7 @@ public class DBConnector {
 			Statement stmt = connection.createStatement();
 			ResultSet result = stmt.executeQuery(query);
 			while(result.next()){
-				Tweet tweet = new Tweet(result.getString(4), result.getString(5),result.getInt(1), result.getBoolean(6), result.getBoolean(7));
+				Tweet tweet = new Tweet(result.getString(4), result.getString(5),result.getInt(1), result.getInt(3),result.getBoolean(6), result.getBoolean(7));
 				tweets.add(tweet);
 			}
 			stmt.close();
