@@ -6,7 +6,7 @@
 <body>
   <nav th:replace="../elements/navbar"></nav>
 
-  <div th:unless="${account != null}" class="wrapper">
+  <div th:unless="${session.account != null}" class="wrapper">
     <div class="jumbotron">
       <div class="container">
         <h1><strong>Not authorized.</strong> Please login.</h1>
@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <div th:if="${account != null}" class="wrapper">
+  <div th:if="${session.account != null}" class="wrapper">
     <div class="container">
       <div class="row">
         <div class="col-md-12">
@@ -30,7 +30,7 @@
             <div class="panel-body">
               <dl class="dl-horizontal">
                 <dt>Account id</dt>
-                <dd th:text="${account.userID}"></dd>
+                <dd th:text="${session.account.userID}"></dd>
                 <dt>Group count</dt>
                 <dd>42</dd>
                 <dt>Tweet count</dt>
@@ -51,16 +51,16 @@
               <dl class="dl-horizontal">
                 <dt>Twitter handle</dt>
                 <dd>
-                  <a th:href="${account.url}" th:text="'@' + ${account.handle}" target="_blank"></a>
+                  <a th:href="${session.account.url}" th:text="'@' + ${session.account.handle}" target="_blank"></a>
                 </dd>
                 <dt>Twitter ID</dt>
-                <dd th:text="${account.twitterID}"></dd>
+                <dd th:text="${session.account.twitterID}"></dd>
                 <dt>Full name</dt>
-                <dd th:text="${account.name}"></dd>
+                <dd th:text="${session.account.name}"></dd>
                 <dt>Twitter bio</dt>
-                <dd th:text="${account.description}"></dd>
+                <dd th:text="${session.account.description}"></dd>
                 <dt>Protected</dt>
-                <dd th:text="${account.protected}"></dd>
+                <dd th:text="${session.account.protected}"></dd>
               </dl>
             </div>
             <div class="panel-footer text-right">

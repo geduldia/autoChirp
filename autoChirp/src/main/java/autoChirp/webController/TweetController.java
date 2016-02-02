@@ -33,6 +33,10 @@ public ModelAndView dashboard(HttpSession session) {
 
 @RequestMapping(value = "/groups/view")
 public ModelAndView viewGroups(HttpSession session) {
+
+  System.out.println("TweetsController:");
+  System.out.println(session.getAttribute("account") == null);
+
         if (session.getAttribute("account") == null) return new ModelAndView("redirect:/account");
 
         List<TweetGroup> tweetGroups = new ArrayList<TweetGroup>();

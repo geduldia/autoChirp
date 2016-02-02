@@ -2,7 +2,6 @@ package autoChirp.webController;
 
 import autoChirp.DBConnector;
 import java.util.Hashtable;
-import java.util.Enumeration;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import org.springframework.social.connect.Connection;
@@ -62,15 +61,9 @@ public String login(HttpSession session) {
                 session.setAttribute("account", account);
         }
 
-        Enumeration<String> myenum = session.getAttributeNames();
+System.out.println("AccountController:");
+System.out.println(session.getAttribute("account") == null);
 
-        while(myenum.hasMoreElements()) {
-            String current = myenum.nextElement();
-            System.out.println(current);
-        }
-
-        myenum.
-        
         return "redirect:/account";
 }
 
