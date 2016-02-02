@@ -20,7 +20,7 @@ import autoChirp.tweetCreation.Tweet;
 import autoChirp.tweetCreation.TweetGroup;
 
 @Controller
-public class TweetController {
+public class DashboardController {
 
 @RequestMapping(value = "/dashboard")
 public ModelAndView dashboard(HttpSession session) {
