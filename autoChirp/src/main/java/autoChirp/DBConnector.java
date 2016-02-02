@@ -474,9 +474,9 @@ public class DBConnector {
 		try {
 			connection.setAutoCommit(false);
 			Statement stmt = connection.createStatement();
-			String sql = "SELECT group_name, description, enabled FROM groups WHERE (user_id = '"+userID+"' AND group_id = '"+groupID+"')";
+			String sql = "SELECT group_name, description, enabled, group_id FROM groups WHERE (user_id = '"+userID+"' AND group_id = '"+groupID+"')";
 			ResultSet result = stmt.executeQuery(sql);
-			TweetGroup group = new TweetGroup(result.getString(1), result.getString(2), result.getBoolean(3));
+			TweetGroup group = new TweetGroup(result.getInt(4), result.getString(1), result.getString(2), result.getBoolean(3));
 			stmt.close();
 			connection.commit();
 			List<Tweet> tweets = getTweetsForUser(userID, groupID);
