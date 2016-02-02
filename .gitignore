@@ -6,6 +6,5 @@ autoChirp/application.properties
 autoChirp/bin
 autoChirp/src/main/resources/database/autoChirp.db*
 autoChirp/src/main/resources/heideltime/config.props
-autoChirp/src/main/resources/heideltime/languages
 autoChirp/src/test/resources/autoChirp.db*
 autoChirp/target
