@@ -3,6 +3,7 @@ package autoChirp.webController;
 import autoChirp.DBConnector;
 import java.util.Hashtable;
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionData;
 import org.springframework.social.connect.ConnectionRepository;
@@ -10,13 +11,11 @@ import org.springframework.social.twitter.api.Twitter;
 import org.springframework.social.twitter.api.TwitterProfile;
 import org.springframework.social.twitter.api.UserOperations;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 @Controller
-@SessionAttributes("account")
 public class AccountController {
 
 private ConnectionRepository connectionRepository;
@@ -34,7 +33,7 @@ public String account() {
 }
 
 @RequestMapping("/account/login")
-public String login(Model model) {
+public String login(HttpSession session) {
         if (connectionRepository.findPrimaryConnection(Twitter.class) != null) {
                 UserOperations userOperations = twitter.userOperations();
                 TwitterProfile twitterProfile = userOperations.getUserProfile();
@@ -59,7 +58,7 @@ public String login(Model model) {
                 account.put("url", twitterProfile.getProfileUrl());
                 account.put("image", twitterProfile.getProfileImageUrl());
                 account.put("protected", String.valueOf(twitterProfile.isProtected()));
-                model.addAttribute("account", account);
+                session.setAttribute("account", account);
         }
 
         return "redirect:/account";

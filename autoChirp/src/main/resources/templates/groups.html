@@ -15,7 +15,12 @@
           <hr></hr>
         </div>
       </div>
-      <div class="row">
+      <div th:if="${#lists.isEmpty(tweetGroups)}" class="row">
+        <div class="col-md-12">
+          <h3 class="text-danger">You don't have any groups yet!</h3>
+        </div>
+      </div>
+      <div th:unless="${#lists.isEmpty(tweetGroups)}" class="row">
         <div class="col-md-12">
           <div class="panel panel-primary">
             <table class="table table-hover">
@@ -32,9 +37,7 @@
                   <td th:text="${tweetGroup.title}"></td>
                   <td th:text="${tweetGroup.description}"></td>
                   <td class="text-center">
-                    <a th:href="@{/groups/edit/} + tweetGroup.groupID" class="btn btn-xs"
-                      th:classappend="${tweetGroup.enabled} ? btn-success : btn-danger"
-                      th:text="${tweetGroup.enabled} ? Enabled : Disabled">
+                    <a th:href="@{/groups/edit/} + tweetGroup.groupID" class="btn btn-xs" th:classappend="${tweetGroup.enabled} ? btn-success : btn-danger" th:text="${tweetGroup.enabled} ? Enabled : Disabled">
                     </a>
                   </td>
                   <td class="text-right">

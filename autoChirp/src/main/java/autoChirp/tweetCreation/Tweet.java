@@ -15,6 +15,7 @@ public class Tweet implements Comparable<Tweet> {
 	public int groupID;
 	public boolean scheduled;
 	public boolean tweeted;
+	public String groupName;
 	
 	/**
 	 * Constructor for tweets read from DB
@@ -32,6 +33,7 @@ public class Tweet implements Comparable<Tweet> {
 		this.scheduled = scheduled;
 		this.tweeted = tweeted;
 		this.groupID = groupID;
+		this.groupName = DBConnector.getGroupTitle(groupID);
 	}
 	
 	/**
@@ -44,6 +46,7 @@ public class Tweet implements Comparable<Tweet> {
 		this.content = content;
 	}
 	
+
 
 	
 	

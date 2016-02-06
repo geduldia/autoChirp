@@ -8,6 +8,7 @@ public class TweetGroup {
 	public String title;
 	public String description;
 	public boolean enabled;
+	public int groupID;
 
 	
 	public TweetGroup(String title, String description) {
@@ -15,7 +16,7 @@ public class TweetGroup {
 		this.description = description;
 	}
 	
-	public TweetGroup(String title, String description, boolean enabled){
+	public TweetGroup(int groupID, String title, String description, boolean enabled){
 		this.title = title;
 		this.description = description;
 		this.enabled = enabled;
