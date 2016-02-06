@@ -85,7 +85,7 @@ public class DBConnectorTest {
 		DBConnector.insertTweetGroup(group, 10);
 		group = new TweetGroup("title", "description");
 		tweets.add(new Tweet("2015-11-12 14:23:12", "tweet3"));
-		group.setTweets(tweets);
+		//group.setTweets(tweets);
 		DBConnector.insertTweetGroup(group,10 );
 		List<Integer> groupIDs = DBConnector.getGroupIDsForUser(10);
 		for (Integer groupID : groupIDs) {
@@ -93,6 +93,9 @@ public class DBConnectorTest {
 			Assert.assertTrue(group.description.equals("description"));
 			Assert.assertTrue(group.title.equals("title"));
 			Assert.assertTrue(group.enabled == false);
+			DBConnector.deleteTweet(1);
+			DBConnector.deleteGroup(groupID)
+			;
 		}
 	}
 	

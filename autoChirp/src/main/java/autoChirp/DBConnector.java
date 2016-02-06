@@ -192,9 +192,10 @@ public class DBConnector {
 				prepUsers.setBoolean(4, false);
 				prepUsers.executeUpdate();
 				Statement stmt = connection.createStatement();
-				String sql = "SELECT group_id FROM groups WHERE description = '" + tweetGroup.description + "' AND user_id = '" + userID + "';";
+				String sql = "SELECT last_insert_rowid();";
 				ResultSet result = stmt.executeQuery(sql);
 				int group_id = result.getInt(1);
+				System.out.println("GID: "+ group_id);
 				for (Tweet tweet : tweetGroup.tweets) {
 					prepTweets.setInt(1, userID);
 					prepTweets.setInt(2, group_id);
@@ -215,6 +216,38 @@ public class DBConnector {
 		return true;
 	}
 
+	
+	public static void deleteGroup(int groupID){
+		try {
+			connection.setAutoCommit(false);
+			Statement stmt = connection.createStatement();
+			String sql = "DELETE FROM groups WHERE group_id = '"+groupID+"'";
+			stmt.executeUpdate(sql);
+			stmt.close();
+			connection.commit();
+			sql = "DELETE FROM tweets WHERE group_id='"+groupID+"'";
+			stmt.executeUpdate(sql);
+			stmt.close();
+			connection.commit();
+		} catch (SQLException e) {
+			System.out.println("DBConnector.deleteGroup:");
+			e.printStackTrace();
+		}
+	}
+	
+	public static void deleteTweet(int tweetID){
+		try {
+			connection.setAutoCommit(false);
+			Statement stmt = connection.createStatement();
+			String sql = "DELETE FROM tweets WHERE tweet_id = '"+tweetID+"'";
+			stmt.executeUpdate(sql);
+			stmt.close();
+			connection.commit();
+		} catch (SQLException e) {
+			System.out.println("DBConnector.deleteTweet:");
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * updates the field 'enabled' in groups-table
 	 * 
