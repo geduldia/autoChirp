@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="../elements/header (title='Statistics')"></head>
+
+<body>
+  <nav th:replace="../elements/navbar"></nav>
+
+  <div class="wrapper">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Statistics about autoChirp</h2>
+          <hr></hr>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="panel panel-inverse">
+              <div class="panel-heading">Current Tweet schedule</div>
+              <div class="panel-body">
+                <dl class="dl-horizontal">
+                  <dt>Upcoming Tweets</dt><dd th:each="tweetEntry : ${upcomingTweets}" th:text="${tweetEntry.tweetDate}"></dd>
+                  <dt>Latest Tweets</dt><dd th:each="tweetEntry : ${latestTweets}" th:text="${tweetEntry.tweetDate}"></dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="panel panel-primary">
+              <div class="panel-heading">General statistics</div>
+              <div class="panel-body">
+                <dl class="dl-horizontal">
+                  <dt>Registered users</dt><dd th:text="${registeredUsers}"></dd>
+                  <dt>Scheduled Tweets</dt><dd th:text="${scheduledTweets}"></dd>
+                  <dt>Published Tweets</dt><dd th:text="${publishedTweets}"></dd>
+                  <dt>All stored Tweets</dt><dd th:text="${allTweets}"></dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer th:replace="../elements/footer"></footer>
+  <div th:replace="../elements/scripts"></div>
+</body>
+
+</html>

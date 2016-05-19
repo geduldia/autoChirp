@@ -1,9 +1,0 @@
-.bash_*
-.m2
-.sass-cache
-start.sh
-autoChirp/application.properties
-autoChirp/src/main/resources/database/autoChirp.db*
-autoChirp/src/main/resources/heideltime/config.props
-autoChirp/src/test/resources/autoChirp.db*
-autoChirp/target
