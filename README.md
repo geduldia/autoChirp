@@ -40,13 +40,13 @@ If You do not want to run a dedicated Jetty, You can still deploy autoChirp usin
 To deploy autoChirp within a running Jetty context, build the .war file and use the autochirp.xml file to configure the webapp through Jetty. For more information regarding the Jetty XML configuration syntax please refer to the Jetty documentation.
 
 ### 3. Contact
-Universität zu Köln
-Sprachliche Informationsverarbeitung
-Institut für Linguistik
-Albertus-Magnus-Platz
-D-50931 Köln (Germany)
-Tel: (+49) 221 - 470 4170
-Fax: (+49) 221 - 470 5193
+    Universität zu Köln
+    Sprachliche Informationsverarbeitung
+    Institut für Linguistik
+    Albertus-Magnus-Platz
+    D-50931 Köln (Germany)
+    Tel: (+49) 221 - 470 4170
+    Fax: (+49) 221 - 470 5193
 
 ### 4. Licenses
 All code this project contains is licensed under the Eclipse Public License v1.0 (EPLv1). You should have obtained a copy of the license bundled with the code. All third-party libraries are subject to their respective licences:
