@@ -39,6 +39,9 @@ If You do not want to run a dedicated Jetty, You can still deploy autoChirp usin
 #### Jetty deployment
 To deploy autoChirp within a running Jetty context, build the .war file and use the autochirp.xml file to configure the webapp through Jetty. For more information regarding the Jetty XML configuration syntax please refer to the Jetty documentation.
 
+#### Twitter-App creation
+In order to run Your own autoChirp instance, You will have to create a Twitter application and amend the corresponding API-key and API-secret to the autoChirp configuration. Make sure to input an URL in the Callback URL field within the Twitter application settings page, otherwise the Twitter-login will not work. (Note the fine-print for this field, stating: "To restrict your application from using callbacks, leave this field blank.")
+
 ### 3. Contact
     Universität zu Köln
     Sprachliche Informationsverarbeitung
