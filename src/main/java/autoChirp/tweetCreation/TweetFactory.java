@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 
 import autoChirp.preProcessing.Document;
 import autoChirp.preProcessing.HeidelTimeWrapper;
@@ -158,25 +159,25 @@ public class TweetFactory {
 					ldt = parseDateString(date);
 					if(ldt == null){
 						throw new MalformedTSVFileException(row, 1, date, "malformed date: "+date+"  (row: "+row+" column: 1)");
-					}	
+					}
 				} else {
 					ldt = parseDateString(date + " " + time);
 					if(ldt == null){
 						throw new MalformedTSVFileException(row, 1, date + " " + time, "malformed date or time: "+date + " " + time+"  (row: "+row+" column: 1-2)");
 					}
 				}
-			
+
 				// get tweet-image
 				String imageUrl = null;
 				if (split.length > 3) {
 					imageUrl = split[3];
 					if(imageUrl.length() > 0){
 						try {
-							ImageIO.read(new URL(imageUrl));
+              Resource image = new UrlResource(imageUrl);
 						} catch (Exception e) {
 							throw new MalformedTSVFileException(row, 4, imageUrl, "invalid image-Url: "+imageUrl+" (row: "+row+" column: 4)");
 						}
-					}	
+					}
 				}
 				// get latitude
 				float latitude = 0;
@@ -204,12 +205,12 @@ public class TweetFactory {
 				// trim content to max. 140 characters
 				content = trimToTweet(content, null, imageUrl);
 				// calc. next possible tweetDate
-				
-				
+
+
 				// add delay
 				ldt = ldt.plusYears(delay);
-			
-				
+
+
 				if (delay == 0) {
 					while (ldt.isBefore(LocalDateTime.now())) {
 						ldt = ldt.plusYears(1);
@@ -289,7 +290,7 @@ public class TweetFactory {
 					else{
 						content = trimToTweet(prefix + ": " + doc.getSentences().get(i - 1), url, null);
 					}
-				
+
 				} else {
 					content = trimToTweet(doc.getSentences().get(i - 1), url, null);
 				}
