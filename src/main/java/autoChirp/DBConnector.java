@@ -9,7 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,7 @@ import autoChirp.tweetCreation.TweetGroup;
  * the database
  *
  * @author Alena Geduldig
+ * @editor Philip Schildkamp
  *
  */
 public class DBConnector {
@@ -480,7 +483,8 @@ public class DBConnector {
 	 * @return a list of 5 upcoming tweets
 	 */
 	public static List<Tweet> getUpcomingTweets() {
-		String query = "SELECT * FROM tweets WHERE(scheduled = 1 AND tweeted = 0) ORDER BY scheduled_date ASC LIMIT 5";
+		String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+		String query = "SELECT * FROM tweets WHERE(scheduled = 1 AND tweeted = 0 AND scheduled_date > '" + now + "') ORDER BY scheduled_date ASC LIMIT 5";
 		return getTweets(query, 0);
 	}
 
