@@ -3,9 +3,9 @@ package autoChirp.tweeting;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -18,13 +18,13 @@ import autoChirp.tweetCreation.Tweet;
  *
  * A class to schedule tweets using the
  * java.util.concurrent.ScheduledExecutorService;
- *
+
  * @author Alena Geduldig
  *
  */
 public class TweetScheduler {
 
-  private static final Map<Integer, Future> scheduled = new HashMap<Integer, Future>();
+  private static final Map<Integer, Future<?>> scheduled = new HashMap<Integer, Future<?>>();
   private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
 
 	/**
@@ -42,8 +42,8 @@ public class TweetScheduler {
 		Duration d;
 		long delay;
 
-		for (Tweet tweet : tweets) {
-
+		for (Tweet tweet: tweets) {
+		
       // ignore if tweet is already scheduled
       if (scheduled.containsKey(tweet.tweetID)) {
         continue;
@@ -78,12 +78,13 @@ public class TweetScheduler {
 	 *            the ID of the Tweet to deschedule
 	 */
   public static void descheduleTweet(int tweetID) {
+
     if (!scheduled.containsKey(tweetID)) {
       System.out.println("Scheduler: could not descheduled Tweet #" + tweetID + ": No scheduling found");
       return;
     }
 
-    Future tweet = scheduled.remove(tweetID);
+    Future<?> tweet = scheduled.remove(tweetID);
     tweet.cancel(true);
   }
 

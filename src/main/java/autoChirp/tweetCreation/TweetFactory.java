@@ -173,7 +173,7 @@ public class TweetFactory {
 					imageUrl = split[3];
 					if(imageUrl.length() > 0){
 						try {
-              Resource image = new UrlResource(imageUrl);
+							Resource image = new UrlResource(imageUrl);
 						} catch (Exception e) {
 							throw new MalformedTSVFileException(row, 4, imageUrl, "invalid image-Url: "+imageUrl+" (row: "+row+" column: 4)");
 						}

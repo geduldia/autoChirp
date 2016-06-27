@@ -29,7 +29,7 @@ public class TweetCreationWorkflow {
 	
 	private static String dbPath = "src/test/resources/";
 	private static String dbFileName = "autoChirp.db";
-	private static String dbCreationFileName = "src/main/resources/database/createDatabaseFile.sql";
+	private static String dbCreationFileName = "src/main/resources/database/schema.sql";
 	
 
 	/**
@@ -114,5 +114,19 @@ public class TweetCreationWorkflow {
 		for (Tweet tweet : group.tweets) {
 			System.out.println(tweet.tweetDate);
 		}
+	}
+	
+	@Test
+	public void repeatTest() throws IOException, MalformedTSVFileException{
+		File file = new File("src/test/resources/testTSVFile_DateFormats.txt");
+		TweetFactory factory = new TweetFactory("src/main/resources/parser/datetime.formats");
+		TweetGroup group = factory.getTweetsFromTSVFile(file, "dateFormatTest", "test all supported formats", 3);
+		Assert.assertEquals(group.tweets.size(), 18);
+		int groupID = DBConnector.insertTweetGroup(group, 1);
+		DBConnector.insertNewRepeatEntry(groupID, 1);
+		
+		TweetGroup update = DBConnector.getGroupForNewYear(group, 1, 2);
+		int newGroupID = DBConnector.insertTweetGroup(update, 1);
+		DBConnector.updateGroupStatus(newGroupID, true, 1);
 	}
 }
