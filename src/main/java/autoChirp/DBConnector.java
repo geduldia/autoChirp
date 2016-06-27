@@ -4,12 +4,18 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Year;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -195,20 +201,19 @@ public class DBConnector {
 		return toReturn;
 	}
 
-
-  /**
+	/**
 	 * returns the number of registered users as int.
-   *
-   * @return an int-count for registered users
+	 *
+	 * @return an int-count for registered users
 	 */
 	public static int getRegisteredUsers() {
-    int toReturn = 0;
+		int toReturn = 0;
 
-    try {
+		try {
 			connection.setAutoCommit(false);
 			Statement stmt = connection.createStatement();
 			ResultSet result = stmt.executeQuery("SELECT Count(*) FROM users;");
-      toReturn = result.getInt(1);
+			toReturn = result.getInt(1);
 			stmt.close();
 			connection.commit();
 		} catch (SQLException e) {
@@ -219,7 +224,6 @@ public class DBConnector {
 
 		return toReturn;
 	}
-
 
 	/**
 	 * writes a TweetGroup into the database and returns its new groupID.
@@ -477,18 +481,19 @@ public class DBConnector {
 		return getTweets(query, userID);
 	}
 
-  /**
+	/**
 	 * returns a list of 5 upcoming tweets
 	 *
 	 * @return a list of 5 upcoming tweets
 	 */
 	public static List<Tweet> getUpcomingTweets() {
 		String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-		String query = "SELECT * FROM tweets WHERE(scheduled = 1 AND tweeted = 0 AND scheduled_date > '" + now + "') ORDER BY scheduled_date ASC LIMIT 5";
+		String query = "SELECT * FROM tweets WHERE(scheduled = 1 AND tweeted = 0 AND scheduled_date > '" + now
+				+ "') ORDER BY scheduled_date ASC LIMIT 5";
 		return getTweets(query, 0);
 	}
 
-  /**
+	/**
 	 * returns a list of 5 recent tweets
 	 *
 	 * @return a list of 5 recent tweets
@@ -525,50 +530,51 @@ public class DBConnector {
 		return toReturn;
 	}
 
-  /**
+	/**
 	 * returns the number of scheduled Tweets
 	 *
 	 * @return number of scheduled Tweets
 	 */
 	public static int getScheduledTweets() {
-    String query = "SELECT Count(*) FROM tweets WHERE(scheduled = 1 AND tweeted = 0)";
+		String query = "SELECT Count(*) FROM tweets WHERE(scheduled = 1 AND tweeted = 0)";
 		return countTweets(query);
 	}
 
-  /**
+	/**
 	 * returns the number of published Tweets
 	 *
 	 * @return number of published Tweets
 	 */
 	public static int getPublishedTweets() {
-    String query = "SELECT Count(*) FROM tweets WHERE(tweeted = 1)";
+		String query = "SELECT Count(*) FROM tweets WHERE(tweeted = 1)";
 		return countTweets(query);
 	}
 
-  /**
+	/**
 	 * returns the number of published Tweets
 	 *
 	 * @return number of published Tweets
 	 */
 	public static int getAllTweets() {
-    String query = "SELECT Count(*) FROM tweets";
+		String query = "SELECT Count(*) FROM tweets";
 		return countTweets(query);
 	}
 
-  /**
-  * returns the number of Tweets for the query
-  *
-  * @param query the SQL query
-  * @return number of tweets
-  */
-  public static int countTweets(String query) {
-    int toReturn;
+	/**
+	 * returns the number of Tweets for the query
+	 *
+	 * @param query
+	 *            the SQL query
+	 * @return number of tweets
+	 */
+	public static int countTweets(String query) {
+		int toReturn;
 
-    try {
+		try {
 			connection.setAutoCommit(false);
 			Statement stmt = connection.createStatement();
 			ResultSet result = stmt.executeQuery(query);
-      toReturn = result.getInt(1);
+			toReturn = result.getInt(1);
 			stmt.close();
 			connection.commit();
 		} catch (SQLException e) {
@@ -578,7 +584,7 @@ public class DBConnector {
 		}
 
 		return toReturn;
-  }
+	}
 
 	/**
 	 * returns the tweetGroup with the given groupID (if userID fits to groupID)
@@ -760,7 +766,7 @@ public class DBConnector {
 			stmt.setString(1, content);
 			stmt.setString(2, imageUrl);
 			stmt.setFloat(3, longitude);
-      stmt.setFloat(4, latitude);
+			stmt.setFloat(4, latitude);
 			stmt.setString(5, tweetDate);
 			stmt.setInt(6, tweetID);
 			stmt.setInt(7, userID);
@@ -907,6 +913,54 @@ public class DBConnector {
 			connection.commit();
 		} catch (SQLException e) {
 			System.out.print("DBConnector.deleteUser: ");
+			e.printStackTrace();
+		}
+	}
+
+	public static void insertRepeatEntry(int groupID, int userID) {
+
+	}
+
+	public static TweetGroup getGroupForNewYear(TweetGroup group, int userID, int yearsToAdd) {
+		TweetGroup updatedGroup = new TweetGroup(group.title, group.description);
+		List<Tweet> updatedTweets = new ArrayList<Tweet>();
+		Tweet updatedTweet;
+		for (Tweet tweet : group.tweets) {
+			LocalDateTime time = LocalDateTime.parse(tweet.tweetDate,
+					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			time = time.plusYears(yearsToAdd);
+			String timeString = time.format( DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			updatedTweet = new Tweet(timeString, tweet.content, tweet.imageUrl, tweet.longitude, tweet.latitude);
+			updatedTweets.add(updatedTweet);
+		}
+		updatedGroup.setTweets(updatedTweets);
+		return updatedGroup;
+	}
+
+	public static void insertNewRepeatEntry(int groupID, int userID) {
+		try {
+
+			connection.setAutoCommit(false);
+			DatabaseMetaData dbmd = connection.getMetaData();
+			ResultSet tables = dbmd.getTables(null, null, "repeats", null);
+			if (!tables.next()) {
+				Statement stmt = connection.createStatement();
+				String sql = "DROP TABLE IF EXISTS repeats; CREATE TABLE repeats ( repeat_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, group_id INTEGER NOT NULL, user_id  INTEGER NOT NULL, CONSTRAINT FK_USERS_USERID_REPEATS_USERID FOREIGN KEY (user_id) REFERENCES users (user_id), CONSTRAINT FK_GROUPS_GROUPID_REPEATS_GROUPID FOREIGN KEY (group_id) REFERENCES groups (group_id));";
+				stmt.executeUpdate(sql);
+				stmt.close();
+				connection.commit();
+				System.out.println("created table 'repeats'.");
+			}
+			// insert user
+			connection.setAutoCommit(false);
+			Statement stmt = connection.createStatement();
+			String sql = "INSERT INTO repeats(group_id, user_id) VALUES(" + groupID + ", " + userID + ")";
+			stmt.executeUpdate(sql);
+			stmt.close();
+			connection.commit();
+
+		} catch (SQLException e) {
+			System.out.print("DBConnector.insertNewRepeatEntry: ");
 			e.printStackTrace();
 		}
 	}
