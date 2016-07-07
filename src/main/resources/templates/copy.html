@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="../elements/header (title='Group')"></head>
+
+<body>
+  <nav th:replace="../elements/navbar"></nav>
+
+  <div class="wrapper">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Copy group
+            <small>Copy Your tweet group to a specified reference date</small></h2>
+          <hr></hr>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <form class="form-horizontal" th:action="${#httpServletRequest.requestURI}" method="post">
+            <div class="form-group">
+              <label for="title" class="col-sm-2 control-label">Title</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="title" name="title" required="required"
+                  maxlength="255" placeholder="My group" th:value="${tweetGroup.title} + ' (copy)'">
+                </input>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="description" class="col-sm-2 control-label">Description</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="description" name="description" disabled="disabled"
+                  maxlength="255" placeholder="A group with my tweets" th:value="${tweetGroup.description}">
+                </input>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="tweetDate" class="col-sm-2 control-label">New scheduling</label>
+              <div class="col-sm-5">
+                <input type="date" class="form-control" id="referenceDate" name="referenceDate" required="required" placeholder="YYYY-MM-DD (e.g. 2021-08-17)">
+                </input>
+              </div>
+              <div class="col-sm-5">
+                <input type="time" class="form-control" id="referenceTime" name="referenceTime" required="required" placeholder="HH:MM:SS (e.g. 03:17:21)" step="1">
+                </input>
+              </div>
+            </div>
+            <div th:if="${!#lists.isEmpty(tweetsList)}" class="form-group">
+              <label class="col-sm-2 control-label">Scheduling base</label>
+              <div class="col-sm-10">
+                <div class="panel panel-primary">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                      	<th class="actions">Select</th>
+                        <th>Content</th>
+                        <th class="text-center"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></th>
+                        <th class="text-center"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span></th>
+                        <th class="text-center tweetdate">When</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="tweetEntry : ${tweetsList}">
+                        <td>
+                          <div class="radio">
+                            <label>
+                              <input type="radio" name="referenceTweetID" id="${tweetEntry.tweetID}" th:value="${tweetEntry.tweetID}" required="required">
+                              </input>
+                              <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                            </label>
+                          </div>
+                        </td>
+                        <td th:text="${tweetEntry.content}"></td>
+                        <td class="text-center">
+                          <a th:unless="${#strings.isEmpty(tweetEntry.imageUrl)}" th:href="${tweetEntry.imageUrl}" target="_blank">
+                            <span class="glyphicon glyphicon-picture" aria-hidden="true"></span></a>
+                        </td>
+                        <td class="text-center">
+                          <a th:unless="${tweetEntry.latitude eq 0.0 and tweetEntry.longitude eq 0.0}"
+                            th:href="'https://www.google.de/maps/@' + ${tweetEntry.latitude} + ',' + ${tweetEntry.longitude} + ',17z'" target="_blank">
+                            <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span></a>
+                        </td>
+                        <td th:text="${tweetEntry.tweetDate}" class="text-center"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div th:if="${pages != null}" class="panel-footer">
+                    <nav class="text-center">
+                      <ul class="pagination">
+                        <li th:classappend="${page == 1} ? disabled">
+                          <a th:href="${page == 1} ? '#' : @{/groups/view/} + ${tweetGroup.groupID} + '?page=' + ${page - 1}"
+                            aria-label="Previous"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></a>
+                        </li>
+                        <li th:each="i : ${#numbers.sequence(1, pages)}" th:classappend="${page == i} ? active">
+                          <a  th:href="@{/groups/view/} + ${tweetGroup.groupID} + '?page=' + ${i}" th:text="${i}"></a>
+                        </li>
+                        <li th:classappend="${page == pages} ? disabled">
+                          <a th:href="${page == pages} ? '#' : @{/groups/view/} + ${tweetGroup.groupID} + '?page=' + ${page + 1}" aria-label="Next">
+                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></a>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Actions</label>
+              <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+                  Copy group to new reference date</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer th:replace="../elements/footer"></footer>
+  <div th:replace="../elements/scripts"></div>
+</body>
+
+</html>

@@ -1,20 +1,17 @@
 package autoChirp.webController;
 
-import autoChirp.DBConnector;
-import autoChirp.preProcessing.parser.WikipediaParser;
-import autoChirp.tweetCreation.MalformedTSVFileException;
-import autoChirp.tweetCreation.Tweet;
-import autoChirp.tweetCreation.TweetFactory;
-import autoChirp.tweetCreation.TweetGroup;
-import autoChirp.tweeting.TweetScheduler;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,6 +24,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+
+import autoChirp.DBConnector;
+import autoChirp.preProcessing.parser.WikipediaParser;
+import autoChirp.tweetCreation.MalformedTSVFileException;
+import autoChirp.tweetCreation.Tweet;
+import autoChirp.tweetCreation.TweetFactory;
+import autoChirp.tweetCreation.TweetGroup;
+import autoChirp.tweeting.TweetScheduler;
 
 /**
  * A Spring MVC controller, responsible for serving /groups. This controller
@@ -43,8 +48,8 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = "/groups")
 public class GroupController {
 
-  @Value("${autochirp.parser.uploadtemp}")
-  private String uploadtemp;
+	@Value("${autochirp.parser.uploadtemp}")
+	private String uploadtemp;
 
 	@Value("${autochirp.parser.dateformats}")
 	private String dateformats;
@@ -253,8 +258,9 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "/import/tsv-file", method = RequestMethod.POST)
 	public ModelAndView importTSVGroupPost(@RequestParam("source") MultipartFile source,
-			@RequestParam("title") String title, @RequestParam("description") String description,
-			@RequestParam("delay") int delay) throws MalformedTSVFileException {
+			@RequestParam("encoding") String encoding, @RequestParam("title") String title,
+			@RequestParam("description") String description, @RequestParam("delay") int delay)
+			throws MalformedTSVFileException {
 		if (session.getAttribute("account") == null)
 			return new ModelAndView("redirect:/account");
 		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
@@ -276,23 +282,25 @@ public class GroupController {
 
 		try {
 			file = File.createTempFile("upload-", ".tsv", new File(uploadtemp));
-      FileOutputStream fos = new FileOutputStream(file);
-      fos.write(source.getBytes());
-      fos.close();
+			FileOutputStream fos = new FileOutputStream(file);
+			fos.write(source.getBytes());
+			fos.close();
 		} catch (Exception e) {
-      ModelAndView mv = new ModelAndView("error");
-      mv.addObject("error", "The uploaded file could not be opened.");
-      return mv;
+			ModelAndView mv = new ModelAndView("error");
+			mv.addObject("error", "The uploaded file could not be opened.");
+			return mv;
 		}
+
 		TweetGroup tweetGroup;
-		try{
-			tweetGroup = tweeter.getTweetsFromTSVFile(file, title, description, (delay <= 0) ? 0 : delay);
+
+		try {
+			tweetGroup = tweeter.getTweetsFromTSVFile(file, title, description, (delay <= 0) ? 0 : delay, encoding);
+		} catch (MalformedTSVFileException e) {
+			ModelAndView mv = new ModelAndView("error");
+			mv.addObject("error", "Parsing error, " + e.getMessage());
+			return mv;
 		}
-		catch(MalformedTSVFileException e){
-			  ModelAndView mv = new ModelAndView("error");
-		      mv.addObject("error","Parsing error, " + e.getMessage());
-		      return mv;
-		}
+
 		int groupID = DBConnector.insertTweetGroup(tweetGroup, userID);
 		file.delete();
 
@@ -366,8 +374,7 @@ public class GroupController {
 	 * A HTTP GET request handler, responsible for serving
 	 * /groups/edit/$groupid. This method is responsible to present the
 	 * group-creation form with all values prefilled into the according
-	 * input-field. As such the form is re-used to edit a already created
-	 * group.
+	 * input-field. As such the form is re-used to edit a already created group.
 	 *
 	 * @param groupID
 	 *            Path param containing an ID-reference to a group
@@ -424,6 +431,148 @@ public class GroupController {
 		DBConnector.editGroup(groupID, title, description, userID);
 
 		return new ModelAndView("redirect:/groups/view/" + groupID);
+	}
+
+	/**
+	 * A HTTP GET request handler, responsible for serving
+	 * /groups/copy/next/$groupid. This method copies the referenced group one
+	 * year into the future and redirects the user to the newly created group.
+	 *
+	 * @param groupID
+	 *            Path param containing an ID-reference to a group
+	 * @return Redirect-view to the copied group overview
+	 */
+	@RequestMapping(value = "/copy/year/{groupID}")
+	public String copyGroupYear(@PathVariable int groupID) {
+		if (session.getAttribute("account") == null)
+			return "redirect:/account";
+
+		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
+		TweetGroup baseGroup = DBConnector.getTweetGroupForUser(userID, groupID);
+		TweetGroup tweetGroup = DBConnector.createRepeatGroupInYears(baseGroup, userID, 1);
+		int newGroupID = DBConnector.insertTweetGroup(tweetGroup, userID);
+
+		return "redirect:/groups/view/" + newGroupID;
+	}
+
+	/**
+	 * A HTTP GET request handler, responsible for serving
+	 * /groups/copy/date/$groupid. This method prompts the user for a reference
+	 * Tweet from the group referenced by $groupid and a new scheduling for that
+	 * Tweet. Then the user can copy and shift the scheduling of the referenced
+	 * group.
+	 *
+	 * @param groupID
+	 *            Path param containing an ID-reference to a group
+	 * @param page
+	 *            Request param containing the page number, defaults to 1
+	 * @return Redirect-view to the copied group overview
+	 */
+	@RequestMapping(value = "/copy/date/{groupID}")
+	public ModelAndView copyGroupDate(@PathVariable int groupID,
+			@RequestParam(name = "page", defaultValue = "1") int page) {
+		if (session.getAttribute("account") == null)
+			return new ModelAndView("redirect:/account");
+
+		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
+		TweetGroup tweetGroup = DBConnector.getTweetGroupForUser(userID, groupID);
+
+		if (tweetGroup == null) {
+			ModelAndView mv = new ModelAndView("error");
+			mv.addObject("error", "A group with the ID #" + groupID + " does not exist.");
+			return mv;
+		}
+
+		List<Tweet> tweetsList = tweetGroup.tweets;
+		ModelAndView mv = new ModelAndView("copy");
+		mv.addObject("tweetGroup", tweetGroup);
+
+		if (tweetsList.size() <= tweetsPerPage) {
+			mv.addObject("tweetsList", tweetsList);
+			return mv;
+		}
+
+		double pgnum = (double) tweetsList.size() / (double) tweetsPerPage;
+		int pages = (pgnum > (int) pgnum) ? (int) (pgnum + 1.0) : (int) pgnum;
+		int offset = (page - 1) * tweetsPerPage;
+		int endset = (offset + tweetsPerPage <= tweetsList.size()) ? offset + tweetsPerPage : tweetsList.size();
+
+		mv.addObject("tweetsList", tweetsList.subList(offset, endset));
+		mv.addObject("page", page);
+		mv.addObject("pages", pages);
+		return mv;
+	}
+
+	/**
+	 * A HTTP POST request handler, responsible for serving
+	 * /groups/copy/date/$groupid. This method does the actual copying and
+	 * shifting of the referenced TweetGroup and redirects the user to the newly
+	 * created group.
+	 * 
+	 * @param groupID
+	 *            Path param containing an ID-reference to a group
+	 * @param title
+	 *            Title of the newly created TweetGroup
+	 * @param referenceDate
+	 *            new date-scheduling of the referenced Tweet
+	 * @param referenceTime
+	 *            new time-scheduling of the referenced Tweet
+	 * @param referenceTweetID
+	 *            ID reference to a Tweet within the TweetGroup
+	 * @return redirect-view to the newly created and shifted TweetGroup
+	 */
+	@RequestMapping(value = "/copy/date/{groupID}", method = RequestMethod.POST)
+	public ModelAndView copyGroupDatePost(@PathVariable int groupID, @RequestParam("title") String title,
+			@RequestParam("referenceDate") String referenceDate, @RequestParam("referenceTime") String referenceTime,
+			@RequestParam("referenceTweetID") int referenceTweetID) {
+		if (session.getAttribute("account") == null)
+			return new ModelAndView("redirect:/account");
+
+		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
+		TweetGroup tweetGroup = DBConnector.getTweetGroupForUser(userID, groupID);
+
+		if (title.length() > 255) {
+			ModelAndView mv = new ModelAndView("error");
+			mv.addObject("error", "The group title may be no longer then 255 characters.");
+			return mv;
+		}
+
+		if (!referenceDate.matches("^[0-9]{4}(-[0-9]{2}){2}$")) {
+			ModelAndView mv = new ModelAndView("error");
+			mv.addObject("error", "The tweet date must match the pattern: YYYY-MM-DD");
+			return mv;
+		}
+
+		if (referenceTime.matches("^[0-9]{2}:[0-9]{2}$")) {
+			referenceTime = referenceTime + ":00";
+		}
+
+		else if (!referenceTime.matches("^[0-9]{2}:[0-9]{2}:[0-9]{2}$")) {
+			ModelAndView mv = new ModelAndView("error");
+			mv.addObject("error", "The tweet time must match the pattern: HH:MM:SS");
+			return mv;
+		}
+
+		Tweet tweetEntry = null;
+		for (Tweet t : tweetGroup.tweets)
+			if (t.tweetID == referenceTweetID)
+				tweetEntry = DBConnector.getTweetByID(t.tweetID, userID);
+
+		if (tweetEntry == null) {
+			ModelAndView mv = new ModelAndView("error");
+			mv.addObject("error", "Error selecting correct reference Tweet");
+			return mv;
+		}
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime now = LocalDateTime.parse(tweetEntry.tweetDate, formatter);
+		LocalDateTime then = LocalDateTime.parse(referenceDate + " " + referenceTime, formatter);
+
+		TweetGroup newTweetGroup = DBConnector.createRepeatGroupInSeconds(tweetGroup, userID,
+				(int) ChronoUnit.SECONDS.between(now, then), title);
+		int newGroupID = DBConnector.insertTweetGroup(newTweetGroup, userID);
+
+		return new ModelAndView("redirect:/groups/view/" + newGroupID);
 	}
 
 	/**
