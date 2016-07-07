@@ -3,6 +3,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +51,7 @@ public class TweetCreationWorkflow {
 	 */
 	@Test
 	public void generateTweetsFromWikipediaUrl(){
-		TweetFactory factory = new TweetFactory("src/main/resources/dateTimeFormats/dateTimeFormats.txt");
+		TweetFactory factory = new TweetFactory("src/main/resources/parser/datetime.formats");
 		List<String> urls = new ArrayList<String>();
 		String url = "https://de.wikipedia.org/wiki/Universität_zu_Köln";
 		urls.add(url);
@@ -73,11 +76,11 @@ public class TweetCreationWorkflow {
 	 */
 	@Test
 	public void generateTweetsFromTSVFile() throws MalformedTSVFileException{
-		TweetFactory factory = new TweetFactory("src/main/resources/dateTimeFormats/dateTimeFormats.txt");
+		TweetFactory factory = new TweetFactory("src/main/resources/parser/datetime.formats");
 		File testFile = new File("src/test/resources/testTSVFile_Image_Locations.txt");
 		
 		//without delay
-		TweetGroup group = factory.getTweetsFromTSVFile(testFile, "testTitle", "testDescription", 0);
+		TweetGroup group = factory.getTweetsFromTSVFile(testFile, "testTitle", "testDescription", 0, "UTF-8");
 		Assert.assertEquals(group.tweets.size(), 3);
 		System.out.println("Title: " + group.title);
 		System.out.println("Description: " + group.description);
@@ -88,7 +91,7 @@ public class TweetCreationWorkflow {
 			System.out.println(tweet.tweetDate+": "+ tweet.content);
 		}
 		//with delay
-		group = factory.getTweetsFromTSVFile(testFile, "testTitle", "testDescription", 3);
+		group = factory.getTweetsFromTSVFile(testFile, "testTitle", "testDescription", 3, "UTF-8");
 		Assert.assertEquals(group.tweets.size(), 3);
 		System.out.println("Title: " + group.title);
 		System.out.println("Description: " + group.description);
@@ -108,8 +111,8 @@ public class TweetCreationWorkflow {
 	@Test
 	public void dateTimeFomatsTest() throws IOException, MalformedTSVFileException{
 		File file = new File("src/test/resources/testTSVFile_DateFormats.txt");
-		TweetFactory factory = new TweetFactory("src/main/resources/dateTimeFormats/dateTimeFormats.txt");
-		TweetGroup group = factory.getTweetsFromTSVFile(file, "dateFormatTest", "test all supported formats", 3);
+		TweetFactory factory = new TweetFactory("src/main/resources/parser/datetime.formats");
+		TweetGroup group = factory.getTweetsFromTSVFile(file, "dateFormatTest", "test all supported formats", 3, "UTF-8");
 		Assert.assertEquals(group.tweets.size(), 18);
 		for (Tweet tweet : group.tweets) {
 			System.out.println(tweet.tweetDate);
@@ -117,16 +120,61 @@ public class TweetCreationWorkflow {
 	}
 	
 	@Test
-	public void repeatTest() throws IOException, MalformedTSVFileException{
+	public void repeatGroupForYearsTest() throws MalformedTSVFileException{
 		File file = new File("src/test/resources/testTSVFile_DateFormats.txt");
 		TweetFactory factory = new TweetFactory("src/main/resources/parser/datetime.formats");
-		TweetGroup group = factory.getTweetsFromTSVFile(file, "dateFormatTest", "test all supported formats", 3);
-		Assert.assertEquals(group.tweets.size(), 18);
-		int groupID = DBConnector.insertTweetGroup(group, 1);
-		DBConnector.insertNewRepeatEntry(groupID, 1);
-		
-		TweetGroup update = DBConnector.getGroupForNewYear(group, 1, 2);
-		int newGroupID = DBConnector.insertTweetGroup(update, 1);
-		DBConnector.updateGroupStatus(newGroupID, true, 1);
+		TweetGroup group = factory.getTweetsFromTSVFile(file, "dateFormatTest", "test all supported formats", 3, "UTF-8");
+		TweetGroup oneYearLater = DBConnector.createRepeatGroupInYears(group, 2, 2);
+		Assert.assertEquals(group.title, oneYearLater.title);
+		Assert.assertEquals(group.description, oneYearLater.description);
+		Assert.assertEquals(group.tweets.size(), oneYearLater.tweets.size());
+		for (int t = 0; t < group.tweets.size(); t++) {
+			Tweet t1 = group.tweets.get(t);
+			Tweet t2 = oneYearLater.tweets.get(t);
+			System.out.println("old: " + t1.tweetDate+"     new: "+t2.tweetDate);
+			Assert.assertEquals(t1.content, t2.content);
+			Assert.assertEquals(t1.groupName, t2.groupName);
+			Assert.assertTrue(t1.latitude == t2.latitude);
+			Assert.assertTrue(t1.longitude == t2.longitude);
+			Assert.assertEquals(t1.imageUrl, t2.imageUrl);
+			LocalDateTime ldt1 = LocalDateTime.parse(t1.tweetDate,
+					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			LocalDateTime ldt2 = LocalDateTime.parse(t2.tweetDate,
+					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			Assert.assertEquals(ldt1.getMonth(), ldt2.getMonth());
+			Assert.assertEquals(ldt1.getDayOfMonth(), ldt2.getDayOfMonth());
+			Assert.assertEquals(ldt1.getMinute(), ldt2.getMinute());
+			Assert.assertEquals(ldt1.getSecond(), ldt2.getSecond());
+			Assert.assertTrue(ldt2.getYear() - ldt1.getYear() == 2);
+		}
 	}
+	
+	@Test
+	public void repeatGroupForSecondsTest() throws MalformedTSVFileException{
+		File file = new File("src/test/resources/testTSVFile_DateFormats.txt");
+		TweetFactory factory = new TweetFactory("src/main/resources/parser/datetime.formats");
+		TweetGroup group = factory.getTweetsFromTSVFile(file, "dateFormatTest", "test all supported formats", 3, "UTF-8");
+		TweetGroup oneYearLater = DBConnector.createRepeatGroupInSeconds(group, 2, 2000);
+		Assert.assertEquals(group.title, oneYearLater.title);
+		Assert.assertEquals(group.description, oneYearLater.description);
+		Assert.assertEquals(group.tweets.size(), oneYearLater.tweets.size());
+		for (int t = 0; t < group.tweets.size(); t++) {
+			Tweet t1 = group.tweets.get(t);
+			Tweet t2 = oneYearLater.tweets.get(t);
+			System.out.println("old: " + t1.tweetDate+"     new: "+t2.tweetDate);
+			Assert.assertEquals(t1.content, t2.content);
+			Assert.assertEquals(t1.groupName, t2.groupName);
+			Assert.assertTrue(t1.latitude == t2.latitude);
+			Assert.assertTrue(t1.longitude == t2.longitude);
+			Assert.assertEquals(t1.imageUrl, t2.imageUrl);
+			LocalDateTime ldt1 = LocalDateTime.parse(t1.tweetDate,
+					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			LocalDateTime ldt2 = LocalDateTime.parse(t2.tweetDate,
+					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			Duration d = Duration.between(ldt1, ldt2);
+			Assert.assertTrue(d.getSeconds() == 2000);
+		}
+	}
+
+
 }

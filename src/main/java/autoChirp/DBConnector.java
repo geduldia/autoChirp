@@ -917,18 +917,43 @@ public class DBConnector {
 		}
 	}
 
-	public static void insertRepeatEntry(int groupID, int userID) {
-
+	/**
+	 * @param group group to repeat
+	 * @param userID  user of group
+	 * @param delayInSeconds delay in seconds
+	 * @return  a copy of the given group with updated tweetdates (old date plus delayInSeconds seconds)
+	 */
+	public static TweetGroup createRepeatGroupInSeconds(TweetGroup group, int userID, int delayInSeconds){
+		TweetGroup repeatGroup = new TweetGroup(group.title, group.description); 
+		List<Tweet> repeatTweets = new ArrayList<Tweet>();
+		Tweet repeatTweet;
+		for (Tweet tweet : group.tweets) {
+			LocalDateTime time = LocalDateTime.parse(tweet.tweetDate,
+					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			time = time.plusSeconds(delayInSeconds);
+			String timeString = time.format( DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			repeatTweet = new Tweet(timeString, tweet.content, tweet.imageUrl, tweet.longitude, tweet.latitude);
+			repeatTweets.add(repeatTweet);
+		}
+		repeatGroup.setTweets(repeatTweets);
+		return repeatGroup;
 	}
 
-	public static TweetGroup getGroupForNewYear(TweetGroup group, int userID, int yearsToAdd) {
+
+	/**
+	 * @param group group to repeat
+	 * @param userID  user of group
+	 * @param delayInYears delay in years
+	 * @return  a copy of the given group with updated tweetdates (old date plus delayInYears years)
+	 */
+	public static TweetGroup createRepeatGroupInYears(TweetGroup group, int userID, int delayInYears) {
 		TweetGroup updatedGroup = new TweetGroup(group.title, group.description);
 		List<Tweet> updatedTweets = new ArrayList<Tweet>();
 		Tweet updatedTweet;
 		for (Tweet tweet : group.tweets) {
 			LocalDateTime time = LocalDateTime.parse(tweet.tweetDate,
 					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-			time = time.plusYears(yearsToAdd);
+			time = time.plusYears(delayInYears);
 			String timeString = time.format( DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 			updatedTweet = new Tweet(timeString, tweet.content, tweet.imageUrl, tweet.longitude, tweet.latitude);
 			updatedTweets.add(updatedTweet);
@@ -936,32 +961,5 @@ public class DBConnector {
 		updatedGroup.setTweets(updatedTweets);
 		return updatedGroup;
 	}
-
-	public static void insertNewRepeatEntry(int groupID, int userID) {
-		try {
-
-			connection.setAutoCommit(false);
-			DatabaseMetaData dbmd = connection.getMetaData();
-			ResultSet tables = dbmd.getTables(null, null, "repeats", null);
-			if (!tables.next()) {
-				Statement stmt = connection.createStatement();
-				String sql = "DROP TABLE IF EXISTS repeats; CREATE TABLE repeats ( repeat_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, group_id INTEGER NOT NULL, user_id  INTEGER NOT NULL, CONSTRAINT FK_USERS_USERID_REPEATS_USERID FOREIGN KEY (user_id) REFERENCES users (user_id), CONSTRAINT FK_GROUPS_GROUPID_REPEATS_GROUPID FOREIGN KEY (group_id) REFERENCES groups (group_id));";
-				stmt.executeUpdate(sql);
-				stmt.close();
-				connection.commit();
-				System.out.println("created table 'repeats'.");
-			}
-			// insert user
-			connection.setAutoCommit(false);
-			Statement stmt = connection.createStatement();
-			String sql = "INSERT INTO repeats(group_id, user_id) VALUES(" + groupID + ", " + userID + ")";
-			stmt.executeUpdate(sql);
-			stmt.close();
-			connection.commit();
-
-		} catch (SQLException e) {
-			System.out.print("DBConnector.insertNewRepeatEntry: ");
-			e.printStackTrace();
-		}
-	}
+	
 }
