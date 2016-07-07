@@ -923,8 +923,8 @@ public class DBConnector {
 	 * @param delayInSeconds delay in seconds
 	 * @return  a copy of the given group with updated tweetdates (old date plus delayInSeconds seconds)
 	 */
-	public static TweetGroup createRepeatGroupInSeconds(TweetGroup group, int userID, int delayInSeconds){
-		TweetGroup repeatGroup = new TweetGroup(group.title, group.description); 
+	public static TweetGroup createRepeatGroupInSeconds(TweetGroup group, int userID, int delayInSeconds, String newTitle){
+		TweetGroup repeatGroup = new TweetGroup(newTitle, group.description); 
 		List<Tweet> repeatTweets = new ArrayList<Tweet>();
 		Tweet repeatTweet;
 		for (Tweet tweet : group.tweets) {
@@ -950,15 +950,18 @@ public class DBConnector {
 		TweetGroup updatedGroup = new TweetGroup(group.title, group.description);
 		List<Tweet> updatedTweets = new ArrayList<Tweet>();
 		Tweet updatedTweet;
+		String timeString = null;
 		for (Tweet tweet : group.tweets) {
 			LocalDateTime time = LocalDateTime.parse(tweet.tweetDate,
 					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 			time = time.plusYears(delayInYears);
-			String timeString = time.format( DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			timeString = time.format( DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 			updatedTweet = new Tweet(timeString, tweet.content, tweet.imageUrl, tweet.longitude, tweet.latitude);
 			updatedTweets.add(updatedTweet);
 		}
+		String newYear = timeString.substring(0, 4);
 		updatedGroup.setTweets(updatedTweets);
+		updatedGroup.title = group.title+"_"+newYear;
 		return updatedGroup;
 	}
 	

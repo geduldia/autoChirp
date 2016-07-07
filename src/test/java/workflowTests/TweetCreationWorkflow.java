@@ -125,7 +125,7 @@ public class TweetCreationWorkflow {
 		TweetFactory factory = new TweetFactory("src/main/resources/parser/datetime.formats");
 		TweetGroup group = factory.getTweetsFromTSVFile(file, "dateFormatTest", "test all supported formats", 3, "UTF-8");
 		TweetGroup oneYearLater = DBConnector.createRepeatGroupInYears(group, 2, 2);
-		Assert.assertEquals(group.title, oneYearLater.title);
+		System.out.println(oneYearLater.title);
 		Assert.assertEquals(group.description, oneYearLater.description);
 		Assert.assertEquals(group.tweets.size(), oneYearLater.tweets.size());
 		for (int t = 0; t < group.tweets.size(); t++) {
@@ -154,8 +154,8 @@ public class TweetCreationWorkflow {
 		File file = new File("src/test/resources/testTSVFile_DateFormats.txt");
 		TweetFactory factory = new TweetFactory("src/main/resources/parser/datetime.formats");
 		TweetGroup group = factory.getTweetsFromTSVFile(file, "dateFormatTest", "test all supported formats", 3, "UTF-8");
-		TweetGroup oneYearLater = DBConnector.createRepeatGroupInSeconds(group, 2, 2000);
-		Assert.assertEquals(group.title, oneYearLater.title);
+		TweetGroup oneYearLater = DBConnector.createRepeatGroupInSeconds(group, 2, 2000, "newTitle");
+		System.out.println(oneYearLater.title);
 		Assert.assertEquals(group.description, oneYearLater.description);
 		Assert.assertEquals(group.tweets.size(), oneYearLater.tweets.size());
 		for (int t = 0; t < group.tweets.size(); t++) {
