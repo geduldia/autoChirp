@@ -2,8 +2,12 @@ package autoChirp.webController;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -11,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -224,7 +230,7 @@ public class GroupController {
 		if (session.getAttribute("account") == null)
 			return new ModelAndView("redirect:/account");
 
-		if (!Arrays.asList("tsv-file", "wikipedia").contains(importer)) {
+		if (!Arrays.asList("gdrive", "tsv-file", "wikipedia").contains(importer)) {
 			ModelAndView mv = new ModelAndView("error");
 			mv.addObject("error", "An importer of type " + importer + " does not exist.");
 			return mv;
@@ -234,6 +240,97 @@ public class GroupController {
 		mv.addObject("importer", importer);
 
 		return mv;
+	}
+
+	/**
+	 * A HTTP POST request handler, responsible for serving
+	 * /groups/import/gdrive. This method gets POSTed as the GoogleDrive-import
+	 * form is submitted. All input-field values are passed as parameters and
+	 * checked for validity. The URL of the GoogleDocs-spreadsheet is validated
+	 * against a basic regex and then further processed. As the corresponding
+	 * TSV-file is successfully downloaded, it gets passed to the
+	 * TSV-file-parser and then inserted into the database.
+	 *
+	 * @param source
+	 *            POST param bearing the Wikipedia-article URL
+	 * @param title
+	 *            POST param bearing the referenced input-field value
+	 * @param description
+	 *            POST param bearing the referenced input-field value
+	 * @return Redirect-view if successful, else error-view
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/import/gdrive", method = RequestMethod.POST)
+	public ModelAndView importGdriveGroupPost(@RequestParam("source") String source,
+			@RequestParam("title") String title, @RequestParam("description") String description) throws Exception {
+		if (session.getAttribute("account") == null)
+			return new ModelAndView("redirect:/account");
+		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
+
+		if (!source.matches("https?:\\/\\/docs\\.google\\.com\\/spreadsheets\\/d\\/.*")) {
+			ModelAndView mv = new ModelAndView("error");
+			mv.addObject("error", "The URL must be a valid Spreadsheet from GoogleDrive.");
+			return mv;
+		}
+
+		if (title.length() > 255) {
+			ModelAndView mv = new ModelAndView("error");
+			mv.addObject("error", "The group title may be no longer then 255 characters.");
+			return mv;
+		}
+
+		if (description.length() > 255) {
+			ModelAndView mv = new ModelAndView("error");
+			mv.addObject("error", "The group description may be no longer then 255 characters.");
+			return mv;
+		}
+
+		Pattern pattern = Pattern.compile("https?:\\/\\/docs\\.google\\.com\\/spreadsheets\\/d\\/([^/]*)");
+		Matcher matcher = pattern.matcher(source);
+
+		if (!matcher.find()) {
+			ModelAndView mv = new ModelAndView("error");
+			mv.addObject("error", "The documentID could not be extracted form the given source URL [" + source + "].");
+			return mv;
+		}
+
+		URL url = new URL("https://docs.google.com/spreadsheets/d/" + matcher.group(1) + "/export?exportFormat=tsv");
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.setRequestMethod("GET");
+		connection.connect();
+
+		if (connection.getResponseCode() != 200) {
+			ModelAndView mv = new ModelAndView("error");
+			mv.addObject("error", "The file could not be read, sure it's accessmode is set to public?");
+			return mv;
+		}
+
+		File file;
+		TweetGroup tweetGroup;
+		TweetFactory tweeter = new TweetFactory(dateformats);
+
+		try {
+			file = File.createTempFile("upload-", ".tsv", new File(uploadtemp));
+			Files.copy(url.openStream(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		} catch (Exception e) {
+			ModelAndView mv = new ModelAndView("error");
+			mv.addObject("error", "The downloaded file could not be opened.");
+			return mv;
+		}
+
+		try {
+			tweetGroup = tweeter.getTweetsFromTSVFile(file, title, description, 0, "UTF-8");
+		} catch (MalformedTSVFileException e) {
+			ModelAndView mv = new ModelAndView("error");
+			mv.addObject("error", "Parsing error, " + e.getMessage());
+			return mv;
+		}
+
+		int groupID = DBConnector.insertTweetGroup(tweetGroup, userID);
+		file.delete();
+
+		return (groupID > 0) ? new ModelAndView("redirect:/groups/view/" + groupID)
+				: new ModelAndView("redirect:/error");
 	}
 
 	/**
@@ -278,6 +375,7 @@ public class GroupController {
 		}
 
 		File file;
+		TweetGroup tweetGroup;
 		TweetFactory tweeter = new TweetFactory(dateformats);
 
 		try {
@@ -290,8 +388,6 @@ public class GroupController {
 			mv.addObject("error", "The uploaded file could not be opened.");
 			return mv;
 		}
-
-		TweetGroup tweetGroup;
 
 		try {
 			tweetGroup = tweeter.getTweetsFromTSVFile(file, title, description, (delay <= 0) ? 0 : delay, encoding);
@@ -337,7 +433,7 @@ public class GroupController {
 
 		if (!source.matches("https?:\\/\\/(de|en)\\.wikipedia\\.org\\/wiki\\/.*")) {
 			ModelAndView mv = new ModelAndView("error");
-			mv.addObject("error", "The URL mmust be a valid (english or german) Wikipedia Article.");
+			mv.addObject("error", "The URL must be a valid (english or german) Wikipedia Article.");
 			return mv;
 		}
 
