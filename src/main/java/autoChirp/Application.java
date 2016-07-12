@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Configuration;
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
 
-  private static Class<Application> applicationClass = Application.class;
+	private static Class<Application> applicationClass = Application.class;
 
 	@Value("${autochirp.database.dbfile}")
 	private String dbfile;
@@ -48,17 +48,15 @@ public class Application extends SpringBootServletInitializer {
 		ApplicationContext ctx = SpringApplication.run(Application.class, args);
 	}
 
-  /**
+	/**
 	 * @param application
 	 *            SpringApplicationBuilder object
-	 * @return SpringApplicationBuilder
-	 *             SpringApplicationBuilder object
+	 * @return SpringApplicationBuilder SpringApplicationBuilder object
 	 */
-  @Override
-  protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-    return application.sources(applicationClass);
-  }
-
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(applicationClass);
+	}
 
 	/**
 	 * Open database connection and schedule relevant Tweets.

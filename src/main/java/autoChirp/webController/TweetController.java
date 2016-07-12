@@ -192,7 +192,7 @@ public class TweetController {
 			return mv;
 		}
 
-		if(tweetTime.matches("^[0-9]{2}:[0-9]{2}$")){
+		if (tweetTime.matches("^[0-9]{2}:[0-9]{2}$")){
 			tweetTime = tweetTime+":00";
 		}
 
@@ -330,7 +330,7 @@ public class TweetController {
 			return mv;
 		}
 
-		if(tweetTime.matches("^[0-9]{2}:[0-9]{2}$")){
+		if (tweetTime.matches("^[0-9]{2}:[0-9]{2}$")){
 			tweetTime = tweetTime+":00";
 		}
 		else if (!tweetTime.matches("^[0-9]{2}:[0-9]{2}:[0-9]{2}$")) {
@@ -465,7 +465,7 @@ public class TweetController {
 			return mv;
 		}
 
-		if(tweetTime.matches("^[0-9]{2}:[0-9]{2}$")){
+		if (tweetTime.matches("^[0-9]{2}:[0-9]{2}$")){
 			tweetTime = tweetTime+":00";
 		}
 
