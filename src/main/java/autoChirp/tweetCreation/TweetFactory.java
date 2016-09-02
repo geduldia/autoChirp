@@ -144,7 +144,7 @@ public class TweetFactory {
 					row++;
 					continue;
 				}
-				if(line.toLowerCase().startsWith("date")){
+				if(line.toLowerCase().startsWith("date")||line.toLowerCase().startsWith("datum")){
 					line = in.readLine();
 					row++;
 					continue;
