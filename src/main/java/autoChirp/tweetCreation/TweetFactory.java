@@ -183,25 +183,33 @@ public class TweetFactory {
 				}
 				// get latitude
 				float latitude = 0;
+				float longitude = 0;
 				if (split.length > 4) {
 					try{
-						latitude = Float.parseFloat(split[4]);
+						String number = split[4];
+						number = number.replace(",", ".");
+						latitude = Float.parseFloat(number);
 					}
 					catch(NumberFormatException e){
 						throw new MalformedTSVFileException(row, 5, split[4], "malformed latitude: "+split[4]+"   (row: "+row+" column: 5)" );
 					}
-				}
-				// get longitude
-				float longitude = 0;
-				if (split.length > 5) {
-					try{
-
-						longitude = Float.parseFloat(split[5]);
+					// get longitude
+					if (split.length > 5) {
+						try{
+							String number = split[5];
+							number = number.replace(",", "\\.");
+							longitude = Float.parseFloat(split[5]);
+						}
+						catch(NumberFormatException e){
+							throw new MalformedTSVFileException(row, 6, split[5], "malformed longitude: "+split[5]+"   (row: "+row+" column: 6)");
+						}
 					}
-					catch(NumberFormatException e){
-						throw new MalformedTSVFileException(row, 6, split[5], "malformed longitude: "+split[5]+"   (row: "+row+" column: 6)");
+					else{
+						//lattitude without longitude will be ignored
+						latitude = 0;
 					}
 				}
+				
 				// get tweet-content
 				content = split[2];
 				// trim content to max. 140 characters
