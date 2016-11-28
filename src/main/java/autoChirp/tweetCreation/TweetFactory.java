@@ -348,6 +348,7 @@ public class TweetFactory {
 		return sb.toString();
 	}
 
+	
 	/**
 	 * trims a sentence to a tweet-lenth of max. 140 characters and adds the
 	 * given url to the tweets content
@@ -357,14 +358,28 @@ public class TweetFactory {
 	 * @return a valid tweet content
 	 */
 	private String trimToTweet(String toTrim, String url, String imageUrl) {
+		if(url == null){
+			System.out.println("find");
+			//check if content contains url
+			String urlRegex = "(http(s)?:\\/\\/(.*))(\\s)?" ;
+			Pattern pattern = Pattern.compile(urlRegex);
+			Matcher matcher = pattern.matcher(toTrim);
+			if(matcher.find()){
+				System.out.println("find");
+				url = matcher.group(1);
+				System.out.println("url: " + url);
+				toTrim = toTrim.replace(url, "");
+				System.out.println("toTrim: " + toTrim);
+			}	
+		}
 		if (toTrim.length() > 140) {
 			int characters = 140;
 			if (url != null) {
 				characters = characters - 25;
 			}
-			if (imageUrl != null) {
-				characters = characters - 25;
-			}
+//			if (imageUrl != null) {
+//				characters = characters - 25;
+//			}
 			toTrim = toTrim.substring(0, characters);
 			toTrim = toTrim.substring(0, toTrim.lastIndexOf(" "));
 		}
