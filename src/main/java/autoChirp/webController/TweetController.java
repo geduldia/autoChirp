@@ -2,6 +2,7 @@ package autoChirp.webController;
 
 import autoChirp.DBConnector;
 import autoChirp.tweetCreation.Tweet;
+import autoChirp.tweetCreation.TweetFactory;
 import autoChirp.tweetCreation.TweetGroup;
 import autoChirp.tweeting.TweetScheduler;
 import java.net.MalformedURLException;
@@ -16,6 +17,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,10 +41,12 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping(value = "/tweets")
 public class TweetController {
-
+	
+	@Value("${autochirp.parser.dateformats}")
+	private String dateformats;
 	private HttpSession session;
 	private int tweetsPerPage = 15;
-	private int maxTweetLength = 140;
+	//private int maxTweetLength = 140;
 
 	/**
 	 * Constructor method, used to autowire and inject the HttpSession object.
@@ -180,11 +185,14 @@ public class TweetController {
 			return new ModelAndView("redirect:/account");
 		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
 
-		if (content.length() > maxTweetLength) {
-			ModelAndView mv = new ModelAndView("error");
-			mv.addObject("error", "The tweet content may be no longer then " + maxTweetLength + " characters.");
-			return mv;
-		}
+		TweetFactory tf = new TweetFactory(dateformats);
+		content = tf.trimToTweet(content, imageUrl);
+		//TODO: Warnung, falls tweet gekürzt wurde
+//		if (content.length() > maxTweetLength) {
+//			ModelAndView mv = new ModelAndView("error");
+//			mv.addObject("error", "The tweet content may be no longer then " + maxTweetLength + " characters.");
+//			return mv;
+//		}
 
 		if (!tweetDate.matches("^[0-9]{4}(-[0-9]{2}){2}$")) {
 			ModelAndView mv = new ModelAndView("error");
@@ -318,11 +326,14 @@ public class TweetController {
 		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
 		boolean enabledGroup = DBConnector.isEnabledGroup(groupID, userID);
 
-		if (content.length() > maxTweetLength) {
-			ModelAndView mv = new ModelAndView("error");
-			mv.addObject("error", "The tweet content may be no longer then " + maxTweetLength + " characters.");
-			return mv;
-		}
+		TweetFactory tf = new TweetFactory(dateformats);
+		content = tf.trimToTweet(content, imageUrl);
+		//TODO: Warnung falls tweet gekürzt wurde
+//		if (content.length() > maxTweetLength) {
+//			ModelAndView mv = new ModelAndView("error");
+//			mv.addObject("error", "The tweet content may be no longer then " + maxTweetLength + " characters.");
+//			return mv;
+//		}
 
 		if (!tweetDate.matches("^[0-9]{4}(-[0-9]{2}){2}$")) {
 			ModelAndView mv = new ModelAndView("error");
@@ -452,12 +463,17 @@ public class TweetController {
 			mv.addObject("error", "You cannot edit a tweeted Tweet.");
 			return mv;
 		}
+		TweetFactory tf = new TweetFactory(dateformats);
+		
+		//TODO: Warnung, falls Tweet tatsächlich gekürzt wurde
+		content = tf.trimToTweet(content, imageUrl);
 
-		if (content.length() > maxTweetLength) {
-			ModelAndView mv = new ModelAndView("error");
-			mv.addObject("error", "The tweet content may be no longer then " + maxTweetLength + " characters.");
-			return mv;
-		}
+//		if (content.length() > maxTweetLength) {
+//			ModelAndView mv = new ModelAndView("error");
+//			mv.addObject("error", "The tweet content may be no longer then " + maxTweetLength + " characters.");
+//			return mv;
+//		}
+
 
     if (!tweetDate.matches("^[0-9]{4}(-[0-9]{2}){2}$")) {
 			ModelAndView mv = new ModelAndView("error");

@@ -35,10 +35,10 @@ public class HeidelTimeWrapper extends HeidelTimeStandalone {
 	/**
 	 * get TreeTagger path
 	 */
-	@PostConstruct
-	public void initializeWrapper() {
-		this.treetagger = treetaggerProp;
-	}
+//	@PostConstruct
+//	public void initializeWrapper() {
+//		HeidelTimeWrapper.treetagger = treetaggerProp;
+//	}
 
   /**
 	 * Empty constructor

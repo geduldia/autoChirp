@@ -213,7 +213,7 @@ public class TweetFactory {
 				// get tweet-content
 				content = split[2];
 				// trim content to max. 140 characters
-				content = trimToTweet(content, null, imageUrl);
+				content = trimToTweet(content, imageUrl);
 				// calc. next possible tweetDate
 
 
@@ -357,39 +357,32 @@ public class TweetFactory {
 	 * @param url
 	 * @return a valid tweet content
 	 */
-	private String trimToTweet(String toTrim, String url, String imageUrl) {
-		if(url == null){
-			System.out.println("find");
-			//check if content contains url
-			String urlRegex = "(http(s)?:\\/\\/(.*))(\\s)?" ;
-			Pattern pattern = Pattern.compile(urlRegex);
-			Matcher matcher = pattern.matcher(toTrim);
-			if(matcher.find()){
-				System.out.println("find");
-				url = matcher.group(1);
-				System.out.println("url: " + url);
-				toTrim = toTrim.replace(url, "");
-				System.out.println("toTrim: " + toTrim);
-			}	
+	public String trimToTweet(String toTrim, String url, String imageUrl) {
+		int maxLength = 140;
+		if(url!= null){
+			maxLength = 116;
 		}
-		if (toTrim.length() > 140) {
-			int characters = 140;
-			if (url != null) {
-				characters = characters - 25;
-			}
-//			if (imageUrl != null) {
-//				characters = characters - 25;
-//			}
-			toTrim = toTrim.substring(0, characters);
+		if (toTrim.length() > maxLength) {
+			
+			toTrim = toTrim.substring(0, maxLength);
 			toTrim = toTrim.substring(0, toTrim.lastIndexOf(" "));
 		}
 		if (url != null) {
 			toTrim = toTrim.concat(" " + url);
 		}
-		// if(imageUrl != null){
-		// toTrim = toTrim.concat(" "+imageUrl);
-		// }
 		return toTrim;
+	}
+	
+	public String trimToTweet(String toTrim, String imageUrl){
+		String urlRegex = "(http(s)?:\\/\\/(.*))(\\s)?" ;
+		Pattern pattern = Pattern.compile(urlRegex);
+		Matcher matcher = pattern.matcher(toTrim);
+		String url = null;
+		if(matcher.find()){
+			url = matcher.group(1);
+			toTrim = toTrim.replace(url, "");
+		}	
+		return trimToTweet(toTrim, url, imageUrl);
 	}
 
 	/**
