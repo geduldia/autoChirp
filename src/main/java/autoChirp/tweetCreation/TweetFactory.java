@@ -213,7 +213,12 @@ public class TweetFactory {
 				// get tweet-content
 				content = split[2];
 				// trim content to max. 140 characters
+				boolean trimmed = false;
+				int lengthBevor = content.length();
 				content = trimToTweet(content, imageUrl);
+				if(content.length() < lengthBevor){
+					trimmed = true;
+				}
 				// calc. next possible tweetDate
 
 
@@ -237,7 +242,8 @@ public class TweetFactory {
 					formattedDate = formattedDate.replace(" 00:00", " 12:00");
 				}
 				if (ldt.isAfter(LocalDateTime.now())) {
-					tweet = new Tweet(formattedDate, content, imageUrl, longitude, latitude);
+					tweet = new ImportetTweet(formattedDate, content, imageUrl, longitude, latitude);
+					((ImportetTweet) tweet).setTrimmed(trimmed);
 					group.addTweet(tweet);
 				}
 				line = in.readLine();
