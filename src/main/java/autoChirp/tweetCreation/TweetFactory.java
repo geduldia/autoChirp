@@ -242,8 +242,8 @@ public class TweetFactory {
 					formattedDate = formattedDate.replace(" 00:00", " 12:00");
 				}
 				if (ldt.isAfter(LocalDateTime.now())) {
-					tweet = new ImportetTweet(formattedDate, content, imageUrl, longitude, latitude);
-					((ImportetTweet) tweet).setTrimmed(trimmed);
+					tweet = new ImportedTweet(formattedDate, content, imageUrl, longitude, latitude);
+					((ImportedTweet) tweet).setTrimmed(trimmed);
 					group.addTweet(tweet);
 				}
 				line = in.readLine();

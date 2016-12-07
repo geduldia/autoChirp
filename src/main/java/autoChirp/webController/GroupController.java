@@ -33,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import autoChirp.DBConnector;
 import autoChirp.preProcessing.parser.WikipediaParser;
+import autoChirp.tweetCreation.ImportedTweet;
 import autoChirp.tweetCreation.MalformedTSVFileException;
 import autoChirp.tweetCreation.Tweet;
 import autoChirp.tweetCreation.TweetFactory;
@@ -326,8 +327,30 @@ public class GroupController {
 			return mv;
 		}
 
+		List<Tweet> trimmed = new ArrayList<Tweet>();
+		for (Tweet t : tweetGroup.tweets)
+			if (t instanceof ImportedTweet)
+				if (((ImportedTweet) t).isTrimmed())
+					trimmed.add(t);
+
 		int groupID = DBConnector.insertTweetGroup(tweetGroup, userID);
 		file.delete();
+
+		if (!trimmed.isEmpty()) {
+			String trim = new String();
+			tweetGroup = DBConnector.getTweetGroupForUser(userID, groupID);
+			for (Tweet t : tweetGroup.tweets)
+				for (Tweet u : trimmed)
+					if (t.compareTo(u) == 0)
+						trim += trim.isEmpty() ? t.tweetID : "," + t.tweetID;
+
+			ModelAndView mv = new ModelAndView("confirm");
+			mv.addObject("next", "/groups/view/" + groupID + "?trimmed=" + trim);
+			mv.addObject("confirm", "Beware! Some Tweets You imported had to be trimmed. "
+					+ "Those will be highlighted on the following page. Do You wish to continue?");
+
+			return mv;
+		}
 
 		return (groupID > 0) ? new ModelAndView("redirect:/groups/view/" + groupID)
 				: new ModelAndView("redirect:/error");
@@ -397,8 +420,30 @@ public class GroupController {
 			return mv;
 		}
 
+		List<Tweet> trimmed = new ArrayList<Tweet>();
+		for (Tweet t : tweetGroup.tweets)
+			if (t instanceof ImportedTweet)
+				if (((ImportedTweet) t).isTrimmed())
+					trimmed.add(t);
+
 		int groupID = DBConnector.insertTweetGroup(tweetGroup, userID);
 		file.delete();
+
+		if (!trimmed.isEmpty()) {
+			String trim = new String();
+			tweetGroup = DBConnector.getTweetGroupForUser(userID, groupID);
+			for (Tweet t : tweetGroup.tweets)
+				for (Tweet u : trimmed)
+					if (t.compareTo(u) == 0)
+						trim += trim.isEmpty() ? t.tweetID : "," + t.tweetID;
+
+			ModelAndView mv = new ModelAndView("confirm");
+			mv.addObject("next", "/groups/view/" + groupID + "?trimmed=" + trim);
+			mv.addObject("confirm", "Beware! Some Tweets You imported had to be trimmed. "
+					+ "Those will be highlighted on the following page. Do You wish to continue?");
+
+			return mv;
+		}
 
 		return (groupID > 0) ? new ModelAndView("redirect:/groups/view/" + groupID)
 				: new ModelAndView("redirect:/error");
