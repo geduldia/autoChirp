@@ -1,11 +1,11 @@
 package autoChirp.preProcessing;
 
 import java.io.FileNotFoundException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import javax.annotation.PostConstruct;
+
+import org.springframework.stereotype.Component;
 
 import de.unihd.dbs.heideltime.standalone.Config;
 import de.unihd.dbs.heideltime.standalone.DocumentType;
@@ -13,8 +13,6 @@ import de.unihd.dbs.heideltime.standalone.HeidelTimeStandalone;
 import de.unihd.dbs.heideltime.standalone.OutputType;
 import de.unihd.dbs.heideltime.standalone.POSTagger;
 import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 /**
  *
@@ -27,24 +25,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class HeidelTimeWrapper extends HeidelTimeStandalone {
 
-	@Value("${autochirp.parser.treetagger}")
-	private String treetaggerProp;
-
-	private static String treetagger;
-
 	/**
-	 * get TreeTagger path
-	 */
-//	@PostConstruct
-//	public void initializeWrapper() {
-//		HeidelTimeWrapper.treetagger = treetaggerProp;
-//	}
-
-  /**
 	 * Empty constructor
 	 */
-	public HeidelTimeWrapper() {}
-
+	public HeidelTimeWrapper() {
+	}
 
 	/**
 	 *
@@ -68,9 +53,9 @@ public class HeidelTimeWrapper extends HeidelTimeStandalone {
 		setLanguage(language);
 		setDocumentType(typeToProcess);
 		setOutputType(outputType);
-		setPosTagger(posTagger);
+		setPosTagger(POSTagger.NO);
 		readConfigFile(configPath);
-		initialize(language, typeToProcess, outputType, configPath, posTagger, doIntervalTagging);
+		initialize(language, typeToProcess, outputType, configPath, POSTagger.NO, doIntervalTagging);
 
 	}
 
@@ -84,7 +69,6 @@ public class HeidelTimeWrapper extends HeidelTimeStandalone {
 			configStream = HeidelTimeWrapper.class.getResourceAsStream(configPath);
 			Properties props = new Properties();
 			props.load(configStream);
-      props.setProperty("treeTaggerHome", treetagger);
 			Config.setProps(props);
 			configStream.close();
 		} catch (FileNotFoundException e) {
