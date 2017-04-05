@@ -3,6 +3,14 @@ $('body').scrollspy({
     offset: 40
 });
 
+<<<<<<< HEAD
+=======
+a https://wiki.selfhtml.org/wiki/JavaScript/Objekte/RegExp https://encrypted.google.com/search?hl=de&q=javascript%20regex%20whitespace%20slash%20match
+
+Ein Text mit einem Link und 28 Zeichen delta http://without-systemd.org/wiki/index.php/Main_Page wird richtig berechnet nehme ich an. Aber wird er auch korrekt abgeschnitten?
+Ein Text mit einem Link und 28 Zeichen delta ....................... wird richtig berechnet nehme ich an. Aber wird er auch korrekt abgeschnitten?
+
+>>>>>>> 8833b111b303987d288fcbe4a3cd1015fea9065e
 if ($('textarea#content').length > 0) {
 	var regex = new RegExp('https?://[^\\s]*', 'g');
 	var subst = new Array(24).join('.');
