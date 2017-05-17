@@ -301,10 +301,12 @@ public class TweetFactory {
 				// trim sentence to 140 character
 				if (prefix != null ) {
 					if(prefix.equals("")){
-						 content = trimToTweet(doc.getSentences().get(i - 1), url, null);
+						 //content = trimToTweet(doc.getSentences().get(i - 1), url, null);
+						content = doc.getSentences().get(i-1)+" "+url;
 					}
 					else{
-						content = trimToTweet(prefix + ": " + doc.getSentences().get(i - 1), url, null);
+						//content = trimToTweet(prefix + ": " + doc.getSentences().get(i - 1), url, null);
+						content = prefix+": "+doc.getSentences().get(i-1)+" "+url;
 					}
 
 				} else {

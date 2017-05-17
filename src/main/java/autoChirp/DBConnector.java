@@ -448,6 +448,8 @@ public class DBConnector {
 				+ "') ORDER BY scheduled_date ASC";
 		return getTweets(query, userID);
 	}
+	
+
 
 	/**
 	 * returns a list of all tweets of a user with the given scheduled- and
@@ -671,6 +673,34 @@ public class DBConnector {
 		}
 		return toReturn;
 	}
+	
+	/**
+	 * reads a single tweet from the database specified by tweetID (if userID
+	 * fits to tweetID)
+	 *
+	 * @param tweetID
+	 *            tweetID
+	 * @return tweet with tweetID
+	 */
+	public static Tweet getTweetByID(int tweetID) {
+		Tweet toReturn = null;
+		try {
+			connection.setAutoCommit(false);
+			Statement stmt = connection.createStatement();
+			String sql = "SELECT * FROM tweets WHERE (tweet_id = '" + tweetID + "')";
+			ResultSet result = stmt.executeQuery(sql);
+			if (!result.next()) {
+				return null;
+			}
+			toReturn = new Tweet(result.getString(4), result.getString(5), result.getString(8), result.getFloat(9),
+					result.getFloat(10));
+		} catch (SQLException e) {
+			System.out.print("DBConnector.getGroupIDsForUser: ");
+			e.printStackTrace();
+		}
+		return toReturn;
+	}
+	
 
 	/**
 	 * returns the groupTitle of the given group (if userID fits to groupID)
