@@ -692,7 +692,8 @@ public class DBConnector {
 			if (!result.next()) {
 				return null;
 			}
-			toReturn = new Tweet(result.getString(4), result.getString(5), result.getString(8), result.getFloat(9),
+			toReturn = new Tweet(result.getString(4), result.getString(5), result.getInt(1), result.getInt(3),
+					result.getBoolean(6), result.getBoolean(7), 0, result.getString(8), result.getFloat(9),
 					result.getFloat(10));
 		} catch (SQLException e) {
 			System.out.print("DBConnector.getGroupIDsForUser: ");
@@ -701,6 +702,31 @@ public class DBConnector {
 		return toReturn;
 	}
 	
+
+	/**
+	 * returns the groupTitle of the given group (if userID fits to groupID)
+	 *
+	 * @param groupID
+	 *            groupID
+	 * @return groupTitle of the given group
+	 */
+	public static String getGroupTitle(int groupID) {
+		String toReturn = null;
+		try {
+			connection.setAutoCommit(false);
+			Statement stmt = connection.createStatement();
+			String sql = "SELECT group_name FROM groups WHERE (group_id = '" + groupID + "')";
+			ResultSet result = stmt.executeQuery(sql);
+			if (!result.next()) {
+				return null;
+			}
+			toReturn = result.getString(1);
+		} catch (SQLException e) {
+			System.out.print("DBConnector.getGroupIDsForUser: ");
+			e.printStackTrace();
+		}
+		return toReturn;
+	}	
 
 	/**
 	 * returns the groupTitle of the given group (if userID fits to groupID)
