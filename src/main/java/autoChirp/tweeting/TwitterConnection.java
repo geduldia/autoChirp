@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import autoChirp.DBConnector;
 import autoChirp.tweetCreation.Tweet;
+import autoChirp.tweetCreation.TweetFactory;
 
 /**
  * This class executes the actual twitter status-update using Spring Social
@@ -106,17 +107,18 @@ public class TwitterConnection {
 
 		// add flashcard
 		if (tweetData.toRequestParameters().get("status").get(0).toString().length() > 140) {
+			TweetFactory tf = new TweetFactory(dateformats);
 			String flashcard = appDomain + "/flashcard/" + toTweet.tweetID;
 
 			try {
-				boolean replacing = tweetData.hasMedia();
-				tweetData = tweetData.withMedia(new UrlResource(flashcard));
-
-				if (replacing) {
-					tweetData = new TweetData(tweet + " " + toTweet.imageUrl);
+				if (tweetData.hasMedia()) {
+					tweetData = new TweetData(tf.trimToTweet(tweet, toTweet.imageUrl))
+							.withMedia(new UrlResource(flashcard));
+				} else {
+					tweetData = tweetData.withMedia(new UrlResource(flashcard));
 				}
 			} catch (MalformedURLException e) {
-				tweetData = new TweetData(tweet + " " + flashcard + " " + toTweet.imageUrl);
+				tweetData = new TweetData(tf.trimToTweet(tweet, flashcard));
 			}
 		}
 
