@@ -213,12 +213,12 @@ public class TweetFactory {
 				// get tweet-content
 				content = split[2];
 				// trim content to max. 140 characters
-				boolean trimmed = false;
-				int lengthBevor = content.length();
-				content = trimToTweet(content, imageUrl);
-				if(content.length() < lengthBevor){
-					trimmed = true;
-				}
+				// boolean trimmed = false;
+				// int lengthBevor = content.length();
+				// content = trimToTweet(content, imageUrl);
+				// if(content.length() < lengthBevor){
+				// 	trimmed = true;
+				// }
 				// calc. next possible tweetDate
 
 
@@ -243,7 +243,7 @@ public class TweetFactory {
 				}
 				if (ldt.isAfter(LocalDateTime.now())) {
 					tweet = new ImportedTweet(formattedDate, content, imageUrl, longitude, latitude);
-					((ImportedTweet) tweet).setTrimmed(trimmed);
+					((ImportedTweet) tweet).setTrimmed(content.length() > 140);
 					group.addTweet(tweet);
 				}
 				line = in.readLine();
@@ -301,16 +301,21 @@ public class TweetFactory {
 				// trim sentence to 140 character
 				if (prefix != null ) {
 					if(prefix.equals("")){
-						 content = trimToTweet(doc.getSentences().get(i - 1), url, null);
+						 //content = trimToTweet(doc.getSentences().get(i - 1), url, null);
+						content = doc.getSentences().get(i-1)+" "+url;
 					}
 					else{
-						content = trimToTweet(prefix + ": " + doc.getSentences().get(i - 1), url, null);
+						//content = trimToTweet(prefix + ": " + doc.getSentences().get(i - 1), url, null);
+						content = prefix+": "+doc.getSentences().get(i-1)+" "+url;
 					}
 
 				} else {
-					content = trimToTweet(doc.getSentences().get(i - 1), url, null);
+					//content = trimToTweet(doc.getSentences().get(i - 1), url, null);
+					content = doc.getSentences().get(i-1)+" "+url;
 				}
-				tweet = new Tweet(tweetDate, content, null, 0, 0);
+//				tweet = new Tweet(tweetDate, content, null, 0, 0);
+				tweet = new ImportedTweet(tweetDate, content, null, 0, 0);
+				((ImportedTweet) tweet).setTrimmed(content.length() > 140);
 				tweets.add(tweet);
 			}
 		}

@@ -337,17 +337,18 @@ public class GroupController {
 		file.delete();
 
 		if (!trimmed.isEmpty()) {
-			String trim = new String();
-			tweetGroup = DBConnector.getTweetGroupForUser(userID, groupID);
-			for (Tweet t : tweetGroup.tweets)
-				for (Tweet u : trimmed)
-					if (t.compareTo(u) == 0)
-						trim += trim.isEmpty() ? t.tweetID : "," + t.tweetID;
+			// String trim = new String();
+			// tweetGroup = DBConnector.getTweetGroupForUser(userID, groupID);
+			// for (Tweet t : tweetGroup.tweets)
+			// for (Tweet u : trimmed)
+			// if (t.compareTo(u) == 0)
+			// trim += trim.isEmpty() ? t.tweetID : "," + t.tweetID;
 
 			ModelAndView mv = new ModelAndView("confirm");
-			mv.addObject("next", "/groups/view/" + groupID + "?trimmed=" + trim);
-			mv.addObject("confirm", "Beware! Some Tweets You imported had to be trimmed. "
-					+ "Those will be highlighted on the following page. Do You wish to continue?");
+			mv.addObject("next", "/groups/view/" + groupID);
+			mv.addObject("confirm", "Attention! Some of the imported Tweets exeed Twitters 140 character limit. "
+							+ "For Your conveniance the full text will be atteched to those Tweets as an image. "
+							+ "Those Tweets are highlighted on the next page.");
 
 			return mv;
 		}
@@ -430,17 +431,18 @@ public class GroupController {
 		file.delete();
 
 		if (!trimmed.isEmpty()) {
-			String trim = new String();
-			tweetGroup = DBConnector.getTweetGroupForUser(userID, groupID);
-			for (Tweet t : tweetGroup.tweets)
-				for (Tweet u : trimmed)
-					if (t.compareTo(u) == 0)
-						trim += trim.isEmpty() ? t.tweetID : "," + t.tweetID;
+			// String trim = new String();
+			// tweetGroup = DBConnector.getTweetGroupForUser(userID, groupID);
+			// for (Tweet t : tweetGroup.tweets)
+			// for (Tweet u : trimmed)
+			// if (t.compareTo(u) == 0)
+			// trim += trim.isEmpty() ? t.tweetID : "," + t.tweetID;
 
 			ModelAndView mv = new ModelAndView("confirm");
-			mv.addObject("next", "/groups/view/" + groupID + "?trimmed=" + trim);
-			mv.addObject("confirm", "Beware! Some Tweets You imported had to be trimmed. "
-					+ "Those will be highlighted on the following page. Do You wish to continue?");
+			mv.addObject("next", "/groups/view/" + groupID);
+			mv.addObject("confirm", "Attention! Some of the imported Tweets exeed Twitters 140 character limit. "
+							+ "For Your conveniance the full text will be atteched to those Tweets as an image. "
+							+ "Those Tweets are highlighted on the next page.");
 
 			return mv;
 		}
@@ -505,7 +507,30 @@ public class GroupController {
 				(prefix == "") ? null : prefix);
 		tweetGroup.title = title;
 
+		List<Tweet> trimmed = new ArrayList<Tweet>();
+		for (Tweet t : tweetGroup.tweets)
+			if (t instanceof ImportedTweet)
+				if (((ImportedTweet) t).isTrimmed())
+					trimmed.add(t);
+
 		int groupID = DBConnector.insertTweetGroup(tweetGroup, userID);
+
+		if (!trimmed.isEmpty()) {
+			// String trim = new String();
+			// tweetGroup = DBConnector.getTweetGroupForUser(userID, groupID);
+			// for (Tweet t : tweetGroup.tweets)
+			// for (Tweet u : trimmed)
+			// if (t.compareTo(u) == 0)
+			// trim += trim.isEmpty() ? t.tweetID : "," + t.tweetID;
+
+			ModelAndView mv = new ModelAndView("confirm");
+			mv.addObject("next", "/groups/view/" + groupID);
+			mv.addObject("confirm", "Attention! Some of the imported Tweets exeed Twitters 140 character limit. "
+							+ "For Your conveniance the full text will be atteched to those Tweets as an image. "
+							+ "Those Tweets are highlighted on the next page.");
+
+			return mv;
+		}
 
 		return (groupID > 0) ? new ModelAndView("redirect:/groups/view/" + groupID)
 				: new ModelAndView("redirect:/error");

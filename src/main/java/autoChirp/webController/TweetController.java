@@ -1,10 +1,5 @@
 package autoChirp.webController;
 
-import autoChirp.DBConnector;
-import autoChirp.tweetCreation.Tweet;
-import autoChirp.tweetCreation.TweetFactory;
-import autoChirp.tweetCreation.TweetGroup;
-import autoChirp.tweeting.TweetScheduler;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -25,6 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import autoChirp.DBConnector;
+import autoChirp.tweetCreation.Tweet;
+import autoChirp.tweetCreation.TweetFactory;
+import autoChirp.tweetCreation.TweetGroup;
+import autoChirp.tweeting.TweetScheduler;
 
 /**
  * A Spring MVC controller, responsible for serving /tweets. This controller
@@ -41,12 +43,12 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping(value = "/tweets")
 public class TweetController {
-	
+
 	@Value("${autochirp.parser.dateformats}")
 	private String dateformats;
 	private HttpSession session;
 	private int tweetsPerPage = 15;
-	//private int maxTweetLength = 140;
+	// private int maxTweetLength = 140;
 
 	/**
 	 * Constructor method, used to autowire and inject the HttpSession object.
@@ -185,14 +187,15 @@ public class TweetController {
 			return new ModelAndView("redirect:/account");
 		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
 
-		TweetFactory tf = new TweetFactory(dateformats);
-		content = tf.trimToTweet(content, imageUrl);
-		//TODO: Warnung, falls tweet gekürzt wurde
-//		if (content.length() > maxTweetLength) {
-//			ModelAndView mv = new ModelAndView("error");
-//			mv.addObject("error", "The tweet content may be no longer then " + maxTweetLength + " characters.");
-//			return mv;
-//		}
+		// TweetFactory tf = new TweetFactory(dateformats);
+		// content = tf.trimToTweet(content, imageUrl);
+		// TODO: Warnung, falls tweet gekürzt wurde
+		// if (content.length() > maxTweetLength) {
+		// ModelAndView mv = new ModelAndView("error");
+		// mv.addObject("error", "The tweet content may be no longer then " +
+		// maxTweetLength + " characters.");
+		// return mv;
+		// }
 
 		if (!tweetDate.matches("^[0-9]{4}(-[0-9]{2}){2}$")) {
 			ModelAndView mv = new ModelAndView("error");
@@ -200,8 +203,8 @@ public class TweetController {
 			return mv;
 		}
 
-		if (tweetTime.matches("^[0-9]{2}:[0-9]{2}$")){
-			tweetTime = tweetTime+":00";
+		if (tweetTime.matches("^[0-9]{2}:[0-9]{2}$")) {
+			tweetTime = tweetTime + ":00";
 		}
 
 		else if (!tweetTime.matches("^[0-9]{2}:[0-9]{2}:[0-9]{2}$")) {
@@ -212,7 +215,7 @@ public class TweetController {
 
 		if (!imageUrl.isEmpty()) {
 			try {
-				URL url = new URL(imageUrl);
+				new URL(imageUrl);
 			} catch (MalformedURLException e) {
 				ModelAndView mv = new ModelAndView("error");
 				mv.addObject("error", "The image URL must be a valid url.");
@@ -326,14 +329,15 @@ public class TweetController {
 		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
 		boolean enabledGroup = DBConnector.isEnabledGroup(groupID, userID);
 
-		TweetFactory tf = new TweetFactory(dateformats);
-		content = tf.trimToTweet(content, imageUrl);
-		//TODO: Warnung falls tweet gekürzt wurde
-//		if (content.length() > maxTweetLength) {
-//			ModelAndView mv = new ModelAndView("error");
-//			mv.addObject("error", "The tweet content may be no longer then " + maxTweetLength + " characters.");
-//			return mv;
-//		}
+		// TweetFactory tf = new TweetFactory(dateformats);
+		// content = tf.trimToTweet(content, imageUrl);
+		// TODO: Warnung falls tweet gekürzt wurde
+		// if (content.length() > maxTweetLength) {
+		// ModelAndView mv = new ModelAndView("error");
+		// mv.addObject("error", "The tweet content may be no longer then " +
+		// maxTweetLength + " characters.");
+		// return mv;
+		// }
 
 		if (!tweetDate.matches("^[0-9]{4}(-[0-9]{2}){2}$")) {
 			ModelAndView mv = new ModelAndView("error");
@@ -341,10 +345,9 @@ public class TweetController {
 			return mv;
 		}
 
-		if (tweetTime.matches("^[0-9]{2}:[0-9]{2}$")){
-			tweetTime = tweetTime+":00";
-		}
-		else if (!tweetTime.matches("^[0-9]{2}:[0-9]{2}:[0-9]{2}$")) {
+		if (tweetTime.matches("^[0-9]{2}:[0-9]{2}$")) {
+			tweetTime = tweetTime + ":00";
+		} else if (!tweetTime.matches("^[0-9]{2}:[0-9]{2}:[0-9]{2}$")) {
 			ModelAndView mv = new ModelAndView("error");
 			mv.addObject("error", "The tweet time must match the pattern: HH:MM:SS");
 			return mv;
@@ -442,15 +445,11 @@ public class TweetController {
 	 * @return Redirect-view if successful, else error-view
 	 */
 	@RequestMapping(value = "/edit/{tweetID}", method = RequestMethod.POST)
-	public ModelAndView editTweetPost(
-    @PathVariable int tweetID,
-    @RequestParam("content") String content,
-    @RequestParam("tweetDate") String tweetDate,
-    @RequestParam("tweetTime") String tweetTime,
-		@RequestParam("imageUrl") String imageUrl,
-		@RequestParam(name = "latitude", defaultValue = "0.0") float latitude,
-    @RequestParam(name = "longitude", defaultValue = "0.0") float longitude
-  ) {
+	public ModelAndView editTweetPost(@PathVariable int tweetID, @RequestParam("content") String content,
+			@RequestParam("tweetDate") String tweetDate, @RequestParam("tweetTime") String tweetTime,
+			@RequestParam("imageUrl") String imageUrl,
+			@RequestParam(name = "latitude", defaultValue = "0.0") float latitude,
+			@RequestParam(name = "longitude", defaultValue = "0.0") float longitude) {
 
 		if (session.getAttribute("account") == null)
 			return new ModelAndView("redirect:/account");
@@ -463,26 +462,26 @@ public class TweetController {
 			mv.addObject("error", "You cannot edit a tweeted Tweet.");
 			return mv;
 		}
-		TweetFactory tf = new TweetFactory(dateformats);
-		
-		//TODO: Warnung, falls Tweet tatsächlich gekürzt wurde
-		content = tf.trimToTweet(content, imageUrl);
+		// TweetFactory tf = new TweetFactory(dateformats);
 
-//		if (content.length() > maxTweetLength) {
-//			ModelAndView mv = new ModelAndView("error");
-//			mv.addObject("error", "The tweet content may be no longer then " + maxTweetLength + " characters.");
-//			return mv;
-//		}
+		// TODO: Warnung, falls Tweet tatsächlich gekürzt wurde
+		// content = tf.trimToTweet(content, imageUrl);
 
+		// if (content.length() > maxTweetLength) {
+		// ModelAndView mv = new ModelAndView("error");
+		// mv.addObject("error", "The tweet content may be no longer then " +
+		// maxTweetLength + " characters.");
+		// return mv;
+		// }
 
-    if (!tweetDate.matches("^[0-9]{4}(-[0-9]{2}){2}$")) {
+		if (!tweetDate.matches("^[0-9]{4}(-[0-9]{2}){2}$")) {
 			ModelAndView mv = new ModelAndView("error");
 			mv.addObject("error", "The tweet date must match the pattern: YYYY-MM-DD");
 			return mv;
 		}
 
-		if (tweetTime.matches("^[0-9]{2}:[0-9]{2}$")){
-			tweetTime = tweetTime+":00";
+		if (tweetTime.matches("^[0-9]{2}:[0-9]{2}$")) {
+			tweetTime = tweetTime + ":00";
 		}
 
 		else if (!tweetTime.matches("^[0-9]{2}:[0-9]{2}:[0-9]{2}$")) {
@@ -515,11 +514,11 @@ public class TweetController {
 
 		DBConnector.editTweet(tweetID, content, userID, imageUrl, longitude, latitude, tweetDate + " " + tweetTime);
 
-    if (!tweetEntry.tweetDate.equals(tweetDate + " " + tweetTime)) {
-      TweetScheduler.descheduleTweet(tweetID);
-      TweetGroup tweetGroup = DBConnector.getTweetGroupForUser(userID, tweetEntry.groupID);
-      TweetScheduler.scheduleTweetsForUser(tweetGroup.tweets, userID);
-    }
+		if (!tweetEntry.tweetDate.equals(tweetDate + " " + tweetTime)) {
+			TweetScheduler.descheduleTweet(tweetID);
+			TweetGroup tweetGroup = DBConnector.getTweetGroupForUser(userID, tweetEntry.groupID);
+			TweetScheduler.scheduleTweetsForUser(tweetGroup.tweets, userID);
+		}
 
 		return new ModelAndView("redirect:/groups/view/" + tweetEntry.groupID);
 	}

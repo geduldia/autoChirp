@@ -109,4 +109,16 @@ public class Tweet implements Comparable<Tweet> {
 	public int compareTo(Tweet tweet) {
 		return this.tweetDate.compareTo(tweet.tweetDate);
 	}
+
+	/**
+	 * Get adjusted Tweet length (Twitter replaces URLs with t.co shortURLs,
+	 * resulting in the necessity to adjust the content string lengths).
+	 *
+	 * @return The adjustet Tweet content length
+	 */
+	public int adjustedLength() {
+		String placeholder = String.format("%24s", "");
+		String adjusted = this.content.replaceAll("https?://[^\\s]*", placeholder);
+		return adjusted.length();
+	}
 }

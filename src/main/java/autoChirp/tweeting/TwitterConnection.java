@@ -7,7 +7,6 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.social.twitter.api.StatusDetails;
 import org.springframework.social.twitter.api.TweetData;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.social.twitter.api.impl.TwitterTemplate;
@@ -15,10 +14,11 @@ import org.springframework.stereotype.Component;
 
 import autoChirp.DBConnector;
 import autoChirp.tweetCreation.Tweet;
+import autoChirp.tweetCreation.TweetFactory;
 
 /**
- * This class executes the actual twitter status-update using
- * Spring Social Twitter API
+ * This class executes the actual twitter status-update using Spring Social
+ * Twitter API
  *
  * @author Alena Geduldig
  *
@@ -32,8 +32,16 @@ public class TwitterConnection {
 	@Value("${spring.social.twitter.appSecret}")
 	private String appSecretProp;
 
+	@Value("${autochirp.domain}")
+	private String appDomainProp;
+
+	@Value("${autochirp.parser.dateformats}")
+	private String dateformatsProp;
+
 	private static String appID;
 	private static String appSecret;
+	private static String appDomain;
+	private static String dateformats;
 
 	/**
 	 * get appToken and appSecret
@@ -42,33 +50,34 @@ public class TwitterConnection {
 	public void initializeConnection() {
 		this.appID = appIDProp;
 		this.appSecret = appSecretProp;
+		this.appDomain = appDomainProp;
+		this.dateformats = dateformatsProp;
 	}
 
 	/**
-	 * updates the users twitter-status to the tweets content. 1. reads the tweet
-	 * with the given tweetID from the database 2. checks if the related
+	 * updates the users twitter-status to the tweets content. 1. reads the
+	 * tweet with the given tweetID from the database 2. checks if the related
 	 * tweetGroup is still enabled and tweet wasn't tweeted already 3. reads the
 	 * users oAuthToken and oAuthTokenSecret from the database 4. updates the
 	 * users twitter status to the tweets tweetContent
 	 *
 	 * @param userID
-	 * 		userID
+	 *            userID
 	 * @param tweetID
-	 * tweetID
+	 *            tweetID
 	 */
 	public void run(int userID, int tweetID) {
-
-		//read tweet from DB
+		// read tweet from DB
 		Tweet toTweet = DBConnector.getTweetByID(tweetID, userID);
 
-    // check if tweet exists
+		// check if tweet exists
 		if (toTweet == null) {
 			return;
 		}
-    // check if tweetGroup is still enabled
-    if (!DBConnector.isEnabledGroup(toTweet.groupID, userID)) {
-      return;
-    }
+		// check if tweetGroup is still enabled
+		if (!DBConnector.isEnabledGroup(toTweet.groupID, userID)) {
+			return;
+		}
 		// check if tweet was not tweeted already
 		if (toTweet.tweeted) {
 			return;
@@ -82,32 +91,49 @@ public class TwitterConnection {
 		// tweeting
 		Twitter twitter = new TwitterTemplate(appID, appSecret, token, tokenSecret);
 
-		//TweetData tweetData = new TweetData(toTweet.content);
+		// TweetData tweetData = new TweetData(toTweet.content);
 		String tweet = toTweet.content;
 		TweetData tweetData = new TweetData(tweet);
 
-		//add image
-		if(toTweet.imageUrl != null){
+		// add image
+		if (toTweet.imageUrl != null) {
 			try {
 				Resource img = new UrlResource(toTweet.imageUrl);
 				tweetData = tweetData.withMedia(img);
 			} catch (MalformedURLException e) {
-				tweetData = new TweetData(tweet+" "+toTweet.imageUrl);
+				tweetData = new TweetData(tweet + " " + toTweet.imageUrl);
 			}
 		}
 
-		//add Geo-Locations
-		if(toTweet.longitude != 0 || toTweet.latitude != 0){
+		// add flashcard
+		if (tweetData.toRequestParameters().get("status").get(0).toString().length() > 140) {
+			TweetFactory tf = new TweetFactory(dateformats);
+			String flashcard = appDomain + "/flashcard/" + toTweet.tweetID;
+
+			try {
+				if (tweetData.hasMedia()) {
+					tweetData = new TweetData(tf.trimToTweet(tweet, toTweet.imageUrl))
+							.withMedia(new UrlResource(flashcard));
+				} else {
+					tweetData = tweetData.withMedia(new UrlResource(flashcard));
+				}
+			} catch (MalformedURLException e) {
+				tweetData = new TweetData(tf.trimToTweet(tweet, flashcard));
+			}
+		}
+
+		// add Geo-Locations
+		if (toTweet.longitude != 0 || toTweet.latitude != 0) {
 			System.out.println("long: " + toTweet.longitude);
 			System.out.println("lat: " + toTweet.latitude);
 			tweetData = tweetData.atLocation(toTweet.longitude, toTweet.latitude).displayCoordinates(true);
 		}
 
-		//update Status
-		twitter.timelineOperations().updateStatus(tweetData);
-
-		//update Tweet-Status in DB
+		// update Tweet-Status in DB
 		DBConnector.flagAsTweeted(tweetID, userID);
+
+		// update Status
+		twitter.timelineOperations().updateStatus(tweetData);
 	}
 
 }
