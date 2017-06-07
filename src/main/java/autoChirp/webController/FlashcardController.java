@@ -169,6 +169,9 @@ public class FlashcardController {
 
 		y = 120f;
 		for (String i : corpus) {
+			if (i.isEmpty())
+				i = " ";
+
 			graphic.setColor(text);
 			attstr = new AttributedString(i.replaceAll("<[^>]*>", ""));
 			attstr.addAttribute(TextAttribute.FONT, new Font(Font.SANS_SERIF, Font.PLAIN, 20));
