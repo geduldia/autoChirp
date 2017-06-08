@@ -106,7 +106,7 @@ public class TwitterConnection {
 		}
 
 		// add flashcard
-		if (tweetData.toRequestParameters().get("status").get(0).toString().length() > 140) {
+		if (toTweet.adjustedLength() > 140) {
 			TweetFactory tf = new TweetFactory(dateformats);
 			String flashcard = appDomain + "/flashcard/" + toTweet.tweetID;
 
