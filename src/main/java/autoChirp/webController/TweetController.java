@@ -1,5 +1,6 @@
 package autoChirp.webController;
 
+import java.awt.image.BufferedImage;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,6 +11,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -215,8 +217,12 @@ public class TweetController {
 
 		if (!imageUrl.isEmpty()) {
 			try {
-				new URL(imageUrl);
-			} catch (MalformedURLException e) {
+				if (ImageIO.read(new URL(imageUrl)) == null) {
+					ModelAndView mv = new ModelAndView("error");
+					mv.addObject("error", "Sorry, but the selected image has an unsupported format.");
+					return mv;
+				}
+			} catch (Exception e) {
 				ModelAndView mv = new ModelAndView("error");
 				mv.addObject("error", "The image URL must be a valid url.");
 				return mv;
@@ -355,8 +361,12 @@ public class TweetController {
 
 		if (!imageUrl.isEmpty()) {
 			try {
-				URL url = new URL(imageUrl);
-			} catch (MalformedURLException e) {
+				if (ImageIO.read(new URL(imageUrl)) == null) {
+					ModelAndView mv = new ModelAndView("error");
+					mv.addObject("error", "Sorry, but the selected image has an unsupported format.");
+					return mv;
+				}
+			} catch (Exception e) {
 				ModelAndView mv = new ModelAndView("error");
 				mv.addObject("error", "The image URL must be a valid url.");
 				return mv;
@@ -492,8 +502,12 @@ public class TweetController {
 
 		if (!imageUrl.isEmpty()) {
 			try {
-				URL url = new URL(imageUrl);
-			} catch (MalformedURLException e) {
+				if (ImageIO.read(new URL(imageUrl)) == null) {
+					ModelAndView mv = new ModelAndView("error");
+					mv.addObject("error", "Sorry, but the selected image has an unsupported format.");
+					return mv;
+				}
+			} catch (Exception e) {
 				ModelAndView mv = new ModelAndView("error");
 				mv.addObject("error", "The image URL must be a valid url.");
 				return mv;
