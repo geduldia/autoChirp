@@ -111,7 +111,7 @@ public class TwitterConnection {
 			String flashcard = appDomain + "/flashcard/" + toTweet.tweetID;
 
 			try {
-				tweetData = tweetData.withMedia(new UrlResource(flashcard));
+				tweetData = new TweetData(tf.trimToTweet(tweet, null)).withMedia(new UrlResource(flashcard));
 			} catch (MalformedURLException e) {
 				tweetData = new TweetData(tf.trimToTweet(tweet + " " + flashcard, null));
 			}
