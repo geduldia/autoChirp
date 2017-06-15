@@ -129,15 +129,14 @@ public class FlashcardController {
 
 		// colors
 		Color text = new Color(51, 51, 51);
-		Color lightgrey = new Color(211, 211, 211);
-		Color darkgrey = new Color(169, 169, 169);
+		Color background = new Color(220, 200, 120, 100);
 
-		// background
-		graphic.setColor(lightgrey);
-		graphic.fillRect(0, 0, image.getWidth(), image.getHeight());
+		// background image
+		BufferedImage bgimg = ImageIO.read(getClass().getClassLoader().getResource("static/img/paper.jpg"));
+		graphic.drawImage(bgimg, 0, 0, null);
 
 		// header box
-		graphic.setColor(darkgrey);
+		graphic.setColor(background);
 		graphic.fillRect(30, 30, 840, 60);
 
 		// formated texts
@@ -193,7 +192,7 @@ public class FlashcardController {
 		if (!onlytext) {
 
 			// image box
-			graphic.setColor(darkgrey);
+			graphic.setColor(background);
 			graphic.fillRect(30, 120, 300, 450);
 
 			// image
