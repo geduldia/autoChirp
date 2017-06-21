@@ -128,7 +128,9 @@ public class TwitterConnection {
 		DBConnector.flagAsTweeted(tweetID, userID);
 
 		// update Status
-		twitter.timelineOperations().updateStatus(tweetData);
+		org.springframework.social.twitter.api.Tweet statusUpdate = twitter.timelineOperations().updateStatus(tweetData);
+		//write statusID in db
+		DBConnector.addStatusID(toTweet, statusUpdate.getId());
 	}
 
 }

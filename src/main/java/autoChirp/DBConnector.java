@@ -834,6 +834,26 @@ public class DBConnector {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * sets the statusID of a published tweet 
+	 * @param tweet
+	 * @param statusId
+	 */
+	public static void addStatusID(Tweet tweet, long statusId){
+		try {
+			connection.setAutoCommit(false);
+			Statement stmt = connection.createStatement();
+			String sql = "UPDATE tweets SET status_id = '" + statusId + "' WHERE (tweet_id = '" + tweet.tweetID+"')";
+			stmt.executeUpdate(sql);
+			stmt.close();
+		} catch (SQLException e) {
+			System.out.println("DBConnector.addStatusID: ");
+			e.printStackTrace();
+		}
+		
+		
+	}
 
 	/**
 	 * adds a single tweet to an existing group and returns its tweetID

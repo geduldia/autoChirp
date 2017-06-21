@@ -21,6 +21,7 @@ public class Tweet implements Comparable<Tweet> {
 	public String imageUrl;
 	public float longitude;
 	public float latitude;
+	public long statusID;
 
 	/**
 	 * Constructor for tweets read from the database. In contrast to new tweets,
