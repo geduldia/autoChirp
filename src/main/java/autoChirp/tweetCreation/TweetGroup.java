@@ -20,6 +20,7 @@ public class TweetGroup {
 	public String description;
 	public boolean enabled;
 	public int groupID;
+	public boolean threaded;
 
 	/**
 	 * Constructor for new TweetGroup-objects (not read from the database)
@@ -36,8 +37,8 @@ public class TweetGroup {
 
 	/**
 	 * Constructor for TweetGroups read from the database. In contrast to new
-	 * TweetGoups, TweetGroups read from DB already have a groupID and a status
-	 * attribute.
+	 * TweetGoups, TweetGroups read from DB already have a groupID and  status
+	 * attributes.
 	 * 
 	 * @param groupID
 	 *            db-key
@@ -48,7 +49,7 @@ public class TweetGroup {
 	 * @param enabled
 	 *            group is active (= tweets are prepared for tweeting)
 	 */
-	public TweetGroup(int groupID, String title, String description, boolean enabled) {
+	public TweetGroup(int groupID, String title, String description, boolean enabled, boolean threaded) {
 		this.groupID = groupID;
 		this.title = title;
 		this.description = description;
@@ -64,6 +65,13 @@ public class TweetGroup {
 	public void setTweets(List<Tweet> tweets) {
 		this.tweets.addAll(tweets);
 		Collections.sort(this.tweets);
+	}
+	
+	/**
+	 * @param threaded
+	 */
+	public void setThreaded(boolean threaded){
+		this.threaded = threaded;
 	}
 
 	/**
