@@ -54,6 +54,7 @@ public class TweetGroup {
 		this.title = title;
 		this.description = description;
 		this.enabled = enabled;
+		this.threaded = threaded;
 	}
 
 	/**
