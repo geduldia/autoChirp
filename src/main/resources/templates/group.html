@@ -47,10 +47,17 @@
                   class="btn btn-primary"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save group</button>
                 <a th:unless="${#httpServletRequest.requestURI.equals(#httpServletRequest.getContextPath() + '/groups/add')}" th:href="@{/groups/delete/} + ${tweetGroup.groupID}"
                   class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete group</a>
+               
                 <a th:unless="${#httpServletRequest.requestURI.equals(#httpServletRequest.getContextPath() + '/groups/add')}" th:href="@{/groups/toggle/} + ${tweetGroup.groupID}"
                   class="btn" th:classappend="${tweetGroup.enabled} ? btn-warning : btn-success"><span class="glyphicon"
                   th:classappend="${tweetGroup.enabled} ? glyphicon-pause : glyphicon-play" aria-hidden="true"></span>
                   <span th:text="${tweetGroup.enabled} ? 'Disable group' : 'Enable group'" th:remove="tag"></span></a>
+              
+                <a th:unless="${#httpServletRequest.requestURI.equals(#httpServletRequest.getContextPath() + '/groups/add')}" th:href="@{/groups/threading/} + ${tweetGroup.groupID}"
+                  class="btn" th:classappend="${tweetGroup.threaded} ? btn-warning : btn-success"><span class="glyphicon"
+                  th:classappend="${tweetGroup.threaded} ? glyphicon-align-justify : glyphicon-list" aria-hidden="true"></span>
+                  <span th:text="${tweetGroup.threaded} ? 'Disable threading' : 'Enable threading'" th:remove="tag"></span></a>
+                  
                 <div class="btn-group" th:if="${#httpServletRequest.requestURI.startsWith(#httpServletRequest.getContextPath() + '/groups/view/')}">
 				  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				    <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> Copy Group <span class="caret"></span>
