@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.social.twitter.api.StatusDetails;
 import org.springframework.social.twitter.api.TweetData;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.social.twitter.api.impl.TwitterTemplate;
@@ -82,6 +83,8 @@ public class TwitterConnection {
 		if (toTweet.tweeted) {
 			return;
 		}
+		
+		
 
 		// read userConfig (oAuthToken, tokenSecret) from DB
 		String[] userConfig = DBConnector.getUserConfig(userID);
@@ -94,6 +97,14 @@ public class TwitterConnection {
 		// TweetData tweetData = new TweetData(toTweet.content);
 		String tweet = toTweet.content;
 		TweetData tweetData = new TweetData(tweet);
+		
+		//check if tweet is a reply
+		long replyID = 0;
+		if(DBConnector.isThreadedGroup(toTweet.groupID, userID)){
+							System.out.println("is threaded Group");
+			replyID = DBConnector.getReplyID(tweetID, toTweet.groupID, userID);
+							System.out.println("replyID: " + replyID);
+		}
 
 		// add image
 		if (toTweet.imageUrl != null) {
@@ -123,12 +134,23 @@ public class TwitterConnection {
 			System.out.println("lat: " + toTweet.latitude);
 			tweetData = tweetData.atLocation(toTweet.longitude, toTweet.latitude).displayCoordinates(true);
 		}
+		
+	
 
 		// update Tweet-Status in DB
 		DBConnector.flagAsTweeted(tweetID, userID);
 
 		// update Status
-		twitter.timelineOperations().updateStatus(tweetData);
+		org.springframework.social.twitter.api.Tweet statusUpdate;
+		if(replyID > 0){
+			statusUpdate = twitter.timelineOperations().updateStatus(tweetData.inReplyToStatus(replyID));
+		}
+		else{
+			statusUpdate = twitter.timelineOperations().updateStatus(tweetData);
+		}
+		//write statusID in db
+		System.out.println("status-ID: "+ statusUpdate.getId());
+		DBConnector.addStatusID(tweetID, statusUpdate.getId());
 	}
 
 }

@@ -135,6 +135,9 @@ public class TweetFactory {
 			String content;
 			String date;
 			String time;
+			int delayInSeconds = -1;
+			LocalDateTime lastLDT = null;
+			boolean useDelay = false;
 			LocalDateTime ldt;
 			Tweet tweet;
 			int row = 1;
@@ -152,21 +155,41 @@ public class TweetFactory {
 				String[] split = line.split("\t");
 				// get tweet-date
 				date = split[0].trim();
-				if(date.length() <= 7){
+				String origDate = date;
+				if(date.toLowerCase().contains("delay")){
+					useDelay = true;
+				}
+				else if(date.length() <= 7){		
 					//add missing day of month
 					date = date.concat("-01");
 				}
 				time = split[1].trim();
-				if (time.equals("")) {
-					ldt = parseDateString(date);
-					if(ldt == null){
-						throw new MalformedTSVFileException(row, 1, date, "malformed date: "+date+"  (row: "+row+" column: 1)");
+				if(!useDelay){
+					if (time.equals("")) {
+						ldt = parseDateString(date);
+						if(ldt == null){
+							throw new MalformedTSVFileException(row, 1, date, "malformed date: "+origDate+"  (row: "+row+" column: 1)");
+						}
+					} else {
+						ldt = parseDateString(date + " " + time);
+						if(ldt == null){
+							throw new MalformedTSVFileException(row, 1, date + " " + time, "malformed date or time: "+date + " " + time+"  (row: "+row+" column: 1-2)");
+						}
 					}
-				} else {
-					ldt = parseDateString(date + " " + time);
-					if(ldt == null){
-						throw new MalformedTSVFileException(row, 1, date + " " + time, "malformed date or time: "+date + " " + time+"  (row: "+row+" column: 1-2)");
-					}
+				}
+				else{
+				
+						try{
+							delayInSeconds = Integer.parseInt(time);
+						}
+						catch(NumberFormatException e){
+							if(delayInSeconds == -1){
+								throw new MalformedTSVFileException(row, 2, time, "malformed/missing delay: "+time+"  (row "+ row+ "column: 2)");
+							}
+						}
+					
+					
+					ldt = lastLDT.plusSeconds(delayInSeconds);
 				}
 
 				// get tweet-image
@@ -248,6 +271,7 @@ public class TweetFactory {
 				}
 				line = in.readLine();
 				row++;
+				lastLDT = ldt;
 			}
 			in.close();
 		} catch (IOException e) {
