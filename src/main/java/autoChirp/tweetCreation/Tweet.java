@@ -21,6 +21,7 @@ public class Tweet implements Comparable<Tweet> {
 	public String imageUrl;
 	public float longitude;
 	public float latitude;
+	public long statusID;
 
 	/**
 	 * Constructor for tweets read from the database. In contrast to new tweets,
@@ -49,7 +50,7 @@ public class Tweet implements Comparable<Tweet> {
 	 *            latitude of geo-location
 	 */
 	public Tweet(String tweetDate, String content, int tweetID, int groupID, boolean scheduled, boolean tweeted,
-			int userID, String imageUrl, float longitude, float latitude) {
+			int userID, String imageUrl, float longitude, float latitude, long statusID) {
 		this.tweetDate = tweetDate;
 		this.content = content;
 		this.tweetID = tweetID;
@@ -60,6 +61,7 @@ public class Tweet implements Comparable<Tweet> {
 		this.imageUrl = imageUrl;
 		this.longitude = longitude;
 		this.latitude = latitude;
+		this.statusID = statusID;
 	}
 
 	/**

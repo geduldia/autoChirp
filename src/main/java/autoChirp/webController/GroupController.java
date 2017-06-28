@@ -767,6 +767,29 @@ public class GroupController {
 
 		return "redirect:/groups/view/" + groupID;
 	}
+	
+	/**
+	 * A HTTP GET request handler, responsible for serving
+	 * /groups/threading/$groupid. This method provides a way to toggle the
+	 * activation-state of the group, referenced by $groupid. If the group is
+	 * enabled after the toggle, the TweetScheduler is called to schedule all
+	 * Tweets in the (now enabled) group.
+	 *
+	 * @param groupID
+	 *            Path param containing an ID-reference to a group
+	 * @return Redirect-view to the toggled group overview
+	 */
+	@RequestMapping(value = "/threading/{groupID}")
+	public String toggleThreading(@PathVariable int groupID) {
+		if (session.getAttribute("account") == null)
+			return "redirect:/account";
+		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
+
+		TweetGroup tweetGroup = DBConnector.getTweetGroupForUser(userID, groupID);
+		boolean threaded = !tweetGroup.threaded;
+		DBConnector.setThreaded(groupID, userID, threaded);
+		return "redirect:/groups/view/" + groupID;
+	}
 
 	/**
 	 * A HTTP GET request handler, responsible for serving
