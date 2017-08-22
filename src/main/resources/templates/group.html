@@ -54,7 +54,7 @@
                   <span th:text="${tweetGroup.enabled} ? 'Disable group' : 'Enable group'" th:remove="tag"></span></a>                              
                 <div class="btn-group" th:if="${#httpServletRequest.requestURI.startsWith(#httpServletRequest.getContextPath() + '/groups/view/')}">
 				  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				    <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> Copy Group <span class="caret"></span>
+				    <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> Copy group <span class="caret"></span>
 				  </button>
 				  <ul class="dropdown-menu">
 				    <li><a th:href="@{/groups/copy/year/} + ${tweetGroup.groupID}">Copy to next Year</a></li>
