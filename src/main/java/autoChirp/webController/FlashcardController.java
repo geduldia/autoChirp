@@ -147,7 +147,7 @@ public class FlashcardController {
 		FontRenderContext frc = graphic.getFontRenderContext();
 
 		// header
-		String header = tweetEntry.tweetDate + " - " + groupName;
+		String header = groupName + " - " + tweetEntry.tweetDate.substring(0,10);
 
 		graphic.setColor(text);
 		attstr = new AttributedString(header);
