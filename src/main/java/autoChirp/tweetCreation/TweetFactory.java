@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
@@ -235,15 +236,8 @@ public class TweetFactory {
 				
 				// get tweet-content
 				content = split[2];
-				// trim content to max. 140 characters
-				// boolean trimmed = false;
-				// int lengthBevor = content.length();
-				// content = trimToTweet(content, imageUrl);
-				// if(content.length() < lengthBevor){
-				// 	trimmed = true;
-				// }
-				// calc. next possible tweetDate
-
+				//escape java
+				content = StringEscapeUtils.unescapeJava(content);
 
 				// add delay
 				ldt = ldt.plusYears(delay);
