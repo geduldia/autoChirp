@@ -1100,22 +1100,34 @@ public class DBConnector {
 	 * @param userID
 	 * @return returns the status_id of the last published tweet in this tweetgroup
 	 */
-	public static long getReplyID(int tweetID, int groupID, int userID) {
-		try {
-			connection.setAutoCommit(false);
-			Statement stmt = connection.createStatement();
-			String sql = "SELECT status_id FROM tweets WHERE (group_id = '" + groupID + "' AND user_id = '" + userID
-					+ "' AND tweet_id = '"+(tweetID-1)+"')";
-			ResultSet result = stmt.executeQuery(sql);
-			long replyID = result.getLong(1);
-			stmt.close();
-			connection.commit();
-			return replyID;
-		} catch (SQLException e) {
-			System.out.print("DBConnector.getReplyID: ");
-			e.printStackTrace();
-			return -1;
+	public static long getReplyID(int tweetID, int groupID, int userID) {	
+		TweetGroup group = DBConnector.getTweetGroupForUser(userID, groupID);
+		List<Tweet> tweets = group.tweets;
+		long replyID = -1;
+		Tweet before = null;
+		for (Tweet tweet : tweets) {
+			if (tweet.tweetID == tweetID && before != null) {
+				replyID = before.statusID;
+				break;
+			}
+			before = tweet;
 		}
+		return replyID;
+//		try {
+//			connection.setAutoCommit(false);
+//			Statement stmt = connection.createStatement();
+//			String sql = "SELECT status_id FROM tweets WHERE (group_id = '" + groupID + "' AND user_id = '" + userID
+//					+ "' AND tweet_id = '"+(tweetID-1)+"')";
+//			ResultSet result = stmt.executeQuery(sql);
+//			long replyID = result.getLong(1);
+//			stmt.close();
+//			connection.commit();
+//			return replyID;
+//		} catch (SQLException e) {
+//			System.out.print("DBConnector.getReplyID: ");
+//			e.printStackTrace();
+//			return -1;
+//		}
 	}
 	
 }
