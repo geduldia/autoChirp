@@ -1,3 +1,33 @@
+$("#selectAll").click(function() {
+
+	if ($(this).is(':checked')) {
+		$("input[type='checkbox']").prop('checked', true);
+	} else {
+		$("input[type='checkbox']").prop('checked', false);
+	}
+
+});
+
+function ConfirmDeleteGroups(event) {
+	if (!$("input:checked").length) {
+		event.preventDefault();
+		alert("no groups selected");
+		return;
+	}
+
+	return confirm("Do you want to delete the selected groups and all containing tweets?");
+
+};
+
+function ConfirmDeleteTweets(event) {
+	if (!$("input:checked").length) {
+		event.preventDefault();
+		alert("no tweets selected");
+		return;
+	}
+	return confirm("Do you want to delete the selected tweets?");
+};
+
 $('body').scrollspy({
     target: '.bs-docs-sidebar',
     offset: 40
@@ -34,3 +64,4 @@ if ($('textarea#content').length > 0) {
 	calculate();
 	$('textarea#content').on('input propertychange', function() { calculate(); });
 }
+

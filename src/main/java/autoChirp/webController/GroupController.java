@@ -141,8 +141,23 @@ public class GroupController {
 			mv.addObject("error", "A group with the ID #" + groupID + " does not exist.");
 			return mv;
 		}
-
 		List<Tweet> tweetsList = tweetGroup.tweets;
+		//reorder tweetsList: upcoming tweets first - past tweets second
+		LocalDateTime now = LocalDateTime.now();
+		List<Tweet> old = new ArrayList<Tweet>();
+		List<Tweet> upcoming = new ArrayList<Tweet>();
+		for (Tweet tweet : tweetsList) {
+			DateTimeFormatter dtFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			LocalDateTime tweetDate = LocalDateTime.parse(tweet.tweetDate, dtFormatter);
+			if(tweetDate.isBefore(now)){
+				old.add(tweet);
+			}
+			else{
+				upcoming.add(tweet);
+			}	
+		}
+		tweetsList.removeAll(old);
+		tweetsList.addAll(old);
 		ModelAndView mv = new ModelAndView("group");
 		mv.addObject("tweetGroup", tweetGroup);
 
@@ -753,7 +768,7 @@ public class GroupController {
 	 * @return Redirect-view to the toggled group overview
 	 */
 	@RequestMapping(value = "/toggle/{groupID}")
-	public String toggleGroup(@PathVariable int groupID) {
+	public String toggleGroup(@PathVariable int groupID, HttpServletRequest request) {
 		if (session.getAttribute("account") == null)
 			return "redirect:/account";
 		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
@@ -764,8 +779,8 @@ public class GroupController {
 
 		if (enabled)
 			TweetScheduler.scheduleTweetsForUser(tweetGroup.tweets, userID);
-
-		return "redirect:/groups/view/" + groupID;
+		String referer = request.getHeader("Referer");
+		return "redirect:" + referer;
 	}
 	
 	/**
@@ -824,7 +839,6 @@ public class GroupController {
 
 		return mv;
 	}
-
 	/**
 	 * A HTTP GET request handler, responsible for serving
 	 * /groups/delete/$groupid/confirm. This method triggers the actual deletion
@@ -846,5 +860,29 @@ public class GroupController {
 		DBConnector.deleteGroup(groupID, userID);
 		return "redirect:" + referer;
 	}
+	
+
+	/**
+	 * A HTTP GET request handler, responsible for serving
+	 * /groups/delete. This method executes the deletion of all groups referred by grouIDs
+	 *
+	 * @param groupIDs
+	 *            Request param containing a list of groupIDs
+	 * @return groups overview
+	 */
+	@RequestMapping(value = "/delete", method= RequestMethod.POST)
+	public ModelAndView deleteGroups(@RequestParam("groupID") List<Integer> groupIDs) {
+		if (session.getAttribute("account") == null)
+			return new ModelAndView("redirect:/account");
+		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
+
+		for (Integer id : groupIDs) {
+			DBConnector.deleteGroup(id, userID);
+		}
+		return new ModelAndView("redirect:/groups/view");
+	}
+	
+
+
 
 }

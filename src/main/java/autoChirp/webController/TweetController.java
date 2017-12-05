@@ -6,6 +6,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
@@ -79,8 +81,25 @@ public class TweetController {
 		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
 
 		List<Tweet> tweetsList = DBConnector.getTweetsForUser(userID);
+		
+		//sort tweets: upcoming first
+		LocalDateTime now = LocalDateTime.now();
+		List<Tweet> old = new ArrayList<Tweet>();
+		List<Tweet> upcoming = new ArrayList<Tweet>();
+		for (Tweet tweet : tweetsList) {
+			DateTimeFormatter dtFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			LocalDateTime tweetDate = LocalDateTime.parse(tweet.tweetDate, dtFormatter);
+			if(tweetDate.isBefore(now)){
+				old.add(tweet);
+			}
+			else{
+				upcoming.add(tweet);
+			}	
+		}
+		tweetsList.removeAll(old);
+		tweetsList.addAll(old);
+		
 		ModelAndView mv = new ModelAndView("tweets");
-
 		if (tweetsList.size() <= tweetsPerPage) {
 			mv.addObject("tweetsList", tweetsList);
 			return mv;
@@ -572,6 +591,8 @@ public class TweetController {
 		return mv;
 	}
 
+
+	
 	/**
 	 * A HTTP GET request handler, responsible for serving
 	 * /tweets/delete/$tweetid/confirm. This method triggers the actual deletion
@@ -596,6 +617,28 @@ public class TweetController {
 
 		DBConnector.deleteTweet(tweetID, userID);
 		return "redirect:" + referer;
+	}
+	
+	/**
+	 * A HTTP GET request handler, responsible for serving
+	 * /tweets/delete. This method executes the deletion of all tweets referred by tweetIDs
+	 *
+	 * @param request
+	 *            Autowired HttpServletRequest object, containing header-fields
+	 * @param tweetIDs
+	 *            Request param containing a List of tweetIDs
+	 * @return Redirect-View
+	 */
+	@RequestMapping(value = "/delete", method=RequestMethod.POST)
+	public ModelAndView deleteTweets(@RequestParam("tweetID") List<Integer> tweetIDs, HttpServletRequest request) {
+		if (session.getAttribute("account") == null)
+			return new ModelAndView("redirect:/account");
+		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
+		for (int tweetID : tweetIDs) {
+			DBConnector.deleteTweet(tweetID, userID);
+		}
+		String referer = request.getHeader("referer");
+		return new ModelAndView("redirect:" + referer);
 	}
 
 }
