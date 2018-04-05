@@ -222,7 +222,8 @@
 														th:href="@{'/groups/view/' +${tweetGroup.groupID}+ '?page=' + ${page+4}}"
 														th:text="${page+4}"></a></li>
 													<li th:if="${page &lt; 4} and ${pages &gt; 7}"><a
-														th:href="@{'/groups/view/' +${tweetGroup.groupID}+ '?page=6'">6</a></li>
+														th:href="@{'/groups/view/' +${tweetGroup.groupID}+ '?page=6'}">6</a></li>
+														   
 													<li th:classappend="(${page+3} &lt; ${pages})? disabled"
 														th:if="${page+2} &lt; ${pages} and ${pages &gt; 7}"><a
 														th:href="(${page+3} &lt; ${pages})? '...' : @{'/groups/view/' +${tweetGroup.groupID}+ '?page=' +  ${page+3}}"
