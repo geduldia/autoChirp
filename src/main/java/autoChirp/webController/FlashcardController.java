@@ -116,7 +116,7 @@ public class FlashcardController {
 			throw new NotFoundException("Could not create flashcard, sorry!");
 		}
 
-		if (tweetEntry.content.length() <= 140) {
+		if (tweetEntry.adjustedLength()<= Tweet.MAX_TWEET_LENGTH) {
 			return null;
 		}
 

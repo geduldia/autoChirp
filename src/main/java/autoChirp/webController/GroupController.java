@@ -33,7 +33,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import autoChirp.DBConnector;
 import autoChirp.preProcessing.parser.WikipediaParser;
-import autoChirp.tweetCreation.ImportedTweet;
 import autoChirp.tweetCreation.MalformedTSVFileException;
 import autoChirp.tweetCreation.Tweet;
 import autoChirp.tweetCreation.TweetFactory;
@@ -155,7 +154,6 @@ public class GroupController {
 		int pages = (pgnum > (int) pgnum) ? (int) (pgnum + 1.0) : (int) pgnum;
 		int offset = (page - 1) * tweetsPerPage;
 		int endset = (offset + tweetsPerPage <= tweetsList.size()) ? offset + tweetsPerPage : tweetsList.size();
-
 		mv.addObject("tweetsList", tweetsList.subList(offset, endset));
 		mv.addObject("page", page);
 		mv.addObject("pages", pages);
@@ -329,10 +327,8 @@ public class GroupController {
 
 		List<Tweet> trimmed = new ArrayList<Tweet>();
 		for (Tweet t : tweetGroup.tweets)
-			if (t instanceof ImportedTweet)
-				if (((ImportedTweet) t).isTrimmed())
+				if(t.adjustedLength() > Tweet.MAX_TWEET_LENGTH)
 					trimmed.add(t);
-
 		int groupID = DBConnector.insertTweetGroup(tweetGroup, userID);
 		file.delete();
 
@@ -346,7 +342,7 @@ public class GroupController {
 
 			ModelAndView mv = new ModelAndView("confirm");
 			mv.addObject("next", "/groups/view/" + groupID);
-			mv.addObject("confirm", "Attention! Some of the imported Tweets exeed Twitters 140 character limit. "
+			mv.addObject("confirm", "Attention! Some of the imported Tweets exeed Twitters 280 character limit. "
 							+ "For Your conveniance the full text will be atteched to those Tweets as an image. "
 							+ "Those Tweets are highlighted on the next page.");
 
@@ -423,8 +419,7 @@ public class GroupController {
 
 		List<Tweet> trimmed = new ArrayList<Tweet>();
 		for (Tweet t : tweetGroup.tweets)
-			if (t instanceof ImportedTweet)
-				if (((ImportedTweet) t).isTrimmed())
+				if(t.adjustedLength() > Tweet.MAX_TWEET_LENGTH)
 					trimmed.add(t);
 
 		int groupID = DBConnector.insertTweetGroup(tweetGroup, userID);
@@ -440,7 +435,7 @@ public class GroupController {
 
 			ModelAndView mv = new ModelAndView("confirm");
 			mv.addObject("next", "/groups/view/" + groupID);
-			mv.addObject("confirm", "Attention! Some of the imported Tweets exeed Twitters 140 character limit. "
+			mv.addObject("confirm", "Attention! Some of the imported Tweets exeed Twitters 280 character limit. "
 							+ "For Your conveniance the full text will be atteched to those Tweets as an image. "
 							+ "Those Tweets are highlighted on the next page.");
 
@@ -509,8 +504,7 @@ public class GroupController {
 
 		List<Tweet> trimmed = new ArrayList<Tweet>();
 		for (Tweet t : tweetGroup.tweets)
-			if (t instanceof ImportedTweet)
-				if (((ImportedTweet) t).isTrimmed())
+				if(t.adjustedLength() > Tweet.MAX_TWEET_LENGTH)
 					trimmed.add(t);
 
 		int groupID = DBConnector.insertTweetGroup(tweetGroup, userID);
@@ -525,7 +519,7 @@ public class GroupController {
 
 			ModelAndView mv = new ModelAndView("confirm");
 			mv.addObject("next", "/groups/view/" + groupID);
-			mv.addObject("confirm", "Attention! Some of the imported Tweets exeed Twitters 140 character limit. "
+			mv.addObject("confirm", "Attention! Some of the imported Tweets exeed Twitters 280 character limit. "
 							+ "For Your conveniance the full text will be atteched to those Tweets as an image. "
 							+ "Those Tweets are highlighted on the next page.");
 

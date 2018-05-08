@@ -5,24 +5,26 @@ $('body').scrollspy({
 
 if ($('textarea#content').length > 0) {
 	var regex = new RegExp('https?://[^\\s]*', 'g');
-	var subst = new Array(24+1).join('.');
+	var subst = new Array(25+1).join('.');
 	var tarea = $('textarea#content');
 	var tweet = window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
 
-	var fcpreview = '<br><a href="/cardpreview/' + tweet + '" target="_blank">Open preview</a>';
-	var flashcard = $('<div id="flashcard" class="small text-warning">Text too long!<br>Will use flashcard!' + fcpreview + '</div>').hide();
-	var charcount = $('<div id="tweetsize" class="small text-muted">(<span id="charcount">0</span> of 140 chars)</div>');
+	var flashcard = $('<div id="flashcard" class="small text-warning">Text too long!<br>Will use flashcard!</div>').hide();
+	var charcount = $('<div id="tweetsize" class="small text-muted">(<span id="charcount">0</span> of '+MAX_TWEET_LENGTH+' chars)</div>');
 
 	var calculate = function() {
 		var text = tarea.val().replace(regex, subst);
-		var size = text.length;
+		var size = 0;
+		for(var i = 0; i < text.length; i++){
+			size+= text.codePointAt(i) >= 4352 ? 2 : 1;
+		}
 		$('#charcount').html(size);
 
-		if (size > 140 && $('#flashcard').not(':visible')) {
+		if (size > MAX_TWEET_LENGTH && $('#flashcard').not(':visible')) {
 			$('#tweetsize').hide();
 			$('#flashcard').show();
 		}
-		if (size <= 140 && $('#flashcard').is(':visible')) {
+		if (size <= MAX_TWEET_LENGTH && $('#flashcard').is(':visible')) {
 			$('#tweetsize').show();
 			$('#flashcard').hide();
 		}

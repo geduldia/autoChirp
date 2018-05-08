@@ -1,5 +1,8 @@
 package autoChirp.tweetCreation;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import autoChirp.DBConnector;
 
 /**
@@ -22,6 +25,11 @@ public class Tweet implements Comparable<Tweet> {
 	public float longitude;
 	public float latitude;
 	public long statusID;
+	private String trimmedContent;
+	private int adjustedLength = -1;
+	
+	
+	public static final int MAX_TWEET_LENGTH = 280;
 
 	/**
 	 * Constructor for tweets read from the database. In contrast to new tweets,
@@ -111,6 +119,50 @@ public class Tweet implements Comparable<Tweet> {
 	public int compareTo(Tweet tweet) {
 		return this.tweetDate.compareTo(tweet.tweetDate);
 	}
+	
+	private String trimContent(String toTrim, String url) {
+		int maxLength = MAX_TWEET_LENGTH;
+		if(url!= null){
+			maxLength = maxLength - 25;
+		}
+		StringBuffer sb = new StringBuffer();
+		char[] chars = toTrim.toCharArray();
+		int counter = 0;
+		for(int i = 0; i < chars.length; i++){
+			counter++;
+			if(Character.codePointAt(chars, i)>= 4352){
+				counter++;
+			}
+			sb.append(chars[i]);
+			if(counter == maxLength){
+				break;
+			}
+			if(counter > maxLength){
+				sb.deleteCharAt(sb.length()-1);
+				break;
+			}
+		}
+		if (url != null) {
+			sb.append(" "+url);
+		}
+		this.trimmedContent = sb.toString();
+		return sb.toString();
+	}
+	
+	public String trimmedContent(){
+		if(trimmedContent != null) return trimmedContent;
+		String trimmed = this.content;
+		String urlRegex = "(http(s)?:\\/\\/(.*))(\\s)?" ;
+		Pattern pattern = Pattern.compile(urlRegex);
+		Matcher matcher = pattern.matcher(trimmed);
+		String url = null;
+		if(matcher.find()){
+			url = matcher.group(1);
+			trimmed = trimmed.replace(url, "");
+		}	
+		return trimContent(trimmed, url);
+	}
+	
 
 	/**
 	 * Get adjusted Tweet length (Twitter replaces URLs with t.co shortURLs,
@@ -119,8 +171,19 @@ public class Tweet implements Comparable<Tweet> {
 	 * @return The adjustet Tweet content length
 	 */
 	public int adjustedLength() {
+		if(adjustedLength != -1){
+			return adjustedLength;
+		}
 		String placeholder = String.format("%24s", "");
 		String adjusted = this.content.replaceAll("https?://[^\\s]*", placeholder);
-		return adjusted.length();
+		char[] chars = adjusted.toCharArray();
+		int counter = 0;
+		for(int i = 0; i < chars.length; i++){
+			counter++;
+			if(Character.codePointAt(chars, i) >= 4352){
+				counter++;
+			}
+		}
+		return counter;
 	}
 }

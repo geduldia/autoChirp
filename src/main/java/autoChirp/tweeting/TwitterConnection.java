@@ -117,14 +117,14 @@ public class TwitterConnection {
 		}
 
 		// add flashcard
-		if (toTweet.adjustedLength() > 140) {
+		if (toTweet.adjustedLength() > Tweet.MAX_TWEET_LENGTH) {
 			TweetFactory tf = new TweetFactory(dateformats);
 			String flashcard = appDomain + "/flashcard/" + toTweet.tweetID;
 
 			try {
-				tweetData = new TweetData(tf.trimToTweet(tweet, null)).withMedia(new UrlResource(flashcard));
+				tweetData = new TweetData(toTweet.trimmedContent()).withMedia(new UrlResource(flashcard));
 			} catch (MalformedURLException e) {
-				tweetData = new TweetData(tf.trimToTweet(tweet + " " + flashcard, null));
+				tweetData = new TweetData(toTweet.trimmedContent()+" " + flashcard);
 			}
 		}
 
@@ -141,16 +141,25 @@ public class TwitterConnection {
 		DBConnector.flagAsTweeted(tweetID, userID);
 
 		// update Status
-		org.springframework.social.twitter.api.Tweet statusUpdate;
+		org.springframework.social.twitter.api.Tweet statusUpdate = null;
 		if(replyID > 0){
-			statusUpdate = twitter.timelineOperations().updateStatus(tweetData.inReplyToStatus(replyID));
+			try{
+				statusUpdate = twitter.timelineOperations().updateStatus(tweetData.inReplyToStatus(replyID));
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
 		}
 		else{
-			statusUpdate = twitter.timelineOperations().updateStatus(tweetData);
+			try{
+				statusUpdate = twitter.timelineOperations().updateStatus(tweetData);
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+			DBConnector.addStatusID(tweetID, statusUpdate.getId());
 		}
-		//write statusID in db
-		System.out.println("status-ID: "+ statusUpdate.getId());
-		DBConnector.addStatusID(tweetID, statusUpdate.getId());
+
 	}
 
 }

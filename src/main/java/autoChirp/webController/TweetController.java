@@ -150,7 +150,7 @@ public class TweetController {
 
 		ModelAndView mv = new ModelAndView("tweet");
 		mv.addObject("tweetGroups", tweetGroups);
-
+		mv.addObject("tweetEntry", new Tweet(null, null));
 		return mv;
 	}
 

@@ -37,7 +37,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr th:each="tweetEntry : ${tweetsList}" th:classappend="(${false} ? danger : '') + (${tweetEntry.adjustedLength() > 140 ? 'warning' : ''})">
+                <tr th:each="tweetEntry : ${tweetsList}" th:classappend="(${false} ? danger : '') + (${tweetEntry.adjustedLength() > 280 ? 'warning' : ''})">
                   <td><a th:href="@{/groups/view/} + ${tweetEntry.groupID}" th:text="${tweetEntry.groupName}"></a></td>
                   <td><a th:href="@{/tweets/view/} + ${tweetEntry.tweetID}" th:text="${tweetEntry.content}"></a></td>
                   <td class="text-center">
@@ -55,7 +55,7 @@
                       ? 'glyphicon-hourglass' : 'glyphicon-remove')" aria-hidden="true"></span>
                   </td>
                   <td class="text-center">
-										<a th:if="${tweetEntry.adjustedLength() > 140}" th:href="@{/cardpreview/} + ${tweetEntry.tweetID}" target="_blank">
+										<a th:if="${tweetEntry.adjustedLength() > 280}" th:href="@{/cardpreview/} + ${tweetEntry.tweetID}" target="_blank">
                     <span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span></a>
                   </td>
                   <td th:text="${tweetEntry.tweetDate}" class="text-center"></td>

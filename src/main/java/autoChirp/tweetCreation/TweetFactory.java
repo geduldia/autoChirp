@@ -259,8 +259,7 @@ public class TweetFactory {
 					formattedDate = formattedDate.replace(" 00:00", " 12:00");
 				}
 				if (ldt.isAfter(LocalDateTime.now())) {
-					tweet = new ImportedTweet(formattedDate, content, imageUrl, longitude, latitude);
-					((ImportedTweet) tweet).setTrimmed(content.length() > 140);
+					tweet = new Tweet(formattedDate, content, imageUrl, longitude, latitude);
 					group.addTweet(tweet);
 				}
 				line = in.readLine();
@@ -332,8 +331,7 @@ public class TweetFactory {
 					content = doc.getSentences().get(i-1)+" "+url;
 				}
 //				tweet = new Tweet(tweetDate, content, null, 0, 0);
-				tweet = new ImportedTweet(tweetDate, content, null, 0, 0);
-				((ImportedTweet) tweet).setTrimmed(content.length() > 140);
+				tweet = new Tweet(tweetDate, content, null, 0, 0);
 				tweets.add(tweet);
 			}
 		}
@@ -378,41 +376,54 @@ public class TweetFactory {
 	}
 
 	
-	/**
-	 * trims a sentence to a tweet-lenth of max. 140 characters and adds the
-	 * given url to the tweets content
-	 *
-	 * @param toTrim
-	 * @param url
-	 * @return a valid tweet content
-	 */
-	public String trimToTweet(String toTrim, String url, String imageUrl) {
-		int maxLength = 140;
-		if(url!= null){
-			maxLength = 116;
-		}
-		if (toTrim.length() > maxLength) {
-			
-			toTrim = toTrim.substring(0, maxLength);
-			toTrim = toTrim.substring(0, toTrim.lastIndexOf(" "));
-		}
-		if (url != null) {
-			toTrim = toTrim.concat(" " + url);
-		}
-		return toTrim;
-	}
 	
-	public String trimToTweet(String toTrim, String imageUrl){
-		String urlRegex = "(http(s)?:\\/\\/(.*))(\\s)?" ;
-		Pattern pattern = Pattern.compile(urlRegex);
-		Matcher matcher = pattern.matcher(toTrim);
-		String url = null;
-		if(matcher.find()){
-			url = matcher.group(1);
-			toTrim = toTrim.replace(url, "");
-		}	
-		return trimToTweet(toTrim, url, imageUrl);
-	}
+//	/**
+//	 * trims a sentence to a tweet-lenth of max. 140 characters and adds the
+//	 * given url to the tweets content
+//	 *
+//	 * @param toTrim
+//	 * @param url
+//	 * @return a valid tweet content
+//	 */
+//	public String trimToTweet(String toTrim, String url) {
+//		int maxLength = MAX_TWEET_LENGTH;
+//		if(url!= null){
+//			maxLength = maxLength - 25;
+//		}
+//		StringBuffer sb = new StringBuffer();
+//		char[] chars = toTrim.toCharArray();
+//		int counter = 0;
+//		for(int i = 0; i < chars.length; i++){
+//			counter++;
+//			if(Character.codePointAt(chars, i)>= 4352){
+//				counter++;
+//			}
+//			sb.append(chars[i]);
+//			if(counter == maxLength){
+//				break;
+//			}
+//			if(counter > maxLength){
+//				sb.deleteCharAt(sb.length()-1);
+//				break;
+//			}
+//		}
+//		if (url != null) {
+//			sb.append(" "+url);
+//		}
+//		return sb.toString();
+//	}
+//	
+//	public String trimToTweet(String toTrim){
+//		String urlRegex = "(http(s)?:\\/\\/(.*))(\\s)?" ;
+//		Pattern pattern = Pattern.compile(urlRegex);
+//		Matcher matcher = pattern.matcher(toTrim);
+//		String url = null;
+//		if(matcher.find()){
+//			url = matcher.group(1);
+//			toTrim = toTrim.replace(url, "");
+//		}	
+//		return trimToTweet(toTrim, url);
+//	}
 
 	/**
 	 * extract date-strings from a TimeML annotated sentence. Extracts only dates
