@@ -23,7 +23,7 @@ CREATE TABLE tweets (
   user_id INTEGER NOT NULL,
   group_id INTEGER DEFAULT NULL,
   scheduled_date VARCHAR(20) NOT NULL,
-  tweet VARCHAR(140) NOT NULL,
+  tweet TEXT NOT NULL,
   scheduled bool DEFAULT FALSE,
   tweeted bool DEFAULT FALSE,
   img_url VARCHAR(255) DEFAULT NULL,
