@@ -1,6 +1,8 @@
 package autoChirp.webController;
 
 import autoChirp.DBConnector;
+import autoChirp.tweetCreation.Tweet;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -33,6 +35,7 @@ public class HomeController {
 	@RequestMapping(value = "/home")
 	public ModelAndView home() {
 		ModelAndView mv = new ModelAndView("home");
+		mv.addObject("maxTweetLength", Tweet.MAX_TWEET_LENGTH);
 		return mv;
 	}
 
@@ -66,6 +69,7 @@ public class HomeController {
 	@RequestMapping(value = "/help")
 	public ModelAndView help() {
 		ModelAndView mv = new ModelAndView("help");
+		mv.addObject("maxTweetLength", Tweet.MAX_TWEET_LENGTH);
 		return mv;
 	}
 
