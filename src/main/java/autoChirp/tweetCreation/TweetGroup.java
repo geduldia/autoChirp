@@ -21,6 +21,7 @@ public class TweetGroup {
 	public boolean enabled;
 	public int groupID;
 	public boolean threaded;
+	public String flashcard = "paper";
 
 	/**
 	 * Constructor for new TweetGroup-objects (not read from the database)
@@ -84,6 +85,10 @@ public class TweetGroup {
 	public void addTweet(Tweet tweet) {
 		tweets.add(tweet);
 		Collections.sort(tweets);
+	}
+	
+	public void setFlashCard(String flashcard){
+		this.flashcard = flashcard;
 	}
 
 }

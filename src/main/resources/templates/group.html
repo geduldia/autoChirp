@@ -41,6 +41,22 @@
 								</input>
 							</div>
 						</div>
+						<div class="form-group"
+							th:if="${#httpServletRequest.requestURI.startsWith(#httpServletRequest.getContextPath() + '/groups/edit/')} and ${tweet}">
+							<label class="col-sm-2 control-label">Flashcard Design</label>
+							<div class="col-md-2 img-select">
+								<input th:checked="${tweetGroup.flashcard=='paper'}"
+									type="radio" name="flashcard" id="paper" value="paper"></input>
+								<label class="btn btn-primary" for="paper"><img src="/img/paper.jpg"
+									class="img-thumbnail img-check"></img></label>
+							</div>
+							<div class="col-md-2 img-select">
+								<input th:checked="${tweetGroup.flashcard=='football'}"
+									type="radio" name="flashcard" id="football" value="football"></input>
+								<label class="btn btn-primary" for="football"><img src="/img/football.jpg"
+									class="img-thumbnail img-check"></img></label>
+							</div>
+						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">Actions</label>
 							<div class="col-sm-10">

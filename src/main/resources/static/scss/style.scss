@@ -153,4 +153,19 @@ video.helpcast {
   border-radius: 4px;
   width: 100%;
 }
+
+#deleteselected {
+	margin: 20px;
+}
+
+.img-select {
+	>input {
+		display: none;
+	}	
+	>input:not(:checked)+label{
+		background-color: transparent;
+	}
+}
 // CUSTOM
+
+

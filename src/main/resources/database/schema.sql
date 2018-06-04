@@ -14,6 +14,7 @@ CREATE TABLE groups (
   description VARCHAR(255) NOT NULL,
   enabled bool DEFAULT FALSE,
   threaded bool DEFAULT FALSE,
+  flashcard VARCHAR(255) DEFAULT NULL,
   CONSTRAINT FK_USERS_USERID_GROUPS_USERID FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 

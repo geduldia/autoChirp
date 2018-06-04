@@ -562,10 +562,16 @@ public class GroupController {
 		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
 
 		TweetGroup tweetGroup = DBConnector.getTweetGroupForUser(userID, groupID);
+		Tweet longTweet = null;
+		for (Tweet tweet : tweetGroup.tweets) {
+			if(tweet.adjustedLength() > 280){
+				longTweet = tweet;
+			}
+		}
 
 		ModelAndView mv = new ModelAndView("group");
 		mv.addObject("tweetGroup", tweetGroup);
-
+		mv.addObject("tweet", longTweet);
 		return mv;
 	}
 
@@ -586,7 +592,7 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "/edit/{groupID}", method = RequestMethod.POST)
 	public ModelAndView editGroupPost(@PathVariable int groupID, @RequestParam("title") String title,
-			@RequestParam("description") String description) {
+			@RequestParam("description") String description,@RequestParam(name = "flashcard", defaultValue = "paper") String flashcard) {
 		if (session.getAttribute("account") == null)
 			return new ModelAndView("redirect:/account");
 		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
@@ -602,9 +608,7 @@ public class GroupController {
 			mv.addObject("error", "The group description may be no longer then 255 characters.");
 			return mv;
 		}
-
-		DBConnector.editGroup(groupID, title, description, userID);
-
+		DBConnector.editGroup(groupID, title, description, userID, flashcard);
 		return new ModelAndView("redirect:/groups/view/" + groupID);
 	}
 

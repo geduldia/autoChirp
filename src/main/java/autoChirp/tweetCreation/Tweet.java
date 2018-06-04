@@ -27,7 +27,7 @@ public class Tweet implements Comparable<Tweet> {
 	public long statusID;
 	private String trimmedContent;
 	private int adjustedLength = -1;
-	
+
 	
 	public static final int MAX_TWEET_LENGTH = 280;
 

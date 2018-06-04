@@ -242,7 +242,7 @@ public class DBConnector {
 		try {
 			connection.setAutoCommit(false);
 			PreparedStatement prepGroups = connection
-					.prepareStatement("INSERT INTO groups(user_id, group_name, description, enabled, threaded) VALUES(?,?,?,?,?)");
+					.prepareStatement("INSERT INTO groups(user_id, group_name, description, enabled, threaded, flashcard) VALUES(?,?,?,?,?,?)");
 			PreparedStatement prepTweets = connection.prepareStatement(
 					"INSERT INTO tweets(user_id, group_id, scheduled_date, tweet, scheduled, tweeted, img_url, longitude, latitude) VALUES(?,?,?,?,?,?,?,?,?)");
 			// update table groups
@@ -251,6 +251,7 @@ public class DBConnector {
 			prepGroups.setString(3, tweetGroup.description);
 			prepGroups.setBoolean(4, false);
 			prepGroups.setBoolean(5, tweetGroup.threaded);
+			prepGroups.setString(6, tweetGroup.flashcard);
 			prepGroups.executeUpdate();
 			// get groupID
 			Statement stmt = connection.createStatement();
@@ -602,13 +603,17 @@ public class DBConnector {
 		try {
 			connection.setAutoCommit(false);
 			Statement stmt = connection.createStatement();
-			String sql = "SELECT group_name, description, enabled, group_id, threaded FROM groups WHERE (user_id = '" + userID
+			String sql = "SELECT group_name, description, enabled, group_id, threaded, flashcard FROM groups WHERE (user_id = '" + userID
 					+ "' AND group_id = '" + groupID + "')";
 			ResultSet result = stmt.executeQuery(sql);
 			if (!result.next())
 				return null;
 			TweetGroup group = new TweetGroup(result.getInt(4), result.getString(1), result.getString(2),
 					result.getBoolean(3), result.getBoolean(5));
+			String flashcard = result.getString(6);
+			if(flashcard != null){
+				group.setFlashCard(result.getString(6));
+			}
 			stmt.close();
 			connection.commit();
 			List<Tweet> tweets = getTweetsForUser(userID, groupID);
@@ -770,19 +775,20 @@ public class DBConnector {
 	 * @param userID
 	 *            userID
 	 */
-	public static void editGroup(int groupID, String title, String description, int userID) {
+	public static void editGroup(int groupID, String title, String description, int userID, String flashcard) {
 		try {
 			connection.setAutoCommit(false);
 			PreparedStatement stmt = connection.prepareStatement(
-					"UPDATE groups SET group_name = ?, description = ?  WHERE (group_id = ?  AND user_id = ?)");
+					"UPDATE groups SET group_name = ?, description = ?,  flashcard = ? WHERE (group_id = ?  AND user_id = ?)");
 			// String sql = "UPDATE groups SET group_name = '" + title + "',
 			// description = '" + description
 			// + "' WHERE (group_id = '" + groupID + "' AND user_id = '" +
 			// userID + "')";
 			stmt.setString(1, title);
 			stmt.setString(2, description);
-			stmt.setInt(3, groupID);
-			stmt.setInt(4, userID);
+			stmt.setString(3, flashcard);
+			stmt.setInt(4, groupID);
+			stmt.setInt(5, userID);
 			stmt.executeUpdate();
 			stmt.close();
 			connection.commit();
@@ -1054,6 +1060,7 @@ public class DBConnector {
 	 */
 	public static TweetGroup createRepeatGroupInSeconds(TweetGroup group, int userID, int delayInSeconds, String newTitle){
 		TweetGroup repeatGroup = new TweetGroup(newTitle, group.description); 
+		repeatGroup.setFlashCard(group.flashcard);
 		List<Tweet> repeatTweets = new ArrayList<Tweet>();
 		Tweet repeatTweet;
 		for (Tweet tweet : group.tweets) {
@@ -1077,6 +1084,7 @@ public class DBConnector {
 	 */
 	public static TweetGroup createRepeatGroupInYears(TweetGroup group, int userID, int delayInYears) {
 		TweetGroup updatedGroup = new TweetGroup(group.title, group.description);
+		updatedGroup.setFlashCard(group.flashcard);
 		List<Tweet> updatedTweets = new ArrayList<Tweet>();
 		Tweet updatedTweet;
 		String timeString = null;
@@ -1128,6 +1136,23 @@ public class DBConnector {
 //			e.printStackTrace();
 //			return -1;
 //		}
+	}
+
+	public static String getFlashcard(int groupID) {
+		try {
+			connection.setAutoCommit(false);
+			Statement stmt = connection.createStatement();
+			String sql = "SELECT flashcard FROM groups WHERE (group_id = '"+groupID+"')";
+			ResultSet result = stmt.executeQuery(sql);
+			String toReturn = result.getString(1);
+			stmt.close();
+			connection.commit();
+			return toReturn;
+		} catch (SQLException e) {
+			System.out.print("DBConnector.getFlashcard: ");
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 }

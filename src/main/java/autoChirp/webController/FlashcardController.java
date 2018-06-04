@@ -43,6 +43,32 @@ public class FlashcardController {
 	public FlashcardController(HttpSession session) {
 		this.session = session;
 	}
+	
+
+	@RequestMapping(value = "/cardpreview/{tweetID}/{design}")
+	public void cardpreview(HttpServletResponse response, @PathVariable int tweetID, @PathVariable String design) throws Exception {
+		if (session.getAttribute("account") == null) {
+			response.sendRedirect("/account");
+			response.getOutputStream().close();
+			return;
+		}
+
+		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
+		Tweet tweetEntry = DBConnector.getTweetByID(tweetID, userID);
+		byte[] img = renderImage(tweetEntry, design);
+
+		if (img == null) {
+			response.sendError(404);
+			response.getOutputStream().close();
+			return;
+		}
+
+		response.setContentType("image/png");
+		response.getOutputStream().write(img);
+		response.getOutputStream().close();
+	}
+
+	
 
 	/**
 	 * RequestMapping to allow previewing flashcards when authenticated.
@@ -60,7 +86,8 @@ public class FlashcardController {
 
 		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
 		Tweet tweetEntry = DBConnector.getTweetByID(tweetID, userID);
-		byte[] img = renderImage(tweetEntry);
+		String flashcard = DBConnector.getFlashcard(tweetEntry.groupID);
+		byte[] img = renderImage(tweetEntry, flashcard);
 
 		if (img == null) {
 			response.sendError(404);
@@ -83,6 +110,7 @@ public class FlashcardController {
 	@RequestMapping(value = "/flashcard/{tweetID}")
 	public void flashcard(HttpServletResponse response, @PathVariable int tweetID) throws Exception {
 		Tweet tweetEntry = DBConnector.getTweetByID(tweetID);
+		String flashcard = DBConnector.getFlashcard(tweetEntry.groupID);
 
 		if (!tweetEntry.tweeted) {
 			response.sendError(404);
@@ -90,7 +118,7 @@ public class FlashcardController {
 			return;
 		}
 
-		byte[] img = renderImage(tweetEntry);
+		byte[] img = renderImage(tweetEntry, flashcard);
 
 		if (img == null) {
 			response.sendError(404);
@@ -111,7 +139,7 @@ public class FlashcardController {
 	 *            Tweet object intended to be displayed as flashcard.
 	 * @return flashcard-image as byte array
 	 */
-	private byte[] renderImage(Tweet tweetEntry) throws Exception {
+	private byte[] renderImage(Tweet tweetEntry, String flashcard) throws Exception {
 		if (tweetEntry == null) {
 			throw new NotFoundException("Could not create flashcard, sorry!");
 		}
@@ -132,7 +160,8 @@ public class FlashcardController {
 		Color background = new Color(220, 200, 120, 100);
 
 		// background image
-		BufferedImage bgimg = ImageIO.read(getClass().getClassLoader().getResource("static/img/paper.jpg"));
+		System.out.println(flashcard);
+		BufferedImage bgimg = ImageIO.read(getClass().getClassLoader().getResource("static/img/"+flashcard+".jpg"));
 		graphic.drawImage(bgimg, 0, 0, null);
 
 		// header box
