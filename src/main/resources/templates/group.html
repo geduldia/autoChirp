@@ -42,20 +42,29 @@
 							</div>
 						</div>
 						<div class="form-group"
-							th:if="${#httpServletRequest.requestURI.startsWith(#httpServletRequest.getContextPath() + '/groups/edit/')} and ${tweet}">
+							th:if="${#httpServletRequest.requestURI.startsWith(#httpServletRequest.getContextPath() + '/groups/edit/')} and ${flashcards}">
 							<label class="col-sm-2 control-label">Flashcard Design</label>
-							<div class="col-md-2 img-select">
+
+							<div th:each="flashcard : ${flashcards}"
+								class="col-md-2 img-select">
+								<input th:checked="${tweetGroup.flashcard == flashcard}"
+									type="radio" name="flashcard" th:id="${#strings.substringBefore(flashcard, '.')}" th:value="${flashcard}"></input>
+								<label class="btn btn-primary" th:for="${#strings.substringBefore(flashcard, '.')}"><img
+									th:src="'/img/flashcards/'+ ${flashcard}" class="img-thumbnail img-check"></img></label>
+							</div>
+						<!-- 	<div class="col-md-2 img-select">
 								<input th:checked="${tweetGroup.flashcard=='paper'}"
 									type="radio" name="flashcard" id="paper" value="paper"></input>
-								<label class="btn btn-primary" for="paper"><img src="/img/paper.jpg"
-									class="img-thumbnail img-check"></img></label>
+								<label class="btn btn-primary" for="paper"><img
+									src="/img/flashcards/paper.jpg" class="img-thumbnail img-check"></img></label>
 							</div>
 							<div class="col-md-2 img-select">
 								<input th:checked="${tweetGroup.flashcard=='football'}"
 									type="radio" name="flashcard" id="football" value="football"></input>
-								<label class="btn btn-primary" for="football"><img src="/img/football.jpg"
+								<label class="btn btn-primary" for="football"><img
+									src="/img/flashards/football.jpg"
 									class="img-thumbnail img-check"></img></label>
-							</div>
+							</div> -->
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">Actions</label>

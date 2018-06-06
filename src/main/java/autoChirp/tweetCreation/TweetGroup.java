@@ -21,7 +21,7 @@ public class TweetGroup {
 	public boolean enabled;
 	public int groupID;
 	public boolean threaded;
-	public String flashcard = "paper";
+	public String flashcard = "default";
 
 	/**
 	 * Constructor for new TweetGroup-objects (not read from the database)

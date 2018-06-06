@@ -10,10 +10,14 @@ import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.net.URL;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -43,10 +47,10 @@ public class FlashcardController {
 	public FlashcardController(HttpSession session) {
 		this.session = session;
 	}
-	
 
 	@RequestMapping(value = "/cardpreview/{tweetID}/{design}")
-	public void cardpreview(HttpServletResponse response, @PathVariable int tweetID, @PathVariable String design) throws Exception {
+	public void cardpreview(HttpServletResponse response, @PathVariable int tweetID, @PathVariable String design)
+			throws Exception {
 		if (session.getAttribute("account") == null) {
 			response.sendRedirect("/account");
 			response.getOutputStream().close();
@@ -67,8 +71,6 @@ public class FlashcardController {
 		response.getOutputStream().write(img);
 		response.getOutputStream().close();
 	}
-
-	
 
 	/**
 	 * RequestMapping to allow previewing flashcards when authenticated.
@@ -144,7 +146,7 @@ public class FlashcardController {
 			throw new NotFoundException("Could not create flashcard, sorry!");
 		}
 
-		if (tweetEntry.adjustedLength()<= Tweet.MAX_TWEET_LENGTH) {
+		if (tweetEntry.adjustedLength() <= Tweet.MAX_TWEET_LENGTH) {
 			return null;
 		}
 
@@ -156,17 +158,22 @@ public class FlashcardController {
 		boolean onlytext = (tweetEntry.imageUrl == null || tweetEntry.imageUrl.isEmpty());
 
 		// colors
-		Color text = new Color(51, 51, 51);
-		Color background = new Color(220, 200, 120, 100);
+		Color textColor = new Color(51, 51, 51);
+		Color backgroundColor = new Color(255,255,255, 70);
 
 		// background image
 		System.out.println(flashcard);
-		BufferedImage bgimg = ImageIO.read(getClass().getClassLoader().getResource("static/img/"+flashcard+".jpg"));
+		File file = new File("src/main/resources/static/img/flashcards/"+flashcard);
+		if (!file.exists()) {
+			flashcard = "default.jpg";
+		}
+		BufferedImage bgimg = ImageIO
+				.read(getClass().getClassLoader().getResource("static/img/flashcards/" + flashcard));
 		graphic.drawImage(bgimg, 0, 0, null);
 
 		// header box
-		graphic.setColor(background);
-		graphic.fillRect(30, 30, 840, 60);
+		 graphic.setColor(backgroundColor);
+		 graphic.fillRect(30, 30, 840, 60);
 
 		// formated texts
 		Float x, y, bound;
@@ -176,33 +183,43 @@ public class FlashcardController {
 		FontRenderContext frc = graphic.getFontRenderContext();
 
 		// header
-		String header = groupName + " [" + tweetEntry.tweetDate.substring(0,10) + "]";
+		String header = groupName+"";
+		String date =  tweetEntry.formatDate().substring(0, 10);
 
-		graphic.setColor(text);
+		graphic.setColor(textColor);
 		attstr = new AttributedString(header);
-		attstr.addAttribute(TextAttribute.FONT, new Font(Font.SANS_SERIF, Font.BOLD, 20));
+		attstr.addAttribute(TextAttribute.FONT, new Font(Font.SANS_SERIF, Font.BOLD, 22));
 		iter = attstr.getIterator();
 		measure = new LineBreakMeasurer(iter, frc);
 		measure.setPosition(iter.getBeginIndex());
-
 		x = 35f;
 		y = 68f;
 		bound = 830f;
-
 		measure.getPosition();
 		measure.nextLayout(bound).draw(graphic, x, y);
 
-		// corpus
-		String corpus[] = tweetEntry.content.split("\n");
-
 		y = 120f;
-		for (String i : corpus) {
-			if (i.isEmpty())
-				i = " ";
+		
+		// corpus
+		List<String> corpus = new ArrayList<String>();
+		corpus.add(date);
+		corpus.add("");
+		corpus.addAll(Arrays.asList(tweetEntry.content.split("\n")));
+		
+		for (int i = 0; i < corpus.size(); i++ ) {
+			String string = corpus.get(i);
+			if (string.isEmpty())
+				string = " ";
 
-			graphic.setColor(text);
-			attstr = new AttributedString(i.replaceAll("<[^>]*>", ""));
-			attstr.addAttribute(TextAttribute.FONT, new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+			graphic.setColor(textColor);
+			attstr = new AttributedString(string.replaceAll("<[^>]*>", ""));
+			if(i == 0){
+				attstr.addAttribute(TextAttribute.FONT, new Font(Font.SANS_SERIF, Font.BOLD, 20));
+			}
+			else{
+
+				attstr.addAttribute(TextAttribute.FONT, new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+			}
 			iter = attstr.getIterator();
 			measure = new LineBreakMeasurer(iter, frc);
 			measure.setPosition(iter.getBeginIndex());
@@ -217,12 +234,13 @@ public class FlashcardController {
 			}
 		}
 
+		// header box
 		// image
 		if (!onlytext) {
 
 			// image box
-			graphic.setColor(background);
-			graphic.fillRect(30, 120, 300, 450);
+			// graphic.setColor(background);
+			// graphic.fillRect(30, 120, 300, 450);
 
 			// image
 			BufferedImage img = ImageIO.read(new URL(tweetEntry.imageUrl));

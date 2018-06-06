@@ -562,16 +562,22 @@ public class GroupController {
 		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
 
 		TweetGroup tweetGroup = DBConnector.getTweetGroupForUser(userID, groupID);
-		Tweet longTweet = null;
+		boolean longTweet = false;
 		for (Tweet tweet : tweetGroup.tweets) {
-			if(tweet.adjustedLength() > 280){
-				longTweet = tweet;
+			if(tweet.adjustedLength() > Tweet.MAX_TWEET_LENGTH){
+				longTweet = true;
+				break;
 			}
 		}
-
+		String[] flashcards = null;
+		if(longTweet){
+			File file = new File("src/main/resources/static/img/flashcards/");
+			flashcards = file.list();
+		}
+		
 		ModelAndView mv = new ModelAndView("group");
 		mv.addObject("tweetGroup", tweetGroup);
-		mv.addObject("tweet", longTweet);
+		mv.addObject("flashcards", flashcards);
 		return mv;
 	}
 

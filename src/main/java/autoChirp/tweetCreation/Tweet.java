@@ -1,7 +1,11 @@
 package autoChirp.tweetCreation;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.springframework.format.datetime.DateTimeFormatAnnotationFormatterFactory;
 
 import autoChirp.DBConnector;
 
@@ -27,8 +31,6 @@ public class Tweet implements Comparable<Tweet> {
 	public long statusID;
 	private String trimmedContent;
 	private int adjustedLength = -1;
-
-	
 	public static final int MAX_TWEET_LENGTH = 280;
 
 	/**
@@ -185,5 +187,14 @@ public class Tweet implements Comparable<Tweet> {
 			}
 		}
 		return counter;
+	}
+	
+	public String formatDate(){
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.parse(tweetDate,dtf);
+		dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+		return dtf.format(date);
+		
+	
 	}
 }

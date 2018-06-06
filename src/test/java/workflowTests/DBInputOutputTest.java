@@ -197,7 +197,7 @@ public class DBInputOutputTest {
 	public void editTweetAndTweetGroup(){
 		int userID = DBConnector.insertNewUser(44, null, null);
 		int groupID = DBConnector.insertTweetGroup(testGroup, userID);
-		DBConnector.editGroup(groupID, "newTitle", "newDescription", userID);
+		DBConnector.editGroup(groupID, "newTitle", "newDescription", userID, "default.jpg");
 		TweetGroup read = DBConnector.getTweetGroupForUser(userID, groupID);
 		String title = DBConnector.getGroupTitle(groupID, userID);
 		Assert.assertEquals("newTitle", title);

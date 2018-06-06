@@ -118,7 +118,6 @@ public class TwitterConnection {
 
 		// add flashcard
 		if (toTweet.adjustedLength() > Tweet.MAX_TWEET_LENGTH) {
-			TweetFactory tf = new TweetFactory(dateformats);
 			String flashcard = appDomain + "/flashcard/" + toTweet.tweetID;
 
 			try {
@@ -130,8 +129,6 @@ public class TwitterConnection {
 
 		// add Geo-Locations
 		if (toTweet.longitude != 0 || toTweet.latitude != 0) {
-			System.out.println("long: " + toTweet.longitude);
-			System.out.println("lat: " + toTweet.latitude);
 			tweetData = tweetData.atLocation(toTweet.longitude, toTweet.latitude).displayCoordinates(true);
 		}
 		
