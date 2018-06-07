@@ -105,6 +105,9 @@ public class GroupController {
 		List<TweetGroup> pageGroupList;
 		double pgnum = (double) tweetGroups.size() / (double) groupsPerPage;
 		int pages = (pgnum > (int) pgnum) ? (int) (pgnum + 1.0) : (int) pgnum;
+		while(page > pages ){
+			page--;
+		}
 		int offset = (page - 1) * groupsPerPage;
 		int endset = (offset + groupsPerPage <= tweetGroups.size()) ? offset + groupsPerPage : tweetGroups.size();
 
@@ -167,6 +170,9 @@ public class GroupController {
 
 		double pgnum = (double) tweetsList.size() / (double) tweetsPerPage;
 		int pages = (pgnum > (int) pgnum) ? (int) (pgnum + 1.0) : (int) pgnum;
+		while(page > pages ){
+			page--;
+		}
 		int offset = (page - 1) * tweetsPerPage;
 		int endset = (offset + tweetsPerPage <= tweetsList.size()) ? offset + tweetsPerPage : tweetsList.size();
 		mv.addObject("tweetsList", tweetsList.subList(offset, endset));
@@ -669,6 +675,9 @@ public class GroupController {
 
 		double pgnum = (double) tweetsList.size() / (double) tweetsPerPage;
 		int pages = (pgnum > (int) pgnum) ? (int) (pgnum + 1.0) : (int) pgnum;
+		while(page > pages ){
+			page--;
+		}
 		int offset = (page - 1) * tweetsPerPage;
 		int endset = (offset + tweetsPerPage <= tweetsList.size()) ? offset + tweetsPerPage : tweetsList.size();
 
