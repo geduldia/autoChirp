@@ -107,6 +107,9 @@ public class TweetController {
 
 		double pgnum = (double) tweetsList.size() / (double) tweetsPerPage;
 		int pages = (pgnum > (int) pgnum) ? (int) (pgnum + 1.0) : (int) pgnum;
+		while(page > pages ){
+			page--;
+		}
 		int offset = (page - 1) * tweetsPerPage;
 		int endset = (offset + tweetsPerPage <= tweetsList.size()) ? offset + tweetsPerPage : tweetsList.size();
 

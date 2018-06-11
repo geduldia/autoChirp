@@ -213,10 +213,11 @@
 														th:classappend="(${page-3} &gt; 1) ? disabled"><a
 														th:href="(${page-3} &gt; 1)? '#' : @{'/groups/view/' +${tweetGroup.groupID}+ '?page=' + ${page-3}}"
 														th:text="(${page-3} &gt; 1)? '...' : ${page-3}"></a></li>
-
-													<li th:if="${page} &gt; ${pages-3} and ${page &gt; 4}"><a
+													<li
+														th:if="${page} &gt; ${pages-3} and ${page &gt; 4} and ${page != 5}"><a
 														th:href="@{'/groups/view/' +${tweetGroup.groupID}+ '?page=' + ${page-5}}"
 														th:text="${pages-5}"></a></li>
+
 													<li
 														th:if="(${page-4} &gt; 0 ) and (${page + 1} &gt; ${pages})"><a
 														th:href="@{'/groups/view/' +${tweetGroup.groupID}+ '?page=' + ${page-4}}"
