@@ -173,7 +173,10 @@ public class FlashcardController {
 
 		// header box
 		 graphic.setColor(backgroundColor);
+		 //corpus box
 		 graphic.fillRect(30, 30, 840, 60);
+		 
+		 graphic.fillRect(30, 120, 840, 450);
 
 		// formated texts
 		Float x, y, bound;
@@ -184,7 +187,7 @@ public class FlashcardController {
 
 		// header
 		String header = groupName+"";
-		String date =  tweetEntry.formatDate().substring(0, 10);
+		String date =  tweetEntry.formatDate().substring(0, 5);
 
 		graphic.setColor(textColor);
 		attstr = new AttributedString(header);
@@ -257,7 +260,7 @@ public class FlashcardController {
 			}
 
 			Integer center = 35 + (290 - width) / 2;
-			graphic.drawImage(img.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH), center, 125, null);
+			graphic.drawImage(img.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH), center, 130, null);
 		}
 
 		// done

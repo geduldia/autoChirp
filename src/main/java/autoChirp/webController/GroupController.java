@@ -105,6 +105,9 @@ public class GroupController {
 		List<TweetGroup> pageGroupList;
 		double pgnum = (double) tweetGroups.size() / (double) groupsPerPage;
 		int pages = (pgnum > (int) pgnum) ? (int) (pgnum + 1.0) : (int) pgnum;
+		while(page > pages ){
+			page--;
+		}
 		int offset = (page - 1) * groupsPerPage;
 		int endset = (offset + groupsPerPage <= tweetGroups.size()) ? offset + groupsPerPage : tweetGroups.size();
 
@@ -167,6 +170,9 @@ public class GroupController {
 
 		double pgnum = (double) tweetsList.size() / (double) tweetsPerPage;
 		int pages = (pgnum > (int) pgnum) ? (int) (pgnum + 1.0) : (int) pgnum;
+		while(page > pages ){
+			page--;
+		}
 		int offset = (page - 1) * tweetsPerPage;
 		int endset = (offset + tweetsPerPage <= tweetsList.size()) ? offset + tweetsPerPage : tweetsList.size();
 		mv.addObject("tweetsList", tweetsList.subList(offset, endset));
@@ -276,7 +282,7 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "/import/gdrive", method = RequestMethod.POST)
 	public ModelAndView importGdriveGroupPost(@RequestParam("source") String source,
-			@RequestParam("title") String title, @RequestParam("description") String description) throws Exception {
+			@RequestParam("title") String title, @RequestParam("description") String description, @RequestParam("encoding") String encoding, @RequestParam(name = "delay", defaultValue = "0") int delay) throws Exception {
 		if (session.getAttribute("account") == null)
 			return new ModelAndView("redirect:/account");
 		int userID = Integer.parseInt(((Hashtable<String, String>) session.getAttribute("account")).get("userID"));
@@ -333,7 +339,7 @@ public class GroupController {
 		}
 
 		try {
-			tweetGroup = tweeter.getTweetsFromTSVFile(file, title, description, 0, "UTF-8");
+			tweetGroup = tweeter.getTweetsFromTSVFile(file, title, description, (delay <= 0) ? 0 : delay, encoding);
 		} catch (MalformedTSVFileException e) {
 			ModelAndView mv = new ModelAndView("error");
 			mv.addObject("error", "Parsing error, " + e.getMessage());
@@ -391,7 +397,7 @@ public class GroupController {
 	@RequestMapping(value = "/import/tsv-file", method = RequestMethod.POST)
 	public ModelAndView importTSVGroupPost(@RequestParam("source") MultipartFile source,
 			@RequestParam("encoding") String encoding, @RequestParam("title") String title,
-			@RequestParam("description") String description, @RequestParam("delay") int delay)
+			@RequestParam("description") String description, @RequestParam(name = "delay", defaultValue = "0") int delay)
 			throws MalformedTSVFileException {
 		if (session.getAttribute("account") == null)
 			return new ModelAndView("redirect:/account");
@@ -679,6 +685,9 @@ public class GroupController {
 
 		double pgnum = (double) tweetsList.size() / (double) tweetsPerPage;
 		int pages = (pgnum > (int) pgnum) ? (int) (pgnum + 1.0) : (int) pgnum;
+		while(page > pages ){
+			page--;
+		}
 		int offset = (page - 1) * tweetsPerPage;
 		int endset = (offset + tweetsPerPage <= tweetsList.size()) ? offset + tweetsPerPage : tweetsList.size();
 

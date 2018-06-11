@@ -4,94 +4,123 @@
 <head th:replace="../elements/header (title='Import')"></head>
 
 <body>
-  <nav th:replace="../elements/navbar"></nav>
+	<nav th:replace="../elements/navbar"></nav>
 
-  <div class="wrapper">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <h2>Group import
-            <small>Import Your custom <strong th:text="${#strings.capitalize(importer)}">
-              </strong> Tweet groups</small></h2>
-          <hr></hr>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <form class="form-horizontal" th:action="${#httpServletRequest.requestURI}"
-            th:attr="enctype=${importer.equals('tsv-file') ? 'multipart/form-data' : ''}" method="post">
-            <div class="form-group">
-              <label for="source" class="col-sm-2 control-label">Import source</label>
-              <div class="col-sm-10">
-                <input th:if="${importer.equals('gdrive')}" type="url" class="form-control" id="source" name="source" required="required" 
-                  placeholder="https://docs.google.com/spreadsheets/d/FWaDfO7VDzL6BEB480MtZrkZsr4lnB56xPnSPGLo/">
-                </input>
-                <input th:if="${importer.equals('tsv-file')}" type="file" class="form-control"
-                  id="source" name="source" required="required" placeholder="my_custom_tsv_file.txt">
-                </input>
-                <input th:if="${importer.equals('wikipedia')}" type="url" class="form-control"
-                  id="source" name="source" required="required" placeholder="https://en.wikipedia.org/wiki/Twitter">
-                </input>
-              </div>
-            </div>
-            <div class="form-group" th:if="${importer.equals('tsv-file')}">
-              <label for="title" class="col-sm-2 control-label">Encoding</label>
-              <div class="col-sm-10">
-              	<select class="form-control" id="encoding" name="encoding" required="required">
-				  <option value="UTF-8" selected="selected">UTF-8</option>
-				  <option value="UTF-16">UTF-16</option>
-				  <option value="US-ASCII">US-ASCII</option>
-				  <option value="cp1252">ISO-8859-1/Latin-1</option>
-				</select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="title" class="col-sm-2 control-label">Title</label>
-              <div class="col-sm-10">
-                <input type="text" class="form-control" id="title" name="title"
-                  required="required" maxlength="255" placeholder="My group">
-                </input>
-              </div>
-            </div>
-            <div class="form-group" th:if="${importer.equals('wikipedia')}">
-              <label for="prefix" class="col-sm-2 control-label">Prefix</label>
-              <div class="col-sm-10">
-                <input type="text" class="form-control" id="prefix" name="prefix"
-                  maxlength="20" placeholder="A string prefix for all imported Tweets or leave empty">
-                </input>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="description" class="col-sm-2 control-label">Description</label>
-              <div class="col-sm-10">
-                <input type="text" class="form-control" id="description" name="description"
-                  required="required" maxlength="255" placeholder="A group with my tweets">
-                </input>
-              </div>
-            </div>
-            <div class="form-group" th:if="${importer.equals('tsv-file')}">
-              <label for="delay" class="col-sm-2 control-label">Delay</label>
-              <div class="col-sm-10">
-                <input type="number" class="form-control" id="delay" name="delay" min="0" required="required"
-                  placeholder="Delay in years, past dates will be ignored. Inputting '0' maps all past dates to their next anniversary.">
-                </input>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">Actions</label>
-              <div class="col-sm-10">
-                <button type="submit" class="btn btn-primary">
-                  <span class="glyphicon glyphicon-transfer" aria-hidden="true"></span> Import group</button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="wrapper">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<h2>
+						Group import <small>Import Your custom <strong
+							th:text="${#strings.capitalize(importer)}"> </strong> Tweet
+							groups
+						</small>
+					</h2>
+					<hr></hr>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<form class="form-horizontal"
+						th:action="${#httpServletRequest.requestURI}"
+						th:attr="enctype=${importer.equals('tsv-file') ? 'multipart/form-data' : ''}"
+						method="post">
+						<div class="form-group">
+							<label for="source" class="col-sm-2 control-label">Import
+								source</label>
+							<div class="col-sm-10">
+								<input th:if="${importer.equals('gdrive')}" type="url"
+									class="form-control" id="source" name="source"
+									required="required"
+									placeholder="https://docs.google.com/spreadsheets/d/FWaDfO7VDzL6BEB480MtZrkZsr4lnB56xPnSPGLo/">
+								</input> <input th:if="${importer.equals('tsv-file')}" type="file"
+									class="form-control" id="source" name="source"
+									required="required" placeholder="my_custom_tsv_file.txt">
+								</input> <input th:if="${importer.equals('wikipedia')}" type="url"
+									class="form-control" id="source" name="source"
+									required="required"
+									placeholder="https://en.wikipedia.org/wiki/Twitter"> </input>
+							</div>
+						</div>
+						<div class="form-group"
+							th:unless="${importer.equals('wikipedia')}">
+							<label for="title" class="col-sm-2 control-label">Encoding</label>
+							<div class="col-sm-10">
+								<select class="form-control" id="encoding" name="encoding"
+									required="required">
+									<option value="UTF-8" selected="selected">UTF-8</option>
+									<option value="UTF-16">UTF-16</option>
+									<option value="US-ASCII">US-ASCII</option>
+									<option value="cp1252">ISO-8859-1/Latin-1</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="title" class="col-sm-2 control-label">Title</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="title" name="title"
+									required="required" maxlength="255" placeholder="My group">
+								</input>
+							</div>
+						</div>
+						<div class="form-group" th:if="${importer.equals('wikipedia')}">
+							<label for="prefix" class="col-sm-2 control-label">Prefix</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="prefix"
+									name="prefix" maxlength="20"
+									placeholder="A string prefix for all imported Tweets or leave empty">
+								</input>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="description" class="col-sm-2 control-label">Description</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="description"
+									name="description" required="required" maxlength="255"
+									placeholder="A group with my tweets"> </input>
+							</div>
+						</div>
+						<div class="form-group"
+							th:unless="${importer.equals('wikipedia')}">
+							<!-- <label class="col-sm-2 control-label">Set dates to</label>
+							<div class="col-sm-4">
+								<div class="checkbox">
+									<label><input type="radio" name="delay" value="0" checked = "checked"
+										id="anniversary"></input>  next anniversary </label>
+								</div>
+							</div>
+								<div class="col-sm-4">
+								<div class="checkbox">
+									<label><input type="radio" name="delay" value="1" 
+										id="anniversary"></input>  add <input type ="number" class = "delay-input"></input> years </label>
+								</div>
+							</div> -->
 
-  <footer th:replace="../elements/footer"></footer>
-  <div th:replace="../elements/scripts"></div>
+							<label for="delay" class="col-sm-2 control-label">Delay in years</label>
+							<div class="col-sm-10">
+								<input type="number" class="form-control" id="delay"
+									name="delay" min="0" 
+									placeholder="Delay in years, past dates will be ignored. Inputting '0' maps all past dates to their next anniversary.">
+								</input>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Actions</label>
+							<div class="col-sm-10">
+								<button type="submit" class="btn btn-primary">
+									<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
+									Import group
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer th:replace="../elements/footer"></footer>
+	<div th:replace="../elements/scripts"></div>
 </body>
 
 </html>

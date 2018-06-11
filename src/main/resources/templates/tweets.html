@@ -40,7 +40,7 @@
 										<th class="text-center"><span
 											class="glyphicon glyphicon-blackboard" aria-hidden="true"></span></th>
 										<th class="text-center tweetdate">When</th>
-											<th class="text-right">select all <input id="selectAll"
+										<th class="text-right">select all <input id="selectAll"
 											type="checkbox"></input></th>
 									</tr>
 								</thead>
@@ -88,64 +88,66 @@
 								<div class="row">
 									<div class="col-md-6">
 										<ul th:if="${pages != null}" class="pagination">
-										<li th:if="${pages &gt; 2}" th:classappend="${page == 1} ? disabled"><a
-											th:href="${page == 1}? '#' :  (@{/tweets/view?page=1})"
-											><span
-												class="glyphicon glyphicon-step-backward" aria-hidden="true"></span></a></li>
-										<li th:classappend="${page == 1} ? disabled"><a
-											th:href="${page == 1}? '#' :  (@{/tweets/view?page=} + ${page-1})"
-											><span
-												class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span></a></li>
-										<li th:if="${page &gt; 3} and ${pages &gt; 7}"
-											th:classappend="(${page-3} &gt; 1) ? disabled"><a
-											th:href="(${page-3} &gt; 1)? '#' : @{'/tweets/view?page=' + ${page-3}}"
-											th:text="(${page-3} &gt; 1)? '...' : ${page-3}"></a></li>
-										<li th:if="${page} &gt; ${pages-3} and ${page &gt; 4}"><a
-											th:href="@{'/tweets/view?page=' + ${page-5}}"
-											th:text="${pages-5}"></a></li>
-										<li
-											th:if="(${page-4} &gt; 0 ) and (${page + 1} &gt; ${pages})"><a
-											th:href="@{'/tweets/view?page=' + ${page-4}}"
-											th:text="${page-4}"></a></li>
-										<li th:if="(${page-3} &gt; 0) and (${page + 2} &gt; ${pages})"><a
-											th:href="@{'/tweets/view?page=' + ${page-3}}"
-											th:text="${page-3}"></a></li>
-										<li th:if="${page-2} &gt; 0"><a
-											th:href="@{'/tweets/view?page=' + ${page-2}}"
-											th:text="${page-2}"></a></li>
-										<li th:if="${page-1} &gt; 0"><a
-											th:href="@{'/tweets/view?page=' + ${page-1}}"
-											th:text="${page-1}"></a></li>
-										<li class="active"><a
-											th:href="@{'/tweets/view?page=' + ${page}}" th:text="${page}"></a></li>
-										<li th:if="${page+1} &lt; ${pages+1}"><a
-											th:href="@{'/tweets/view?page=' + ${page+1}}"
-											th:text="${page+1}"></a></li>
-										<li th:if="${page+2} &lt; ${pages+1}"><a
-											th:href="@{'/tweets/view?page=' + ${page+2}}"
-											th:text="${page+2}"></a></li>
-										<li th:if="${page+3} &lt; ${pages+1} and ${page-2 &lt; 1}"><a
-											th:href="@{'/tweets/view?page=' + ${page+3}}"
-											th:text="${page+3}"></a></li>
-										<li th:if="${page+4} &lt; ${pages+1} and ${page-1 &lt; 1}"><a
-											th:href="@{'/tweets/view?page=' + ${page+4}}"
-											th:text="${page+4}"></a></li>
-										<li th:if="${page &lt; 4} and ${pages &gt; 7}"><a
-											th:href="@{/tweets/view?page=6}">6</a></li>
-										<li th:classappend="(${page+3} &lt; ${pages})? disabled"
-											th:if="${page+2} &lt; ${pages} and ${pages &gt; 7}"><a
-											th:href="(${page+3} &lt; ${pages})? '...' : @{'/tweets/view?page=' + ${page+3}}"
-											th:text="(${page+3} &lt; ${pages})? '...' : ${page+3}"></a></li>
-										<li th:classappend="${page == pages} ? disabled"><a
-											th:href="${page == pages}? '#' :  (@{/tweets/view?page=} + ${page+1})"
-											><span
-												class="glyphicon glyphicon-triangle-right"
-												aria-hidden="true"></span></a></li>
-										<li th:if="${pages &gt; 2}" th:classappend="${page == pages} ? disabled"><a
-											th:href="${page == pages}? '#' :  (@{/tweets/view?page=} + ${pages})"
-											><span
-												class="glyphicon glyphicon-step-forward" aria-hidden="true"></span></a></li>
-									</ul>
+											<li th:if="${pages &gt; 2}"
+												th:classappend="${page == 1} ? disabled"><a
+												th:href="${page == 1}? '#' :  (@{/tweets/view?page=1})"><span
+													class="glyphicon glyphicon-step-backward"
+													aria-hidden="true"></span></a></li>
+											<li th:classappend="${page == 1} ? disabled"><a
+												th:href="${page == 1}? '#' :  (@{/tweets/view?page=} + ${page-1})"><span
+													class="glyphicon glyphicon-triangle-left"
+													aria-hidden="true"></span></a></li>
+											<li th:if="${page &gt; 3} and ${pages &gt; 7}"
+												th:classappend="(${page-3} &gt; 1) ? disabled"><a
+												th:href="(${page-3} &gt; 1)? '#' : @{'/tweets/view?page=' + ${page-3}}"
+												th:text="(${page-3} &gt; 1)? '...' : ${page-3}"></a></li>
+											<li th:if="${page} &gt; ${pages-3} and ${page &gt; 4} and ${page != 5}"><a
+												th:href="@{'/tweets/view?page=' + ${page-5}}"
+												th:text="${pages-5}"></a></li>
+											<li
+												th:if="(${page-4} &gt; 0 ) and (${page + 1} &gt; ${pages})"><a
+												th:href="@{'/tweets/view?page=' + ${page-4}}"
+												th:text="${page-4}"></a></li>
+											<li
+												th:if="(${page-3} &gt; 0) and (${page + 2} &gt; ${pages})"><a
+												th:href="@{'/tweets/view?page=' + ${page-3}}"
+												th:text="${page-3}"></a></li>
+											<li th:if="${page-2} &gt; 0"><a
+												th:href="@{'/tweets/view?page=' + ${page-2}}"
+												th:text="${page-2}"></a></li>
+											<li th:if="${page-1} &gt; 0"><a
+												th:href="@{'/tweets/view?page=' + ${page-1}}"
+												th:text="${page-1}"></a></li>
+											<li class="active"><a
+												th:href="@{'/tweets/view?page=' + ${page}}"
+												th:text="${page}"></a></li>
+											<li th:if="${page+1} &lt; ${pages+1}"><a
+												th:href="@{'/tweets/view?page=' + ${page+1}}"
+												th:text="${page+1}"></a></li>
+											<li th:if="${page+2} &lt; ${pages+1}"><a
+												th:href="@{'/tweets/view?page=' + ${page+2}}"
+												th:text="${page+2}"></a></li>
+											<li th:if="${page+3} &lt; ${pages+1} and ${page-2 &lt; 1}"><a
+												th:href="@{'/tweets/view?page=' + ${page+3}}"
+												th:text="${page+3}"></a></li>
+											<li th:if="${page+4} &lt; ${pages+1} and ${page-1 &lt; 1}"><a
+												th:href="@{'/tweets/view?page=' + ${page+4}}"
+												th:text="${page+4}"></a></li>
+											<li th:if="${page &lt; 4} and ${pages &gt; 7}"><a
+												th:href="@{/tweets/view?page=6}">6</a></li>
+											<li th:classappend="(${page+3} &lt; ${pages})? disabled"
+												th:if="${page+2} &lt; ${pages} and ${pages &gt; 7}"><a
+												th:href="(${page+3} &lt; ${pages})? '...' : @{'/tweets/view?page=' + ${page+3}}"
+												th:text="(${page+3} &lt; ${pages})? '...' : ${page+3}"></a></li>
+											<li th:classappend="${page == pages} ? disabled"><a
+												th:href="${page == pages}? '#' :  (@{/tweets/view?page=} + ${page+1})"><span
+													class="glyphicon glyphicon-triangle-right"
+													aria-hidden="true"></span></a></li>
+											<li th:if="${pages &gt; 2}"
+												th:classappend="${page == pages} ? disabled"><a
+												th:href="${page == pages}? '#' :  (@{/tweets/view?page=} + ${pages})"><span
+													class="glyphicon glyphicon-step-forward" aria-hidden="true"></span></a></li>
+										</ul>
 									</div>
 									<div class="col-md-6">
 										<div class="text-right">
